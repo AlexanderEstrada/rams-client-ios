@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="IMRegistrationCollectionViewCell" id="Oki-92-6Ov" customClass="IMRegistrationCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="150"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="150"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-avatar" translatesAutoresizingMaskIntoConstraints="NO" id="fot-bJ-AeI">
+                        <rect key="frame" x="10" y="15" width="70" height="70"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="70" id="wIQ-Np-cur"/>
+                            <constraint firstAttribute="height" constant="70" id="zuN-JM-uTe"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qkY-ok-sYH">
+                        <rect key="frame" x="90" y="25" width="220" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="YGt-ft-N7n"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eo9-fQ-hjO">
+                        <rect key="frame" x="90" y="95" width="220" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="Xnj-ic-jk6"/>
+                            <constraint firstAttribute="width" constant="220" id="s8J-eh-8pD"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eI9-39-Bcu">
+                        <rect key="frame" x="90" y="55" width="220" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="220" id="1eU-vG-huU"/>
+                            <constraint firstAttribute="height" constant="20" id="UNC-9x-kdg"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BYu-Uf-osj">
+                        <rect key="frame" x="90" y="75" width="220" height="20"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="bE6-zY-P5f"/>
+                            <constraint firstAttribute="width" constant="220" id="qnp-xv-AYM"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q3s-nG-q6b">
+                        <rect key="frame" x="23" y="95" width="44" height="44"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="44" id="EJt-WX-5yn"/>
+                            <constraint firstAttribute="height" constant="44" id="i5t-To-VTw"/>
+                        </constraints>
+                        <state key="normal" image="icon-upload-small">
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="Eo9-fQ-hjO" secondAttribute="trailing" constant="10" id="14a-9O-Rti"/>
+                <constraint firstItem="fot-bJ-AeI" firstAttribute="top" secondItem="Oki-92-6Ov" secondAttribute="top" constant="15" id="8oo-jg-RGo"/>
+                <constraint firstItem="eI9-39-Bcu" firstAttribute="top" secondItem="qkY-ok-sYH" secondAttribute="bottom" constant="10" id="BW2-Gi-QXe"/>
+                <constraint firstItem="Eo9-fQ-hjO" firstAttribute="top" secondItem="BYu-Uf-osj" secondAttribute="bottom" id="CRZ-ln-ChE"/>
+                <constraint firstItem="fot-bJ-AeI" firstAttribute="leading" secondItem="Oki-92-6Ov" secondAttribute="leading" constant="10" id="DvW-d9-jgs"/>
+                <constraint firstItem="BYu-Uf-osj" firstAttribute="top" secondItem="eI9-39-Bcu" secondAttribute="bottom" id="Sms-8r-mPk"/>
+                <constraint firstItem="q3s-nG-q6b" firstAttribute="leading" secondItem="Oki-92-6Ov" secondAttribute="leading" constant="23" id="Zmb-mM-ZOa"/>
+                <constraint firstAttribute="trailing" secondItem="qkY-ok-sYH" secondAttribute="trailing" constant="10" id="cDN-26-7LS"/>
+                <constraint firstItem="qkY-ok-sYH" firstAttribute="top" secondItem="Oki-92-6Ov" secondAttribute="top" constant="25" id="dG6-E7-fHL"/>
+                <constraint firstItem="q3s-nG-q6b" firstAttribute="top" secondItem="fot-bJ-AeI" secondAttribute="bottom" constant="10" id="hgU-dR-IMr"/>
+                <constraint firstItem="qkY-ok-sYH" firstAttribute="leading" secondItem="fot-bJ-AeI" secondAttribute="trailing" constant="10" id="lNo-OK-etH"/>
+                <constraint firstAttribute="trailing" secondItem="BYu-Uf-osj" secondAttribute="trailing" constant="10" id="mpq-pp-nGS"/>
+                <constraint firstAttribute="trailing" secondItem="eI9-39-Bcu" secondAttribute="trailing" constant="10" id="vOY-EZ-hSp"/>
+            </constraints>
+            <size key="customSize" width="279" height="79"/>
+            <connections>
+                <outlet property="buttonUpload" destination="q3s-nG-q6b" id="IIK-Ka-hgJ"/>
+                <outlet property="labelDetail1" destination="BYu-Uf-osj" id="khu-t8-tog"/>
+                <outlet property="labelDetail2" destination="Eo9-fQ-hjO" id="X6M-GM-4RQ"/>
+                <outlet property="labelSubtitle" destination="eI9-39-Bcu" id="sEi-uw-IMI"/>
+                <outlet property="labelTitle" destination="qkY-ok-sYH" id="gxh-7g-Ss9"/>
+                <outlet property="photoView" destination="fot-bJ-AeI" id="plG-Q2-E8b"/>
+            </connections>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="icon-avatar" width="70" height="70"/>
+        <image name="icon-upload-small" width="44" height="44"/>
+    </resources>
+</document>
