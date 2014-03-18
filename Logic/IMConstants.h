@@ -17,11 +17,13 @@ typedef enum{
 
 @interface IMConstants : NSObject
 
-#define IMGoogleAPIKey      @"AIzaSyBX9FNqp2GnryIZGk_yeLY_OrN_9xCORQE"
-
-//#define IMBaseURL           @"http://localhost:8080/api"
-//#define IMBaseURL           @"http://172.20.10.2:8080/api"
-#define IMBaseURL           @"https://im.iom.or.id/api"
+//@"AIzaSyBX9FNqp2GnryIZGk_yeLY_OrN_9xCORQE"
+#define IMGoogleAPIKey      [[NSUserDefaults standardUserDefaults] stringForKey:@"Google Places API KEY"]
+#define IMBaseURL           [[NSUserDefaults standardUserDefaults] stringForKey:@"API URL"]
+//@"d67acd1c1fa33b68055f9f7dafaa3ae0"
+#define IMAPIKey            [[NSUserDefaults standardUserDefaults] stringForKey:@"API Key"]
+//@"7cb0533b94446f4c49f1eadcffe5f19a31b25d5d"
+#define IMAPISecret         [[NSUserDefaults standardUserDefaults] stringForKey:@"API Secret"]
 
 #define CORE_DATA_OBJECT(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
 
@@ -38,9 +40,6 @@ typedef enum{
 #define IMSyncKeySuccess                @"success"
 #define IMUpdatesAvailable              @"updates"
 #define IMAuthenticationStatus          @"authenticationStatus"
-
-#define IMAPIKey                        @"d67acd1c1fa33b68055f9f7dafaa3ae0"
-#define IMAPISecret                     @"7cb0533b94446f4c49f1eadcffe5f19a31b25d5d"
 
 #define IMInterceptionFetcherUpdate     @"IMInterceptionFetcherUpdate"
 #define IMLastSyncDate                  @"IMLastSyncDate"
