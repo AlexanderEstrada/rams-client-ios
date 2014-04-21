@@ -8,6 +8,7 @@
 
 #import "RegistrationBiometric+Storage.h"
 #import "Registration.h"
+#import "LibBase64.h"
 
 
 @implementation RegistrationBiometric (Storage)
@@ -105,6 +106,29 @@
     return file ? [UIImage imageWithContentsOfFile:file] : nil;
 }
 
+- (void)deleteBiometricData:(FingerPosition)position
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    @try {
+    switch (position) {
+        case RightThumb:
+            [manager removeItemAtPath:self.rightThumb error:nil]; break;
+        case RightIndex:
+            [manager removeItemAtPath:self.rightIndex error:nil]; break;
+        case LeftThumb:
+            [manager removeItemAtPath:self.leftThumb error:nil]; break;
+        case LeftIndex:
+            [manager removeItemAtPath:self.leftIndex error:nil]; break;
+        default:
+            break;
+    }
+    }
+    @catch (NSException *exception)
+    {
+         NSLog(@"Exception while deleteBiometricData by FingerPosition : %u - description : %@", position,[exception description]);
+        
+    }
+}
 - (void)deleteBiometricData
 {
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -115,7 +139,11 @@
         [manager removeItemAtPath:self.rightThumb error:nil];
         [manager removeItemAtPath:self.rightIndex error:nil];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating deleteBiometricData: \n%@", [exception description]);
+
+    }
 }
 
 - (NSString *)base64Photograph
@@ -126,6 +154,7 @@
 - (NSString *)base64FingerImageWithPosition:(FingerPosition)position
 {
     NSString *file;
+   
     
     switch (position) {
         case RightThumb:
@@ -137,7 +166,13 @@
         case LeftIndex:
             file = self.leftIndex; break;
     }
-    
+//    if (file != Nil) {
+//        [LibBase64 initialize];
+//        UIImage*image = [[self fingerImageForPosition:position] mutableCopy];
+//        NSData * data = [UIImageJPEGRepresentation(image, 1.0f) mutableCopy];
+//        return  [LibBase64 encode:data];
+//    }else return Nil;
+
     return file ? [[NSData dataWithContentsOfFile:file] base64EncodedStringWithOptions:0] : nil;
 }
 

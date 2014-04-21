@@ -11,6 +11,9 @@
 
 @class Migrant;
 
+
+
+
 @interface Biometric : NSManagedObject
 
 @property (nonatomic, retain) NSString * biometricId;

@@ -12,6 +12,8 @@
 #import "Registration+Export.h"
 #import "UIImage+ImageUtils.h"
 #import "IMEditRegistrationVC.h"
+#import "Accommodation+Extended.h"
+#import "Migrant+Extended.h"
 
 
 @implementation IMRegistrationListVC
@@ -25,11 +27,15 @@
 - (void)reloadData
 {
     self.reloadingData = YES;
+//        [self hideLoadingView];
+    
     NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
     request.predicate = self.basePredicate;
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"dateCreated" ascending:NO]];
     request.returnsObjectsAsFaults = YES;
+    // Set the batch size to a suitable number.
+    [request setFetchBatchSize:15];
     
     NSError *error;
     self.data = [context executeFetchRequest:request error:&error];
@@ -37,10 +43,61 @@
     self.reloadingData = NO;
 }
 
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [self hideLoadingView];
+    [self reloadData];
+    
+}
+
 - (void)upload:(UIButton *)sender
 {
-//    Registration *registration = self.data[sender.tag];
     //TODO: upload individual registration here
+    Registration *registration = self.data[sender.tag];
+    //implement success and failure handler
+    registration.onProgress = ^{
+        [self showLoadingViewWithTitle:@"Just a moment please..."];
+    };
+    
+    registration.successHandler = ^{
+        
+        [self hideLoadingView];
+        [self showAlertWithTitle:@"Upload Success" message:nil];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
+        [self dismissViewControllerAnimated:YES completion:nil];
+        [self reloadData];
+        
+        
+    };
+    
+    registration.failureHandler = ^(NSError *error){
+        [self hideLoadingView];
+        [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
+        
+        
+    };
+    
+    
+    
+    //TODO : package data to json and send to server
+    /*
+     1. encode biometric data (fingers print and photo from jpg to Base64
+     2. save registration data to local database
+     3. create json format data from Registration
+     4. Create connection to server
+     5. Upload Registration Data to server
+     */
+    
+    NSMutableDictionary * params = [[registration format] mutableCopy];
+    
+    //send the json data to server
+    [registration sendRegistration:params];
+    
+    //reload data
+    [self reloadData];
+    
 }
 
 
@@ -57,9 +114,21 @@
     
     Registration *registration = self.data[indexPath.row];
     cell.labelTitle.text = registration.fullname;
-    cell.labelSubtitle.text = registration.bioDataSummary;
-    cell.labelDetail1.text = registration.unhcrSummary;
-    cell.labelDetail2.text = registration.interceptionSummary;
+    cell.labelSubtitle.text = registration.registrationId;
+    //        cell.labelDetail1.text = registration.bioData.nationality.name;
+    cell.labelDetail1.text = registration.bioDataSummary;
+    cell.labelDetail2.text = registration.unhcrSummary;
+    cell.labelDetail3.text = registration.interceptionSummary;
+    if (registration.detentionLocation) {
+        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        Accommodation * place = [Accommodation accommodationWithId:registration.detentionLocation inManagedObjectContext:context];
+        cell.labelDetail4.text = place.name;
+    }else {
+        cell.labelDetail4.text = Nil;
+    }
+    cell.labelDetail5.text = Nil;
+    
+    
     
     UIImage *image = registration.biometric.photographImage;
     if (image) {
@@ -107,18 +176,27 @@
     [self.collectionView registerNib:[UINib nibWithNibName:@"IMRegistrationCollectionViewCell"
                                                     bundle:[NSBundle mainBundle]]
           forCellWithReuseIdentifier:@"IMRegistrationCollectionViewCell"];
+    
+//    [self showLoadingView];
+//    sleep(2);
+    
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    self.data = nil;
+    //    self.data = nil;
     [super viewWillDisappear:animated];
+    [self reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     if (!self.data && !self.reloadingData) self.basePredicate = [NSPredicate predicateWithFormat:@"complete = NO"];
+
+    [self reloadData];
+//    [self hideLoadingView];
+//    [self showAlertWithTitle:@"Reload Success" message:nil];
 }
 
 - (void)didReceiveMemoryWarning

@@ -69,7 +69,7 @@
         NSMutableSet *oldGroups = [data.interceptionGroups mutableCopy];
         [oldGroups minusSet:newGroups];
         [data removeInterceptionGroups:oldGroups];
-        
+        if (CORE_DATA_OBJECT(dictionary[kInterceptionPhotos])) {
         //manage photos
         NSMutableSet *newPhotos = [NSMutableSet set];
         NSArray *photos = dictionary[kInterceptionPhotos];
@@ -85,7 +85,7 @@
         NSMutableSet *oldPhotos = [data.photos mutableCopy];
         [oldPhotos minusSet:newPhotos];
         [data removePhotos:oldPhotos];
-        
+        }
         //if active, recheck status
         if (data.active.boolValue) data.active = @(data.currentPopulation > 0);
         

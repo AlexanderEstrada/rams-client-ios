@@ -15,6 +15,7 @@
 #import "IMInterceptionLocationFetcher.h"
 #import "IMConstants.h"
 #import "IMDBManager.h"
+#import "IMMigrantFetcher.h"
 
 
 @interface IMBackgroundFetcher()
@@ -81,7 +82,7 @@
 {
     NSLog(@"Updating Interception Cases");
     IMDataFetcher *fetcher = [[IMInterceptionFetcher alloc] init];
-    fetcher.onFinished = ^{ [self synchronizePhotos]; };
+    fetcher.onFinished = ^{ [self fetchMigrants]; };
     [self execute:fetcher];
 }
 
@@ -89,6 +90,10 @@
 {
     NSLog(@"Updating Irregular Migrant Data");
     
+    IMDataFetcher *fetcher = [[IMMigrantFetcher alloc] init];
+    fetcher.onFinished = ^{ [self synchronizePhotos]; };
+    [self execute:fetcher];
+//    [self synchronizePhotos] ;
 }
 
 - (void)synchronizePhotos

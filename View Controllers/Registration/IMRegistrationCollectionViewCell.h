@@ -14,7 +14,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *labelSubtitle;
 @property (weak, nonatomic) IBOutlet UILabel *labelDetail1;
 @property (weak, nonatomic) IBOutlet UILabel *labelDetail2;
+@property (weak, nonatomic) IBOutlet UILabel *labelDetail3;
+@property (weak, nonatomic) IBOutlet UILabel *labelDetail4;
+@property (weak, nonatomic) IBOutlet UILabel *labelDetail5;
 @property (weak, nonatomic) IBOutlet UIImageView *photoView;
 @property (weak, nonatomic) IBOutlet UIButton *buttonUpload;
+
 
 @end

@@ -32,5 +32,7 @@
 @dynamic interceptions;
 @dynamic iomData;
 @dynamic movements;
+@dynamic detentionLocation;
+@dynamic dateCreated;
 
 @end

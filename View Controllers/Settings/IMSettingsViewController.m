@@ -1,4 +1,4 @@
-//
+
 //  IMSettingsViewController.m
 //  IMMS for iPad
 //
@@ -14,6 +14,7 @@
 #import "IMFormCell.h"
 #import "Biometric+Storage.h"
 #import "Photo+Storage.h"
+#import "IMConstants.h"
 
 
 @interface IMSettingsViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
@@ -79,7 +80,7 @@
     label.textAlignment = NSTextAlignmentCenter;
     
     if (section == 0) {
-        NSString *text = [NSString stringWithFormat:@"Your session will expired in %@", [[IMAuthManager sharedManager].activeUser.accessExpiryDate relativeTimeToFuture]];
+        NSString *text = [NSString stringWithFormat:@"Your session on %@ will expired in %@",[IMHTTPClient sharedClient].baseURL,[[IMAuthManager sharedManager].activeUser.accessExpiryDate relativeTimeToFuture]];
         label.text = text;
     }else if (section == 1) {
         NSDate *lastSync = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];
@@ -89,7 +90,7 @@
         BOOL stat = [[NSUserDefaults standardUserDefaults] boolForKey:IMBackgroundUpdates];
         label.text = stat ? @"When updates available, data will be synchronize automatically in the background." : @"App will ask for confirmation when updates available.";
     }
-
+    
     label.textColor = [UIColor darkGrayColor];
     
     return label;
@@ -122,6 +123,7 @@
         cell.textLabel.text = @"Reset Application Data";
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.imageView.image = [[UIImage imageNamed:@"Database"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        
     }else {
         if (indexPath.row == 0) {
             cell.textLabel.text = @"Start Data Updates";
@@ -149,7 +151,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
-        case 1: [self confirmResetDatabase]; break;
+        case 1:
+        {
+            [self confirmResetDatabase];
+            break;
+        }
         case 2:
             switch (indexPath.row) {
                 case 0: [self checkDataUpdates]; break;
@@ -163,6 +169,7 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    
     if (alertView.tag == kResetDatabaseAlertTag && buttonIndex != [alertView cancelButtonIndex]) {
         [self resetDatabase];
     }else if (alertView.tag == kSyncAlertTag && buttonIndex != [alertView cancelButtonIndex]) {
@@ -170,6 +177,7 @@
     }else if (alertView.tag == kConfirmSyncAlertTag && buttonIndex != [alertView cancelButtonIndex]) {
         [self.sideMenuDelegate openSynchronizationDialog:nil];
     }
+    [self hideLoadingView];
 }
 
 
@@ -212,11 +220,13 @@
                                                   otherButtonTitles:@"Yes", nil];
             alert.tag = kSyncAlertTag;
             [alert show];
+            
         }else {
             [self showAlertWithTitle:@"Reset Failed"
                              message:@"Please try again or relaunch the application. If problem persist, please contact administrator."];
         }
     }];
+    
 }
 
 - (void)checkDataUpdates
@@ -267,6 +277,10 @@
     self.tableView.delegate = self;
     self.tableView.backgroundView = nil;
     self.tableView.backgroundColor = [UIColor clearColor];
+    
+    [IMDBManager sharedManager].onProgress = ^{
+        [self showLoadingViewWithTitle:@"Just a moment please..."];
+    };
 }
 
 @end

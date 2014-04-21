@@ -13,6 +13,6 @@
 @interface IMScanFingerprintViewController : IMViewController
 
 @property (nonatomic) FingerPosition currentFingerPosition;
-@property (nonatomic, copy) void (^doneCompletionBlock)(NSDictionary *data);
+@property (nonatomic, copy) void (^doneCompletionBlock)(NSMutableDictionary *data);
 
 @end

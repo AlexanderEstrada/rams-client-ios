@@ -52,9 +52,15 @@ NSString *const COUNTRY_NAME        = @"countryName";
         
         NSError *error = nil;
         NSArray *results = [context executeFetchRequest:request error:&error];
-        country = [results lastObject];
+        if (results && [results count] > 0) {
+            country = [results lastObject];
+        }
+
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+    NSLog(@"Exception while creating countryWithCode: \n%@", [exception description]);
+    }
     
     return country;
 }

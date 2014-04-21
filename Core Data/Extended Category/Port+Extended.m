@@ -54,7 +54,11 @@
         NSArray *results = [context executeFetchRequest:request error:&error];
         return [results lastObject];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating portWithName: \n%@", [exception description]);
+
+    }
     
     return nil;
 }

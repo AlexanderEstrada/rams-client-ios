@@ -39,10 +39,24 @@
     [self showPopoverFromRect:[self.tableView rectForHeaderInSection:sender.tag + 3] withViewController:vc navigationController:YES];
 }
 
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [self hideLoadingView];
+    [self.tableView reloadData];
+    
+}
+
+
 - (void)toggleActive
 {
     NSDictionary *params = @{@"id":self.interceptionData.interceptionDataId, @"active":@(!self.interceptionData.active.boolValue)};
     IMInterceptionDataUpdater *updater = [[IMInterceptionDataUpdater alloc] init];
+    
+    updater.onProgress =^{
+        [self showLoadingViewWithTitle:@"Just a moment please"];
+    };
+    
     updater.successHandler = ^{
         [[IMDBManager sharedManager] saveDatabase:nil];
         NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
@@ -53,16 +67,23 @@
             [self setupNavigationItem];
         }
         [self hideLoadingView];
+//        [self showAlertWithTitle:@"Update Success" message:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Update Success" message:Nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+
     };
     
     updater.failureHandler = ^(NSError *error){
         [self hideLoadingView];
-        [self showAlertWithTitle:@"Update Failed"
-                         message:@"Failed updating interception data. Please check your network connection and try again."];
+//        [self showAlertWithTitle:@"Update Failed"
+//                         message:@"Failed updating interception data. Please check your network connection and try again."];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Update Failed" message:@"Failed updating interception data. Please check your network connection and try again." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     };
     
-    [self showLoadingView];
+    
     [updater toggleActive:params];
+
 }
 
 #pragma mark View Lifecycle

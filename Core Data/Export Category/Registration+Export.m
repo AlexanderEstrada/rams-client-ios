@@ -7,11 +7,16 @@
 //
 
 #import "Registration+Export.h"
+#import "IMDBManager.h"
+#import "IMHTTPClient.h"
+#import "Migrant+Extended.h"
+
 
 
 @implementation Registration (Export)
 
 NSString *const REG_ENTITY_NAME                 = @"Registration";
+NSString *const REG_ID                          = @"id";
 
 NSString *const REG_CAPTURE_DEVICE              = @"captureDevice";
 NSString *const REG_IOM_CARE                    = @"underIomCare";
@@ -51,9 +56,12 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
 {
     Registration *registration = [NSEntityDescription insertNewObjectForEntityForName:REG_ENTITY_NAME inManagedObjectContext:context];
     registration.dateCreated = [NSDate date];
-    registration.biometric = [NSEntityDescription insertNewObjectForEntityForName:@"RegistrationBiometric" inManagedObjectContext:context];
-    registration.interceptionData = [NSEntityDescription insertNewObjectForEntityForName:@"RegistrationInterception" inManagedObjectContext:context];
-    registration.bioData = [NSEntityDescription insertNewObjectForEntityForName:@"RegistrationBioData" inManagedObjectContext:context];
+    RegistrationBiometric * biometric = [NSEntityDescription insertNewObjectForEntityForName:@"RegistrationBiometric" inManagedObjectContext:context];
+    RegistrationInterception *interceptionData = [NSEntityDescription insertNewObjectForEntityForName:@"RegistrationInterception" inManagedObjectContext:context];
+    RegistrationBioData * biodata = [NSEntityDescription insertNewObjectForEntityForName:@"RegistrationBioData" inManagedObjectContext:context];
+    registration.biometric = biometric;
+    registration.interceptionData =interceptionData;
+    registration.bioData = biodata;
     
     return registration;
 }
@@ -61,50 +69,317 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
 
 - (NSDictionary *)format
 {
-    NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
-    
-    [formatted setObject:self.captureDevice forKey:REG_CAPTURE_DEVICE];
-    [formatted setObject:self.underIOMCare forKey:REG_IOM_CARE];
-    [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
-    if (self.unhcrDocument) [formatted setObject:self.unhcrDocument forKey:REG_UNHCR_DOCUMENT];
-    if (self.unhcrNumber) [formatted setObject:self.unhcrNumber forKey:REG_UNHCR_DOCUMENT_NUMBER];
-    if (self.vulnerability) [formatted setObject:self.vulnerability forKey:REG_VULNERABILITY];
-    
-    //Biodata
-    NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
-    [bioData setObject:self.bioData.firstName forKey:REG_FIRST_NAME];
-    if (self.bioData.familyName) [bioData setObject:self.bioData.familyName forKey:REG_FAMILY_NAME];
-    [bioData setObject:self.bioData.gender forKey:REG_GENDER];
-    [bioData setObject:self.bioData.maritalStatus forKey:REG_MARITAL_STATUS];
-    [bioData setObject:self.bioData.nationality.code forKey:REG_NATIONALITY];
-    [bioData setObject:self.bioData.countryOfBirth.code forKey:REG_COUNTRY_OF_BIRTH];
-    [bioData setObject:self.bioData.placeOfBirth forKey:REG_PLACE_OF_BIRTH];
-    [bioData setObject:[self.bioData.dateOfBirth toUTCString] forKey:REG_DATE_OF_BIRTH];
-    [formatted setObject:bioData forKey:REG_BIO_DATA];
-    
-    //Interception
-    NSMutableDictionary *interception = [NSMutableDictionary dictionary];
-    [interception setObject:[self.interceptionData.dateOfEntry toUTCString] forKey:REG_DATE_OF_ENTRY];
-    [interception setObject:[self.interceptionData.interceptionDate toUTCString] forKey:REG_INTERCEPTION_DATE];
-    [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
-    [formatted setObject:interception forKey:REG_INTERCEPTION];
-    
-    
-    if (!self.underIOMCare.boolValue) {
-        NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
-                                   REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
-        [formatted setObject:transfer forKey:REG_TRANSFER];
+    @try {
+        NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
+        
+        //Registration Data
+        [formatted setObject:self.captureDevice forKey:REG_CAPTURE_DEVICE];
+        [formatted setObject:self.underIOMCare?@"true":@"false" forKey:REG_IOM_CARE];
+        //    [formatted setObject:self.underIOMCare forKey:REG_IOM_CARE];
+        [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
+        if (self.unhcrDocument) [formatted setObject:self.unhcrDocument forKey:REG_UNHCR_DOCUMENT];
+        if (self.unhcrNumber) [formatted setObject:self.unhcrNumber forKey:REG_UNHCR_DOCUMENT_NUMBER];
+        if (self.vulnerability) [formatted setObject:self.vulnerability forKey:REG_VULNERABILITY];
+        
+        //Biodata
+        NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
+        [bioData setObject:self.bioData.firstName forKey:REG_FIRST_NAME];
+        if (self.bioData.familyName) [bioData setObject:self.bioData.familyName forKey:REG_FAMILY_NAME];
+        //    [bioData setObject:self.bioData.gender forKey:REG_GENDER];
+        [bioData setObject:[self.bioData.gender isEqual:@"Male"] ? @"M":@"F" forKey:REG_GENDER];
+        [bioData setObject:self.bioData.maritalStatus forKey:REG_MARITAL_STATUS];
+        [bioData setObject:self.bioData.nationality.code forKey:REG_NATIONALITY];
+        [bioData setObject:self.bioData.countryOfBirth.code forKey:REG_COUNTRY_OF_BIRTH];
+        [bioData setObject:self.bioData.placeOfBirth forKey:REG_PLACE_OF_BIRTH];
+        [bioData setObject:[self.bioData.dateOfBirth toUTCString] forKey:REG_DATE_OF_BIRTH];
+        [formatted setObject:bioData forKey:REG_BIO_DATA];
+        
+        //Interception
+        NSMutableDictionary *interception = [NSMutableDictionary dictionary];
+        if (self.interceptionData.dateOfEntry == Nil) {
+            self.interceptionData.dateOfEntry =self.dateCreated;
+        }
+        [interception setObject:[self.interceptionData.dateOfEntry toUTCString] forKey:REG_DATE_OF_ENTRY];
+        
+        [interception setObject:[self.interceptionData.interceptionDate toUTCString] forKey:REG_INTERCEPTION_DATE];
+        [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
+        [formatted setObject:interception forKey:REG_INTERCEPTION];
+        
+        //Under IOM care
+        if (self.underIOMCare.boolValue) {
+            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+            [formatted setObject:transfer forKey:REG_TRANSFER];
+        }
+        
+        NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
+        [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
+        if (self.biometric.rightThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:RightThumb] forKey:REG_RIGHT_THUMB];
+        if (self.biometric.rightIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:RightIndex] forKey:REG_RIGHT_INDEX];
+        if (self.biometric.leftThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftThumb] forKey:REG_LEFT_THUMB];
+        if (self.biometric.leftIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftIndex] forKey:REG_LEFT_INDEX];
+        [formatted setObject:biometric forKey:REG_BIOMETRIC];
+        
+        
+        return formatted;
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating formatted Registration data: %@", [exception description]);
     }
     
-    NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
-    [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
-    if (self.biometric.rightThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:RightThumb] forKey:REG_RIGHT_THUMB];
-    if (self.biometric.rightIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:RightIndex] forKey:REG_RIGHT_INDEX];
-    if (self.biometric.leftThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftThumb] forKey:REG_LEFT_THUMB];
-    if (self.biometric.leftIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftIndex] forKey:REG_LEFT_INDEX];
-    [formatted setObject:biometric forKey:REG_BIOMETRIC];
     
-    return formatted;
+    return nil;
+}
+
++ (Registration *)registrationWithDictionary:(NSDictionary *)dictionary
+                      inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    if (![Registration validateRegistrationDictionary:dictionary]) return nil;
+    
+    @try {
+        
+        //check ID on local database
+        NSString *registrationId = CORE_DATA_OBJECT([dictionary objectForKey:REG_ID]);
+        Registration *dt = [Registration registrationWithId:registrationId inManagedObjectContext:context];
+        
+        if (!dt) {
+            dt = [NSEntityDescription insertNewObjectForEntityForName:REG_ENTITY_NAME
+                                               inManagedObjectContext:context];
+            dt.registrationId = registrationId;
+        }
+        
+        //device
+        dt.captureDevice = CORE_DATA_OBJECT([dictionary objectForKey:REG_CAPTURE_DEVICE]);
+        NSString * underIOMCare = [dictionary objectForKey:REG_IOM_CARE];
+        dt.underIOMCare = [underIOMCare isEqual:@"true"] == TRUE ? @(1) : @(0);
+        dt.unhcrDocument = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT]);
+        dt.unhcrNumber = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT_NUMBER]);
+        dt.vulnerability = CORE_DATA_OBJECT([dictionary objectForKey:REG_VULNERABILITY]);
+        dt.dateCreated = CORE_DATA_OBJECT([dictionary objectForKey:REG_DATE_OF_ENTRY]);
+        
+        
+        //biodata
+        NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
+        bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
+        dt.bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
+        dt.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
+        dt.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
+        
+        dt.bioData.gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
+        dt.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
+        dt.bioData.nationality.code = CORE_DATA_OBJECT([bioData objectForKey:REG_NATIONALITY]);
+        dt.bioData.countryOfBirth.code = CORE_DATA_OBJECT([bioData objectForKey:REG_COUNTRY_OF_BIRTH]);
+        dt.bioData.placeOfBirth = CORE_DATA_OBJECT([ bioData objectForKey:REG_PLACE_OF_BIRTH]);
+        dt.bioData.dateOfBirth = CORE_DATA_OBJECT([bioData objectForKey:REG_DATE_OF_BIRTH]);
+        
+        //interception
+        NSMutableDictionary *interception = [NSMutableDictionary dictionary];
+        interception = CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION]);
+        dt.interceptionData = CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION]);
+        dt.interceptionData.interceptionLocation = CORE_DATA_OBJECT([interception objectForKey:REG_INTERCEPTION_LOCATION]);
+        dt.interceptionData.interceptionDate = CORE_DATA_OBJECT([interception objectForKey:REG_INTERCEPTION_DATE]);
+        dt.interceptionData.dateOfEntry = CORE_DATA_OBJECT([interception objectForKey:REG_DATE_OF_ENTRY]);
+        dt.associatedOffice.name = CORE_DATA_OBJECT([interception objectForKey:REG_IOM_OFFICE]);
+        
+        //Under IOM care
+        if (!dt.underIOMCare.boolValue) {
+            NSMutableDictionary *transfer = [NSMutableDictionary dictionary];
+            transfer = CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER]);
+            dt.transferDate = CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER_DATE]);
+            dt.transferDestination.accommodationId = CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER_DESTINATION]);
+        }
+        
+        //biometric
+        NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
+        biometric = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIOMETRIC]);
+        dt.biometric = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIOMETRIC]);
+        dt.biometric.rightThumb  = CORE_DATA_OBJECT([biometric objectForKey:REG_RIGHT_THUMB]);
+        dt.biometric.rightIndex  = CORE_DATA_OBJECT([biometric objectForKey:REG_RIGHT_INDEX]);
+        dt.biometric.leftThumb = CORE_DATA_OBJECT([biometric objectForKey:REG_LEFT_THUMB]);
+        dt.biometric.leftIndex = CORE_DATA_OBJECT([biometric objectForKey:REG_LEFT_INDEX]);
+        dt.biometric.photograph = CORE_DATA_OBJECT([biometric objectForKey:REG_PHOTOGRAPH]);
+        
+        
+        return dt;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception while creating Detention Location: %@", [exception description]);
+    }
+    
+    return nil;
+}
+
+- (void) setToLocal:(NSNumber *)value{
+    self.complete = value;
+}
+
+- (void) sendRegistration:(NSDictionary *)params
+{
+    //show on progress
+    if (self.onProgress) {
+        self.onProgress();
+    }
+    
+    IMHTTPClient *client = [IMHTTPClient sharedClient];
+    [client postJSONWithPath:@"migrant/save"
+                  parameters:params
+                     success:^(NSDictionary *jsonData, int statusCode){
+                         if ([self saveRegistrationData:params withId:[jsonData objectForKey:REG_ID]] && self.successHandler) {
+                             self.successHandler();
+                             //set status to local
+                             self.complete = @(REG_STATUS_LOCAL);
+                         }else if (self.failureHandler){
+                             self.failureHandler([NSError errorWithDomain:@"Failed Saving Database" code:0 userInfo:nil]);
+                         }
+                     }
+                     failure:^(NSDictionary *jsonData, NSError *error, int statusCode){
+                         NSLog(@"Error send json: %@\nError: %@", params, [error description]);
+                         if (self.failureHandler) self.failureHandler(error);
+                     }];
+}
+
+- (BOOL)saveRegistrationData:(NSDictionary *)dictionary withId:(NSString*)Id
+{
+    NSManagedObjectContext *context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    
+    @try {
+        NSError *error;
+        
+        context.parentContext = [[IMDBManager sharedManager] localDatabase].managedObjectContext;
+        
+        Migrant *migrant = [Migrant migrantWithId:Id inContext:context];
+        
+        if (!migrant) {
+            //create new migrant data
+            migrant = [Migrant newMigrantInContext:context withId:Id];
+        }
+        migrant.registrationNumber = Id;
+        //device
+        
+        //general information
+        migrant.underIOMCare = [[dictionary objectForKey:REG_IOM_CARE] isEqualToString:@"true"] ? @(1):@(0);
+        migrant.unhcrDocument = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT]);
+        migrant.unhcrNumber = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT_NUMBER]);
+        migrant.vulnerabilityStatus = CORE_DATA_OBJECT([dictionary objectForKey:REG_VULNERABILITY]);
+        
+//        if (dictionary [REG_DATE_OF_ENTRY]) {
+//            migrant.dateCreated = [NSDate dateFromUTCString:[dictionary objectForKey:REG_DATE_OF_ENTRY]];
+//        }
+       
+        
+        
+        //biodata
+        NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
+        bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
+        //            dt.bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
+        migrant.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
+        migrant.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
+        
+        migrant.bioData.gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
+        migrant.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
+        migrant.bioData.nationality = [Country countryWithCode:[bioData objectForKey:REG_NATIONALITY] inManagedObjectContext:context];
+        migrant.bioData.countryOfBirth = [Country countryWithCode:[bioData objectForKey:REG_COUNTRY_OF_BIRTH] inManagedObjectContext:context];
+        migrant.bioData.cityOfBirth = CORE_DATA_OBJECT([ bioData objectForKey:REG_PLACE_OF_BIRTH]);
+        migrant.bioData.dateOfBirth = [NSDate dateFromUTCString:[bioData objectForKey:REG_DATE_OF_BIRTH] ];
+        
+        if (dictionary [REG_INTERCEPTION]) {
+            
+            Interception *data = [Interception interceptionWithDictionary:CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION])withMigrantId:Id inContext:context];
+            if (data) {
+                [migrant addInterceptionsObject:data];
+            }
+            
+            
+        }
+        //IOM data
+        migrant.iomData.associatedOffice = [IomOffice officeWithName:CORE_DATA_OBJECT([dictionary objectForKey:REG_IOM_OFFICE]) inManagedObjectContext:context];
+        //Under IOM care
+        if (!migrant.underIOMCare.boolValue && CORE_DATA_OBJECT([dictionary objectForKey:REG_TRANSFER])) {
+            //add movement
+            NSArray *movements = CORE_DATA_OBJECT(dictionary [REG_TRANSFER]);
+            for (NSDictionary *movement in movements) {
+                //set movement type to Transfer as default
+                [movement setValue:@"Transfer" forKey:@"type"];
+                Movement *data = [Movement movementWithDictionary:movement inContext:context];
+                if (data) {
+                    [migrant addMovementsObject:data];
+                }
+            }
+        }
+        
+        //biometric
+        if ([dictionary objectForKey:REG_BIOMETRIC]) {
+            NSMutableDictionary *biometric = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIOMETRIC]);
+            
+            //update data
+            migrant.biometric = [Biometric biometricWithId:Id inContext:context];
+            if (!migrant.biometric) {
+                migrant.biometric = [NSEntityDescription insertNewObjectForEntityForName:BIO_ENTITY_NAME inManagedObjectContext:context];
+                //migrant ID == Biometric ID
+                migrant.biometric.biometricId = Id;
+            }
+            
+            //device
+            
+            //photo
+            [migrant.biometric updatePhotographFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_PHOTOGRAPH])];
+            
+            //template
+            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_THUMB_TEMPLATE]) forFingerPosition:RightThumb];
+            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_INDEX_TEMPLATE]) forFingerPosition:RightIndex];
+            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_THUMB_TEMPLATE]) forFingerPosition:LeftThumb];
+            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_INDEX_TEMPLATE]) forFingerPosition:LeftIndex];
+            
+            //finger image
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_THUMB_IMAGE]) forFingerPosition:RightThumb];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_INDEX_IMAGE]) forFingerPosition:RightIndex];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_THUMB_IMAGE]) forFingerPosition:LeftThumb];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_INDEX_IMAGE]) forFingerPosition:LeftIndex];
+        }else {
+            migrant.biometric = Nil;
+        }
+        
+        NSLog(@"Result : %hhd",[context save:&error]);
+        NSLog(@"Error : %@",[error description]);
+        return YES;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Throw exeption while saveRegistrationData: %@",[exception description]);
+        [context rollback];
+    }
+    
+    return NO;
+}
+
+
+- (BOOL)saveRegistrationData:(NSDictionary *)dictionary
+
+{
+    @try {
+        NSError *error;
+        NSManagedObjectContext *context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        context.parentContext = [[IMDBManager sharedManager] localDatabase].managedObjectContext;
+        
+        
+        Registration *data = [Registration registrationWithDictionary:dictionary inManagedObjectContext:context];
+        
+        if (data) {
+            BOOL value = [context save:&error];
+            if (value == FALSE) {
+                NSLog(@"Faile TO save to database : %@",[error description]);
+            }else data.complete =@TRUE;
+            
+            return value;
+        }
+        NSLog(@"Error saving registration data - Error: %@",  [error description]);
+        [context rollback];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Throw exeption : %@",[exception description]);
+    }
+    
+    return NO;
 }
 
 - (NSString *)fullname
@@ -174,4 +449,236 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
     self.complete = @(stat);
 }
 
+- (void) setRegistrationToLocal
+{
+    self.complete = @(REG_STATUS_LOCAL);
+}
+
+
++ (Registration *)registrationWithId:(NSString *)registrationId
+              inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    @try {
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:REG_ENTITY_NAME];
+        request.predicate = [NSPredicate predicateWithFormat:@"registrationId = %@", registrationId];
+        
+        NSError *error = nil;
+        NSArray *results = [context executeFetchRequest:request error:&error];
+        return [results lastObject];
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while registrationWithId : %@", [exception description]);
+    }
+    
+    return nil;
+}
+
++ (BOOL)validateRegistrationDictionary:(NSDictionary *)dictionary
+{
+    return dictionary && [dictionary objectForKey:REG_BIOMETRIC] && [dictionary objectForKey:REG_BIO_DATA] && [dictionary objectForKey:REG_INTERCEPTION];
+}
+
++ (Registration *)registrationFromMigrantAndDictionary:(Migrant *)migrant withdictionary:(NSDictionary *)dictionary inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    @try {
+                            
+        Registration * data = [Registration registrationWithId:migrant.registrationNumber inManagedObjectContext:context];
+        if (!data) {
+            //create new registration data
+            data = [Registration newRegistrationInContext:context];
+        }
+        
+        //set registration to local
+        data.complete = @(REG_STATUS_LOCAL);
+        
+        //date ctreated
+        data.dateCreated = migrant.dateCreated;
+        
+        //save detention location
+        data.detentionLocation = migrant.detentionLocation;
+        
+        //copy Migrant to Registration
+        data.registrationId = migrant.registrationNumber;
+        data.unhcrDocument = migrant.unhcrDocument;
+        data.unhcrNumber = migrant.unhcrNumber;
+        data.underIOMCare = migrant.underIOMCare;
+        data.vulnerability = migrant.vulnerabilityStatus;
+        
+        //deep copy
+        data.associatedOffice = [IomOffice officeWithName:migrant.iomData.associatedOffice.name inManagedObjectContext:context];
+        
+        
+//        if (dictionary[@"bioData"]) {
+//            //get country from dictionary
+//            NSDictionary *bioData = [dictionary objectForKey:@"bioData"];
+//            data.bioData.countryOfBirth = [Country countryWithName:[bioData objectForKey:@"countryOfBirth"] inManagedObjectContext:context];
+//            data.bioData.nationality = [Country countryWithName:[bioData objectForKey:@"nationality"] inManagedObjectContext:context];
+//            NSLog(@"Nationality : %@",data.bioData.nationality.name);
+//            NSLog(@" Registration Nationality : %@ - code : %@",data.bioData.nationality.name,data.bioData.nationality.code);
+//            NSLog(@" Migrant Nationality : %@ - code : %@",migrant.bioData.nationality.name,migrant.bioData.nationality.code);
+//            
+//            if (migrant.bioData.nationality.name != data.bioData.nationality.name) {
+//                NSLog(@"Something Wrong ...!!!");
+//                
+//            }
+//
+//        }
+        
+        //Biodata
+        data.bioData.firstName = migrant.bioData.firstName;
+        data.bioData.familyName = migrant.bioData.familyName;
+        data.bioData.gender = migrant.bioData.gender;
+        data.bioData.maritalStatus = migrant.bioData.maritalStatus;
+        data.bioData.placeOfBirth = migrant.bioData.cityOfBirth;
+        data.bioData.dateOfBirth = migrant.bioData.dateOfBirth;
+        
+        
+        //deep copy
+//        data.bioData.countryOfBirth = [Country countryWithName:migrant.bioData.countryOfBirth.name inManagedObjectContext:context];
+        data.bioData.nationality = [Country countryWithName:migrant.bioData.nationality.name inManagedObjectContext:context];
+        
+        if (migrant.bioData.nationality.name != data.bioData.nationality.name) {
+            NSLog(@"Something Wrong ...!!!");
+            
+        }
+        
+        
+    
+        //Biometric
+        data.biometric.leftIndex = migrant.biometric.leftIndexImage;
+        data.biometric.leftThumb = migrant.biometric.leftThumbImage;
+        data.biometric.rightIndex = migrant.biometric.rightIndexImage;
+        data.biometric.rightThumb = migrant.biometric.rightThumbImage;
+        data.biometric.photograph = migrant.biometric.photograph;
+        
+        
+        //interception
+        if (migrant.interceptions) {
+            if ([migrant.interceptions count] > 1) {
+                //sort interceptions
+                [migrant.interceptions sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"interceptionDate" ascending:NO]]];
+            }
+            
+            //get newest interception data
+            Interception *interception = [migrant.interceptions anyObject];
+            data.interceptionData.interceptionLocation = interception.interceptionLocation;
+            data.interceptionData.interceptionDate = interception.interceptionDate;
+            data.interceptionData.dateOfEntry = interception.dateOfEntry;
+        }
+        
+        
+        //under IOM Care
+        if (data.underIOMCare.boolValue && migrant.movements)
+        {
+            if ([migrant.movements count] > 1) {
+                //sort interceptions
+                [migrant.movements sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO]]];
+            }
+            
+            //get newest movement data
+            Movement *movement = [migrant.movements anyObject];
+            
+            //Accommodation
+            data.transferDestination = movement.transferLocation;
+        }
+        
+        return data;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception while registrationFromMigrantAndDictionary with Error : %@",[exception description]);
+        return Nil;
+    }
+    
+}
++ (Registration *)registrationFromMigrant:(Migrant *)migrant inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    @try {
+        Registration * data = [Registration registrationWithId:migrant.registrationNumber inManagedObjectContext:context];
+        if (!data) {
+            //create new registration data
+            data = [Registration newRegistrationInContext:context];
+        }
+        
+            //set registration to local
+            data.complete = @(REG_STATUS_LOCAL);
+            
+            //date ctreated
+            data.dateCreated = migrant.dateCreated;
+            
+            //save detention location
+            data.detentionLocation = migrant.detentionLocation;
+            
+            //copy Migrant to Registration
+            data.registrationId = migrant.registrationNumber;
+            data.unhcrDocument = migrant.unhcrDocument;
+            data.unhcrNumber = migrant.unhcrNumber;
+            data.underIOMCare = migrant.underIOMCare;
+            data.vulnerability = migrant.vulnerabilityStatus;
+            
+            //deep copy
+            data.associatedOffice = [IomOffice officeWithName:migrant.iomData.associatedOffice.name inManagedObjectContext:context];
+            
+            
+            //Biodata
+            data.bioData.firstName = migrant.bioData.firstName;
+            data.bioData.familyName = migrant.bioData.familyName;
+            data.bioData.gender = migrant.bioData.gender;
+            data.bioData.maritalStatus = migrant.bioData.maritalStatus;
+            data.bioData.placeOfBirth = migrant.bioData.cityOfBirth;
+            data.bioData.dateOfBirth = migrant.bioData.dateOfBirth;
+        
+        //get country from dictionary
+        
+            //deep copy
+            data.bioData.countryOfBirth = [Country countryWithCode:migrant.bioData.countryOfBirth.code inManagedObjectContext:context];
+            data.bioData.nationality = [Country countryWithCode:migrant.bioData.nationality.code inManagedObjectContext:context];
+
+            //Biometric
+            data.biometric.leftIndex = migrant.biometric.leftIndexImage;
+            data.biometric.leftThumb = migrant.biometric.leftThumbImage;
+            data.biometric.rightIndex = migrant.biometric.rightIndexImage;
+            data.biometric.rightThumb = migrant.biometric.rightThumbImage;
+            data.biometric.photograph = migrant.biometric.photograph;
+            
+            
+            //interception
+            if (migrant.interceptions) {
+                if ([migrant.interceptions count] > 1) {
+                    //sort interceptions
+                    [migrant.interceptions sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"interceptionDate" ascending:NO]]];
+                }
+                
+                //get newest interception data
+                Interception *interception = [migrant.interceptions anyObject];
+                data.interceptionData.interceptionLocation = interception.interceptionLocation;
+                data.interceptionData.interceptionDate = interception.interceptionDate;
+                data.interceptionData.dateOfEntry = interception.dateOfEntry;
+            }
+            
+            
+            //under IOM Care
+            if (data.underIOMCare.boolValue && migrant.movements)
+            {
+                if ([migrant.movements count] > 1) {
+                    //sort interceptions
+                    [migrant.movements sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO]]];
+                }
+                
+                //get newest movement data
+                Movement *movement = [migrant.movements anyObject];
+                
+                //Accommodation
+                data.transferDestination = movement.transferLocation;
+            }
+        
+        return data;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception while registrationFromMigrant with Error : %@",[exception description]);
+        return Nil;
+    }
+    
+    
+}
 @end

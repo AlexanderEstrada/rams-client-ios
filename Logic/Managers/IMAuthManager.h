@@ -19,5 +19,6 @@
 - (BOOL)isLoggedOn;
 - (BOOL)isTokenExpired;
 - (void)logout;
+- (void)reInit;
 
 @end

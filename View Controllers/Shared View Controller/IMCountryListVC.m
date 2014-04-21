@@ -9,12 +9,16 @@
 #import "IMCountryListVC.h"
 #import "IMDBManager.h"
 #import "IMFormCell.h"
+#import "Registration.h"
+#import "RegistrationBioData.h"
 
 @interface IMCountryListVC ()<UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary *countries;
 @property (nonatomic, strong) NSMutableArray *indexTitles;
 @property (nonatomic) BOOL modal;
+@property (nonatomic) NSString* entity;
+@property (nonatomic) NSString* sortDescriptorWithKey;
 @property (nonatomic, strong) UITableView *tableView;
 
 @end
@@ -25,8 +29,16 @@
 #pragma mark Core Data Methods
 - (void)setupFetchRequestWithPredicate:(NSPredicate *)predicate
 {
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Country"];
-    request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES], nil];
+    NSFetchRequest *request = Nil;
+    if (self.entity) {
+        request = [NSFetchRequest fetchRequestWithEntityName:self.entity];
+        //        request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:self.sortDescriptorWithKey ascending:YES], nil];
+    }else {
+        request = [NSFetchRequest fetchRequestWithEntityName:@"Country"];
+        request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES], nil];
+    }
+    
+    
     [request setReturnsObjectsAsFaults:YES];
     
     if (self.basePredicate) {
@@ -47,25 +59,57 @@
     self.countries = [NSMutableDictionary dictionary];
     self.indexTitles = [NSMutableArray array];
     
-    for (int i=0; i<[results count]; i++) {
-        Country *country = results[i];
-        NSString *indexTitle = [country.name substringToIndex:1];
+    //sort first
+    if (self.sortDescriptorWithKey) {
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]
+                                            initWithKey:self.sortDescriptorWithKey ascending:YES];
+        NSArray *sortDescriptors = [[NSArray alloc]
+                                    initWithObjects:sortDescriptor, nil];
+        NSMutableArray * sortedElements = [results mutableCopy];
+        [sortedElements sortUsingDescriptors:sortDescriptors];
         
-        //add index (first char)
-        if (![self.indexTitles containsObject:indexTitle]) {
-            [self.indexTitles addObject:indexTitle];
+        for (Registration * registration in sortedElements) {
+            Country *country = registration.bioData.nationality;
+            NSString *indexTitle = [country.name substringToIndex:1];
+            
+            //add index (first char)
+            if (![self.indexTitles containsObject:indexTitle]) {
+                [self.indexTitles addObject:indexTitle];
+            }
+            
+            //add the country data to section data
+            NSMutableArray *sectionData = [[self.countries objectForKey:indexTitle] mutableCopy];
+            if (!sectionData) {
+                sectionData = [NSMutableArray array];
+            }
+
+            if (![sectionData containsObject:country]) {
+                [sectionData addObject:country];
+                [self.countries setObject:sectionData forKey:indexTitle];
+            }
+            
         }
-        
-        //add the country data to section data
-        NSMutableArray *sectionData = [[self.countries objectForKey:indexTitle] mutableCopy];
-        if (!sectionData) {
-            sectionData = [NSMutableArray array];
+    }else
+    {
+        for (int i=0; i<[results count]; i++) {
+            Country *country = results[i];
+            NSString *indexTitle = [country.name substringToIndex:1];
+            
+            //add index (first char)
+            if (![self.indexTitles containsObject:indexTitle]) {
+                [self.indexTitles addObject:indexTitle];
+            }
+            
+            //add the country data to section data
+            NSMutableArray *sectionData = [[self.countries objectForKey:indexTitle] mutableCopy];
+            if (!sectionData) {
+                sectionData = [NSMutableArray array];
+            }
+            
+            [sectionData addObject:country];
+            [self.countries setObject:sectionData forKey:indexTitle];
         }
-        
-        [sectionData addObject:country];
-        [self.countries setObject:sectionData forKey:indexTitle];
     }
-    
     results = nil;
     [self.tableView reloadData];
 }
@@ -165,6 +209,43 @@
     }
 }
 
+#pragma mark View lifecycle
+- (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal popover:(BOOL)popover withEntity:(NSString*)entity sortDescriptorWithKey:(NSString*)key
+{
+    
+    if (entity && key) {
+        self = [super init];
+        
+        self.title = @"Choose Country";
+        self.basePredicate = basePredicate;
+        self.modal = modal;
+        self.entity = entity;
+        self.sortDescriptorWithKey = key;
+        
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectZero];
+        searchBar.delegate = self;
+        searchBar.showsCancelButton = NO;
+        searchBar.placeholder = @"Search by location name";
+        [searchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
+        
+        [self.view addSubview:searchBar];
+        
+        self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        self.tableView.dataSource = self;
+        self.tableView.delegate = self;
+        self.tableView.backgroundColor = [UIColor whiteColor];
+        [self.tableView setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self.view addSubview:self.tableView];
+        
+        NSDictionary *views = NSDictionaryOfVariableBindings(searchBar, _tableView);
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[searchBar]|" options:NSLayoutFormatDirectionLeftToRight metrics:nil views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[_tableView]|" options:NSLayoutFormatDirectionLeftToRight metrics:nil views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar(44)][_tableView]|" options:0 metrics:nil views:views]];
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:searchBar attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tableView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+        
+        return self;
+    }else return Nil;
+}
 
 #pragma mark View lifecycle
 - (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal popover:(BOOL)popover
@@ -174,6 +255,8 @@
     self.title = @"Choose Country";
     self.basePredicate = basePredicate;
     self.modal = modal;
+    self.entity = Nil;
+    self.sortDescriptorWithKey = Nil;
     
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectZero];
     searchBar.delegate = self;

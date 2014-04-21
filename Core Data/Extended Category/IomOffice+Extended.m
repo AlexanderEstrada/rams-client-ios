@@ -59,7 +59,11 @@
         NSArray *results = [context executeFetchRequest:request error:&error];
         office = [results lastObject];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating officeWithName: \n%@", [exception description]);
+
+    }
     
     return office;
 }

@@ -27,5 +27,6 @@
 - (void)updatePhotographData:(NSData *)photographData;
 - (void)updateFingerImageWithData:(NSData *)imageData forFingerPosition:(FingerPosition)position;
 - (void)deleteBiometricData;
+- (void)deleteBiometricData:(FingerPosition)position;
 
 @end

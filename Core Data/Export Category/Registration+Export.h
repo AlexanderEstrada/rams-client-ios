@@ -18,9 +18,21 @@
 
 #import "NSDate+Relativity.h"
 
+@class Migrant,Interception;
+
 @interface Registration (Export)
 
+
+
+
 + (Registration *)newRegistrationInContext:(NSManagedObjectContext *)context;
++ (Registration *)registrationWithId:(NSString *)registrationId
+              inManagedObjectContext:(NSManagedObjectContext *)context;
++ (BOOL)validateRegistrationDictionary:(NSDictionary *)dictionary;
++ (Registration *)registrationWithDictionary:(NSDictionary *)dictionary
+                      inManagedObjectContext:(NSManagedObjectContext *)context;
++ (Registration *)registrationFromMigrant:(Migrant *)migrant inManagedObjectContext:(NSManagedObjectContext *)context;
++ (Registration *)registrationFromMigrantAndDictionary:(Migrant *)migrant withdictionary:(NSDictionary *)dictionary inManagedObjectContext:(NSManagedObjectContext *)context;
 
 - (NSDictionary *)format;
 
@@ -29,5 +41,9 @@
 - (NSString *)bioDataSummary;
 - (NSString *)interceptionSummary;
 - (NSString *)unhcrSummary;
-
+- (BOOL)saveRegistrationData:(NSDictionary *)dictionary;
+- (BOOL)saveRegistrationData:(NSDictionary *)dictionary withId:(NSString*)Id;
+- (void) sendRegistration:(NSDictionary *)params;
+- (void) setToLocal:(NSNumber *)value;
+- (void) setRegistrationToLocal;
 @end

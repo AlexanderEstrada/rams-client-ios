@@ -9,10 +9,19 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+#import <Foundation/Foundation.h>
+
+
+
+typedef void (^IMRegistrationUploadSuccessHandler)(void);
+typedef void (^IMRegistrationUploadFailureHandler)(NSError *error);
+typedef void (^IMRegistrationUploadOnProgress)(void);
+
 @class Accommodation, IomOffice, RegistrationBioData, RegistrationBiometric, RegistrationInterception;
 
 @interface Registration : NSManagedObject
 
+@property (nonatomic, retain) NSString * registrationId;
 @property (nonatomic, retain) NSDate * dateCreated;
 @property (nonatomic, retain) NSString * unhcrDocument;
 @property (nonatomic, retain) NSString * unhcrNumber;
@@ -26,5 +35,10 @@
 @property (nonatomic, retain) RegistrationBioData *bioData;
 @property (nonatomic, retain) RegistrationBiometric *biometric;
 @property (nonatomic, retain) Accommodation *transferDestination;
+@property (nonatomic, retain) NSString *detentionLocation;
+
+@property (nonatomic, copy) IMRegistrationUploadSuccessHandler successHandler;
+@property (nonatomic, copy) IMRegistrationUploadFailureHandler failureHandler;
+@property (nonatomic, copy) IMRegistrationUploadOnProgress onProgress;
 
 @end

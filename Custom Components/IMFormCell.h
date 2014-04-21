@@ -16,7 +16,8 @@ typedef enum{
     IMFormCellTypeSubtitle,
     IMFormCellTypeTitle,
     IMFormCellTypeDetailCenter,
-    IMFormCellTypeSwitch
+    IMFormCellTypeSwitch,
+    IMFormCellTypeButton
 }IMFormCellType;
 
 @interface IMFormCell : UITableViewCell
@@ -28,12 +29,15 @@ typedef enum{
 @property (nonatomic, readonly) IMFormCellType type;
 @property (nonatomic, strong) UIImageView *iconView;
 @property (nonatomic, strong) UISwitch *switcher;
+@property (nonatomic, strong) UIButton *button;
 
 @property (nonatomic) int maxCharCount;
 @property (nonatomic, strong) NSArray *characterSets;
 @property (nonatomic, copy) void (^onTextValueReturn)(NSString *value);
 @property (nonatomic, copy) void (^onStepperValueChanged)(int newValue);
 @property (nonatomic, copy) void (^onSwitcherValueChanged)(BOOL value);
+@property (nonatomic, copy) void (^onButtonPush)(void);
+
 @property (nonatomic) BOOL editingEnabled;
 
 - (IMFormCell *)initWithFormType:(IMFormCellType)type reuseIdentifier:(NSString *)identifier;

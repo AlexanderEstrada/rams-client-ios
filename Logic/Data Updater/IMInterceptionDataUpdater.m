@@ -39,7 +39,12 @@
     InterceptionData *data = [InterceptionData dataWithDictionary:dictionary inManagedObjectContext:context];
     if (data) {
         NSError *error;
-        return [context save:&error];
+        BOOL result = [context save:&error];
+        if (!result) {
+            NSLog(@"Result : %hhd for saveInterceptionData - with error : %@ and dictionary : \n %@ ",result,[error description],dictionary);
+            
+        }
+        return result;
     }
     
     return NO;
@@ -79,6 +84,9 @@
 
 - (void)toggleActive:(NSDictionary *)params
 {
+    if (self.onProgress) {
+        self.onProgress();
+    }
     IMHTTPClient *client = [IMHTTPClient sharedClient];
     [client postJSONWithPath:@"interception/toggleActive"
                   parameters:params success:^(NSDictionary *jsonData, int statusCode){

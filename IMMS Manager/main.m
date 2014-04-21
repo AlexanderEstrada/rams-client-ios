@@ -9,9 +9,11 @@
 #import <UIKit/UIKit.h>
 
 #import "IMAppDelegate.h"
+#include "IMConstants.h"
 
 int main(int argc, char * argv[])
 {
+    [IMConstants initialize];
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([IMAppDelegate class]));
     }

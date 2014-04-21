@@ -11,6 +11,9 @@
 
 @interface IMRegistrationViewController : UITabBarController
 
+
 @property (nonatomic, assign) id<IMSideMenuDelegate> sideMenuDelegate;
+
+
 
 @end

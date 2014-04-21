@@ -84,7 +84,6 @@
 		ACCBD281181E503700CC3EDE /* IMMigrantTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACCBD280181E503700CC3EDE /* IMMigrantTableViewCell.xib */; };
 		ACCBD284181E52E300CC3EDE /* RegistrationBiometric+Storage.m in Sources */ = {isa = PBXBuildFile; fileRef = ACCBD283181E52E300CC3EDE /* RegistrationBiometric+Storage.m */; };
 		ACCBD28A181E58DA00CC3EDE /* Registration+Export.m in Sources */ = {isa = PBXBuildFile; fileRef = ACCBD289181E58DA00CC3EDE /* Registration+Export.m */; };
-		ACCBD28F181E639700CC3EDE /* Constants.plist in Resources */ = {isa = PBXBuildFile; fileRef = ACCBD28E181E639700CC3EDE /* Constants.plist */; };
 		ACE6926117F158DA0095F90C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ACE6926017F158DA0095F90C /* Main.storyboard */; };
 		ACE6926417F158E90095F90C /* IMMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = ACE6926217F158E90095F90C /* IMMS.xcdatamodeld */; };
 		ACE6928F17F1599A0095F90C /* IMAccommodationFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE6926817F1599A0095F90C /* IMAccommodationFetcher.m */; };
@@ -220,6 +219,15 @@
 		ACE694ED17F198830095F90C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EC17F198830095F90C /* AVFoundation.framework */; };
 		ACE694EF17F199770095F90C /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EE17F199770095F90C /* GoogleMaps.framework */; };
 		ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = ACE694F017F199AE0095F90C /* GoogleMaps.bundle */; };
+		F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F926697918EEA73600A95E94 /* Child+Extended.m */; };
+		F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */; };
+		F977449518F3E5C8001D30FA /* ServerSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F977449418F3E5C8001D30FA /* ServerSettingViewController.m */; };
+		F977449918F6A662001D30FA /* IMRegistrationFilterVCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F977449718F6A662001D30FA /* IMRegistrationFilterVCViewController.m */; };
+		F977449A18F6A662001D30FA /* IMRegistrationFilterVCViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F977449818F6A662001D30FA /* IMRegistrationFilterVCViewController.xib */; };
+		F9C6042118E5ED7400D9A450 /* LibBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C6042018E5ED7400D9A450 /* LibBase64.m */; };
+		F9C6042818E6D05000D9A450 /* IMRegistrationFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C6042718E6D05000D9A450 /* IMRegistrationFetcher.m */; };
+		F9C6042C18E903FB00D9A450 /* Constants.plist in Resources */ = {isa = PBXBuildFile; fileRef = F9C6042B18E903FB00D9A450 /* Constants.plist */; };
+		F9E3A43A18FD3CFA00749977 /* IMMigrantViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E3A43918FD3CFA00749977 /* IMMigrantViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -393,7 +401,6 @@
 		ACCBD283181E52E300CC3EDE /* RegistrationBiometric+Storage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RegistrationBiometric+Storage.m"; sourceTree = "<group>"; };
 		ACCBD288181E58DA00CC3EDE /* Registration+Export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Registration+Export.h"; sourceTree = "<group>"; };
 		ACCBD289181E58DA00CC3EDE /* Registration+Export.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Registration+Export.m"; sourceTree = "<group>"; };
-		ACCBD28E181E639700CC3EDE /* Constants.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Constants.plist; sourceTree = "<group>"; };
 		ACE6926017F158DA0095F90C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		ACE6926317F158E90095F90C /* IMMS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IMMS.xcdatamodel; sourceTree = "<group>"; };
 		ACE6926717F1599A0095F90C /* IMAccommodationFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMAccommodationFetcher.h; sourceTree = "<group>"; };
@@ -644,6 +651,22 @@
 		ACE694EC17F198830095F90C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		ACE694EE17F199770095F90C /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Libraries/GoogleMaps.framework; sourceTree = "<group>"; };
 		ACE694F017F199AE0095F90C /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = Libraries/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
+		F926697818EEA73600A95E94 /* Child+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Child+Extended.h"; sourceTree = "<group>"; };
+		F926697918EEA73600A95E94 /* Child+Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Child+Extended.m"; sourceTree = "<group>"; };
+		F93AFCA518F7A25A00AB63DA /* IMRegistrationFilterDataVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMRegistrationFilterDataVC.h; path = RegistrationFilter/IMRegistrationFilterDataVC.h; sourceTree = "<group>"; };
+		F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IMRegistrationFilterDataVC.m; path = RegistrationFilter/IMRegistrationFilterDataVC.m; sourceTree = "<group>"; };
+		F977449318F3E5C8001D30FA /* ServerSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerSettingViewController.h; sourceTree = "<group>"; };
+		F977449418F3E5C8001D30FA /* ServerSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerSettingViewController.m; sourceTree = "<group>"; };
+		F977449618F6A662001D30FA /* IMRegistrationFilterVCViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMRegistrationFilterVCViewController.h; path = RegistrationFilter/IMRegistrationFilterVCViewController.h; sourceTree = "<group>"; };
+		F977449718F6A662001D30FA /* IMRegistrationFilterVCViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IMRegistrationFilterVCViewController.m; path = RegistrationFilter/IMRegistrationFilterVCViewController.m; sourceTree = "<group>"; };
+		F977449818F6A662001D30FA /* IMRegistrationFilterVCViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = IMRegistrationFilterVCViewController.xib; path = RegistrationFilter/IMRegistrationFilterVCViewController.xib; sourceTree = "<group>"; };
+		F9C6041F18E5ED7400D9A450 /* LibBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibBase64.h; sourceTree = "<group>"; };
+		F9C6042018E5ED7400D9A450 /* LibBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LibBase64.m; sourceTree = "<group>"; };
+		F9C6042618E6D05000D9A450 /* IMRegistrationFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMRegistrationFetcher.h; sourceTree = "<group>"; };
+		F9C6042718E6D05000D9A450 /* IMRegistrationFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMRegistrationFetcher.m; sourceTree = "<group>"; };
+		F9C6042B18E903FB00D9A450 /* Constants.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Constants.plist; sourceTree = "<group>"; };
+		F9E3A43818FD3CFA00749977 /* IMMigrantViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantViewController.h; sourceTree = SOURCE_ROOT; };
+		F9E3A43918FD3CFA00749977 /* IMMigrantViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantViewController.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1008,6 +1031,8 @@
 		ACCBD267181E406400CC3EDE /* Irregular Migrant Data */ = {
 			isa = PBXGroup;
 			children = (
+				F9E3A43818FD3CFA00749977 /* IMMigrantViewController.h */,
+				F9E3A43918FD3CFA00749977 /* IMMigrantViewController.m */,
 			);
 			path = "Irregular Migrant Data";
 			sourceTree = "<group>";
@@ -1025,6 +1050,7 @@
 				AC8A6B681820B67B005A1C3C /* IMRegistrationCollectionViewCell.m */,
 				AC8A6B6A1820B693005A1C3C /* IMRegistrationCollectionViewCell.xib */,
 				AC8A6B661820B612005A1C3C /* Edit Registration Data */,
+				F93AFCA418F7A1E100AB63DA /* Filter Registration Data */,
 			);
 			path = Registration;
 			sourceTree = "<group>";
@@ -1045,6 +1071,8 @@
 		ACE6926617F1599A0095F90C /* Data Fetcher */ = {
 			isa = PBXGroup;
 			children = (
+				F9C6042618E6D05000D9A450 /* IMRegistrationFetcher.h */,
+				F9C6042718E6D05000D9A450 /* IMRegistrationFetcher.m */,
 				ACE6926B17F1599A0095F90C /* IMDataFetcher.h */,
 				ACE6926C17F1599A0095F90C /* IMDataFetcher.m */,
 				ACE6926917F1599A0095F90C /* IMBackgroundFetcher.h */,
@@ -1113,13 +1141,13 @@
 		ACE692A117F159AC0095F90C /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
+				F9C6042B18E903FB00D9A450 /* Constants.plist */,
 				AC4FE834181519C10043111B /* Export Category */,
 				AC4FE830181510530043111B /* Storage Category */,
 				ACE692A217F159AC0095F90C /* Extended Category */,
 				ACE692C317F159AC0095F90C /* Generated Classes */,
 				ACE692F417F159AC0095F90C /* User.h */,
 				ACE692F517F159AC0095F90C /* User.m */,
-				ACCBD28E181E639700CC3EDE /* Constants.plist */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -1154,6 +1182,8 @@
 				ACA7C648182162A000C560FD /* Movement+Extended.m */,
 				ACA7C64A182162C100C560FD /* Interception+Extended.h */,
 				ACA7C64B182162C100C560FD /* Interception+Extended.m */,
+				F926697818EEA73600A95E94 /* Child+Extended.h */,
+				F926697918EEA73600A95E94 /* Child+Extended.m */,
 			);
 			path = "Extended Category";
 			sourceTree = "<group>";
@@ -1259,6 +1289,7 @@
 		ACE6934B17F159E10095F90C /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				F9C6041E18E5ED7400D9A450 /* base64 */,
 				ACB28FC318221375000322B4 /* NBIS */,
 				ACB28FBA18220639000322B4 /* FbF mobileOne Lib */,
 				ACE6934C17F159E10095F90C /* AFNetworking */,
@@ -1458,6 +1489,8 @@
 		ACE6942817F159E80095F90C /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				F977449318F3E5C8001D30FA /* ServerSettingViewController.h */,
+				F977449418F3E5C8001D30FA /* ServerSettingViewController.m */,
 				ACE6942917F159E80095F90C /* IMLoginViewController.h */,
 				ACE6942A17F159E80095F90C /* IMLoginViewController.m */,
 			);
@@ -1524,6 +1557,27 @@
 			path = Statistic;
 			sourceTree = "<group>";
 		};
+		F93AFCA418F7A1E100AB63DA /* Filter Registration Data */ = {
+			isa = PBXGroup;
+			children = (
+				F977449618F6A662001D30FA /* IMRegistrationFilterVCViewController.h */,
+				F977449718F6A662001D30FA /* IMRegistrationFilterVCViewController.m */,
+				F977449818F6A662001D30FA /* IMRegistrationFilterVCViewController.xib */,
+				F93AFCA518F7A25A00AB63DA /* IMRegistrationFilterDataVC.h */,
+				F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */,
+			);
+			name = "Filter Registration Data";
+			sourceTree = "<group>";
+		};
+		F9C6041E18E5ED7400D9A450 /* base64 */ = {
+			isa = PBXGroup;
+			children = (
+				F9C6041F18E5ED7400D9A450 /* LibBase64.h */,
+				F9C6042018E5ED7400D9A450 /* LibBase64.m */,
+			);
+			path = base64;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1569,11 +1623,16 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = IM;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Mario Yohanes";
 				TargetAttributes = {
 					AC807D2D17F14F58000988D0 = {
-						DevelopmentTeam = E8GC2RWRU9;
+						DevelopmentTeam = C59V5LZ7A7;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					AC807D4D17F14F58000988D0 = {
 						TestTargetID = AC807D2D17F14F58000988D0;
@@ -1603,7 +1662,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F977449A18F6A662001D30FA /* IMRegistrationFilterVCViewController.xib in Resources */,
 				AC4467051803AE0600534428 /* AccommodationCell.xib in Resources */,
+				F9C6042C18E903FB00D9A450 /* Constants.plist in Resources */,
 				ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */,
 				ACE6934417F159BA0095F90C /* IMPhotoViewer.xib in Resources */,
 				AC8A6B6B1820B693005A1C3C /* IMRegistrationCollectionViewCell.xib in Resources */,
@@ -1613,7 +1674,6 @@
 				ACE6926117F158DA0095F90C /* Main.storyboard in Resources */,
 				AC807D3E17F14F58000988D0 /* InfoPlist.strings in Resources */,
 				AC807D4917F14F58000988D0 /* Images.xcassets in Resources */,
-				ACCBD28F181E639700CC3EDE /* Constants.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1650,6 +1710,7 @@
 				ACB2900318221375000322B4 /* BozorthIO.m in Sources */,
 				ACE692FE17F159AC0095F90C /* InterceptionMovement+Extended.m in Sources */,
 				AC4EFA4817F2EE0500369A82 /* UIFont+IMMS.m in Sources */,
+				F977449918F6A662001D30FA /* IMRegistrationFilterVCViewController.m in Sources */,
 				ACE6928F17F1599A0095F90C /* IMAccommodationFetcher.m in Sources */,
 				AC14E0A7181FD98B00EB356B /* IMEditRegistrationDataVC.m in Sources */,
 				ACE6929717F1599A0095F90C /* IMInterceptionDataUpdater.m in Sources */,
@@ -1662,6 +1723,7 @@
 				ACE6931A17F159AC0095F90C /* Port.m in Sources */,
 				AC807D4017F14F58000988D0 /* main.m in Sources */,
 				ACE694CD17F17B4F0095F90C /* UIColor+IMMS.m in Sources */,
+				F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */,
 				ACCBD251181E27DB00CC3EDE /* RegistrationBioData.m in Sources */,
 				ACE693BE17F159E20095F90C /* UIImageView+AFNetworking.m in Sources */,
 				ACE693CD17F159E20095F90C /* NSDate+Relativity.m in Sources */,
@@ -1679,6 +1741,7 @@
 				ACE6931217F159AC0095F90C /* InterceptionMovement.m in Sources */,
 				AC20B637181FE92000E82C26 /* IMConstants.m in Sources */,
 				AC8A6B741820F6EF005A1C3C /* IMRegistrationUploadVC.m in Sources */,
+				F9C6042818E6D05000D9A450 /* IMRegistrationFetcher.m in Sources */,
 				ACE6931917F159AC0095F90C /* PoliceOfficer.m in Sources */,
 				ACE6931617F159AC0095F90C /* Migrant.m in Sources */,
 				ACE6933D17F159BA0095F90C /* IMCollectionViewController.m in Sources */,
@@ -1706,6 +1769,7 @@
 				ACE6934817F159BA0095F90C /* IMTextField.m in Sources */,
 				AC6D728E18068C1200E5F845 /* FamilyData.m in Sources */,
 				ACE6929317F1599A0095F90C /* IMInterceptionLocationFetcher.m in Sources */,
+				F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */,
 				ACE6929D17F1599A0095F90C /* IMLocationManager.m in Sources */,
 				ACE6944E17F159E80095F90C /* IMInterceptionViewController.m in Sources */,
 				ACE6945D17F159E80095F90C /* IMPoliceOfficerVC.m in Sources */,
@@ -1760,10 +1824,12 @@
 				ACE6930E17F159AC0095F90C /* Interception.m in Sources */,
 				ACE693BB17F159E20095F90C /* AFPropertyListRequestOperation.m in Sources */,
 				ACE6933F17F159BA0095F90C /* IMDataTableViewController.m in Sources */,
+				F9C6042118E5ED7400D9A450 /* LibBase64.m in Sources */,
 				ACE6946017F159E80095F90C /* IMMenuViewController.m in Sources */,
 				ACE6930717F159AC0095F90C /* Allowance.m in Sources */,
 				AC8A6B691820B67B005A1C3C /* IMRegistrationCollectionViewCell.m in Sources */,
 				ACE6930417F159AC0095F90C /* Port+Extended.m in Sources */,
+				F977449518F3E5C8001D30FA /* ServerSettingViewController.m in Sources */,
 				ACE693CE17F159E20095F90C /* NSString+Encryption.m in Sources */,
 				ACE6929117F1599A0095F90C /* IMDataFetcher.m in Sources */,
 				AC6D727F1806636500E5F845 /* IMMigrantFetcher.m in Sources */,
@@ -1773,6 +1839,7 @@
 				ACE6929417F1599A0095F90C /* IMPhotoFetcher.m in Sources */,
 				AC5DD1821804FD0400E3911C /* IMAccommodationInfoVC.m in Sources */,
 				ACE6929B17F1599A0095F90C /* IMDBManager.m in Sources */,
+				F9E3A43A18FD3CFA00749977 /* IMMigrantViewController.m in Sources */,
 				ACE6934517F159BA0095F90C /* IMTableHeaderView.m in Sources */,
 				ACE6930F17F159AC0095F90C /* InterceptionData.m in Sources */,
 				ACE6946917F159E80095F90C /* IMPhotoView.m in Sources */,
@@ -1834,7 +1901,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1865,6 +1931,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -1874,7 +1941,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1898,6 +1964,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -1908,26 +1976,26 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/mario/iPhone\\ Projects/IMMS\\ Manager/Libraries",
+					"/Users/IOM/Documents/TestBeth/imms-ipad/Libraries",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "IMMS Manager/IMMS Manager-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/mario/iPhone\\ Projects/IMMS\\ Manager/Libraries/FbF\\ mobileOne\\ Lib",
-					"/Users/mario/iPhone\\ Projects/IMMS\\ Manager/Libraries/NBIS/lib",
+					"/Users/IOM/Documents/TestBeth/imms-ipad/Libraries/FbF\\ mobileOne\\ Lib",
+					"/Users/IOM/Documents/TestBeth/imms-ipad/Libraries/NBIS/lib",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "B92BF6B6-8BFB-4C1B-B48B-6F86D1EA69E0";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1936,26 +2004,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/mario/iPhone\\ Projects/IMMS\\ Manager/Libraries",
+					"/Users/IOM/Documents/TestBeth/imms-ipad/Libraries",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "IMMS Manager/IMMS Manager-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/mario/iPhone\\ Projects/IMMS\\ Manager/Libraries/FbF\\ mobileOne\\ Lib",
-					"/Users/mario/iPhone\\ Projects/IMMS\\ Manager/Libraries/NBIS/lib",
+					"/Users/IOM/Documents/TestBeth/imms-ipad/Libraries/FbF\\ mobileOne\\ Lib",
+					"/Users/IOM/Documents/TestBeth/imms-ipad/Libraries/NBIS/lib",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "A74E8BD8-E1CF-41AA-8913-94F211C79F9E";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1963,7 +2032,6 @@
 		AC807D6417F14F58000988D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/IMMS Manager.app/IMMS Manager";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1986,7 +2054,6 @@
 		AC807D6517F14F58000988D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/IMMS Manager.app/IMMS Manager";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

@@ -8,6 +8,10 @@
 
 #import "IMViewController.h"
 
+
 @interface IMRegistrationUploadVC : IMViewController
+
+//- (void)uploadRegistrationData:(NSDictionary *)params;
+//- (BOOL)saveRegistrationData:(NSDictionary *)dictionary;
 
 @end

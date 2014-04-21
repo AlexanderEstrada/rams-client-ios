@@ -13,7 +13,11 @@
 #import "IMCountryListVC.h"
 #import "IMAccommodationChooserVC.h"
 #import "IMOptionChooserViewController.h"
+#import "IMDBManager.h"
+#import "IomOffice+Extended.h"
+#import "Migrant+Extended.h"
 
+#define TAG_NO_UNHCR_DOC 1
 
 @interface IMEditRegistrationDataVC ()<UIPopoverControllerDelegate, IMOptionChooserDelegate>
 
@@ -34,6 +38,7 @@
 {
     _registration = registration;
     _underIOMCare = self.registration.underIOMCare.boolValue;
+    
     [self.tableView reloadData];
 }
 
@@ -97,7 +102,7 @@
     switch (section) {
         case 0: return 9;
         case 1: return 2;
-        case 2: return 3;
+        case 2: return 4;
         case 3: return 2;
     }
     
@@ -207,7 +212,14 @@
             cell.labelTitle.text = @"UNHCR Document Number";
             cell.textValue.placeholder = @"e.g 186-09C02429";
             cell.textValue.text = self.registration.unhcrNumber;
-            cell.onTextValueReturn = ^(NSString *value){ self.registration.unhcrNumber = [value uppercaseString]; };
+            cell.onTextValueReturn = ^(NSString *value){
+                if (!self.registration.unhcrDocument){
+                        //show alert
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    alert.tag = TAG_NO_UNHCR_DOC;
+                        [alert show];
+                   value =  self.registration.unhcrNumber = Nil;
+                }else self.registration.unhcrNumber = [value uppercaseString]; };
             cell.characterSets = @[[NSCharacterSet characterSetWithCharactersInString:@"0123456789cC-"]];
         }
     }else if (indexPath.section == 2) {
@@ -223,7 +235,16 @@
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet], [NSCharacterSet characterSetWithCharactersInString:@"-,"]];
             cell.onTextValueReturn = ^(NSString *value){ self.registration.interceptionData.interceptionLocation = value; };
             cell.maxCharCount = 50;
-        }else {
+        }
+        //TODO : add IOM assosiate Office
+        else if (indexPath.row == 2){
+            
+            cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
+            cell.labelTitle.text = @"Assosiate IOM Office";
+            cell.labelValue.text = self.registration.associatedOffice.name;
+
+        }
+        else {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = @"Under IOM Care";
             cell.switcher.on = self.registration.underIOMCare.boolValue;
@@ -242,6 +263,17 @@
     }
     
     return cell;
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == TAG_NO_UNHCR_DOC) {
+        //reset UNHCR document number
+        self.registration.unhcrNumber = Nil;
+    }
+
+    
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -293,21 +325,53 @@
             vc.firstRowIsSpecial = YES;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }
-    }else if (indexPath.section == 1 && indexPath.row == 0) {
-        IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_UNHCR_DOCUMENT delegate:self];
-        vc.selectedValue = self.registration.unhcrDocument;
-        vc.firstRowIsSpecial = YES;
-        [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
-    }else if (indexPath.section == 2 && indexPath.row == 0) {
-        IMDatePickerVC *datePicker = [[IMDatePickerVC alloc] initWithAction:^(NSDate *date){
-            self.registration.interceptionData.interceptionDate = date;
-            IMFormCell *cell = (IMFormCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-            cell.labelValue.text = [self.registration.interceptionData.interceptionDate mediumFormatted];
-        }];
+    }else if (indexPath.section == 1){
+        if (indexPath.row == 0) {
+            IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_UNHCR_DOCUMENT delegate:self];
+            vc.selectedValue = self.registration.unhcrDocument;
+            vc.firstRowIsSpecial = YES;
+            [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
+        }else if (indexPath.row == 1){
+            if (!self.registration.unhcrDocument) {
+                //show alert
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                alert.tag = TAG_NO_UNHCR_DOC;
+                [alert show];
+                
+            }
+        }
         
-        datePicker.maximumDate = [NSDate date];
-        datePicker.date = self.registration.interceptionData.interceptionDate;
-        [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:datePicker navigationController:NO];
+    }else if (indexPath.section == 2) {
+        if (indexPath.row == 0) {
+            IMDatePickerVC *datePicker = [[IMDatePickerVC alloc] initWithAction:^(NSDate *date){
+                self.registration.interceptionData.interceptionDate = date;
+                IMFormCell *cell = (IMFormCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                cell.labelValue.text = [self.registration.interceptionData.interceptionDate mediumFormatted];
+            }];
+            
+            datePicker.maximumDate = [NSDate date];
+            datePicker.date = self.registration.interceptionData.interceptionDate;
+            [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:datePicker navigationController:NO];
+        }else if (indexPath.row == 2){
+            
+            //get Assosiate IOM Office from database
+            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+            NSArray *offices = [IomOffice officesInManagedObjectContext:context];
+            
+            //add Assosiate IOM Office data
+            IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithOptions:offices onOptionSelected:^(id selectedValue){
+                IMFormCell *cell = (IMFormCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                cell.labelValue.text = [selectedValue description];
+                self.registration.associatedOffice = [IomOffice officeWithName:[selectedValue description] inManagedObjectContext:self.registration.managedObjectContext];
+                [self.popover dismissPopoverAnimated:YES];
+                [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+            }];
+                vc.title = @"Select IOM Office";
+
+            [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:YES];
+            
+        }
+        
     }else if (indexPath.section == 3) {
         if (indexPath.row == 0) {
             [self showAccommodation:indexPath];
@@ -397,5 +461,7 @@
     vc.preferredContentSize = CGSizeMake(500, 400);
     [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:YES];
 }
+
+
 
 @end

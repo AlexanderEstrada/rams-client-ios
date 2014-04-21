@@ -11,10 +11,14 @@
 #import "IMConstants.h"
 #import "NSDate+Relativity.h"
 #import "IMDBManager.h"
+#import "Migrant+Extended.h"
+#import "Registration+Export.h"
 
 @interface IMMigrantFetcher () {
     dispatch_queue_t migrantQueue;
+    dispatch_queue_t registrationQueue;
     NSManagedObjectContext *context;
+    NSManagedObjectContext *reg_context;
 }
 
 @property (nonatomic) NSInteger currentProgress;
@@ -29,9 +33,10 @@
 - (void)fetchUpdates
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@(10) forKey:@"max"];
+    [params setObject:@(100) forKey:@"max"];
+    
     [params setObject:@(self.progress) forKey:@"offset"];
-
+    
     NSDate *lastSyncDate = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];
     if (lastSyncDate) [params setObject:[lastSyncDate toUTCString] forKey:@"since"];
     
@@ -45,9 +50,9 @@
 - (void)fetchMigrant:(NSString *)migrantId
 {
     IMHTTPClient *client = [IMHTTPClient sharedClient];
-    [client getJSONWithPath:@"migrant/list"
+    [client getJSONWithPath:@"migrant/show"
                  parameters:@{@"id":migrantId}
-                    success:^(NSDictionary *jsonData, int statusCode){ [self parseMigrants:jsonData]; }
+                    success:^(NSDictionary *jsonData, int statusCode){ [self parseMigrant:jsonData]; }
                     failure:self.onFailure];
 }
 
@@ -74,6 +79,7 @@
         //reset current progress and update current total to current batch count
         self.currentProgress = 0;
         self.currentTotal = [migrants count];
+        NSLog(@"self.currentTotal : %ld",(long)self.currentTotal);
         
         if (!self.currentTotal) {   //finalize synchronizer when returned migrants count reached zero
             [self postFinished];
@@ -89,29 +95,97 @@
     }
 }
 
+- (void) saveToRegistration :(Migrant *)data
+{
+
+    
+    //define queue if it's nil
+    if (!registrationQueue) {
+        registrationQueue = dispatch_queue_create("RegistrationQueue", NULL);
+        //        migrantQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+        dispatch_sync(registrationQueue, ^{
+            reg_context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            reg_context.parentContext = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        });
+    }
+    
+    dispatch_async(registrationQueue, ^{
+        @autoreleasepool {
+            @try {
+       
+                //save to registration
+                Registration * reg = [Registration registrationFromMigrant:data inManagedObjectContext:reg_context];
+                
+                //save to array
+                //                    NSError *error;
+                NSError *error;
+                BOOL result = [reg_context save:&error];
+                NSLog(@"Result %hhd - Error : %@\n",result,[error description]);
+                
+                if (!result || !reg) {
+                    [reg_context rollback];
+                    NSLog(@"Failed saving context Error : %@\n after parsing migrant - JSON : \n %@",[error description], data);
+                    [self postFailureWithError:error];
+                }
+                
+                
+                NSLog(@"Procced Registration %ld from %ld ",(long)self.progress,(long)self.total);
+                //update fetcher's progress, end it if necessary
+                self.progress++;
+                if (self.progress == self.total) {
+                    [self postFinished];
+                }else {
+                    //if fetcher not finished yet, update current batch progress
+                    self.currentProgress++;
+                }
+            }
+            @catch (NSException *exception) {
+                NSLog(@"Error while parsing registrationFromMigrant - Error message: %@", [exception description]);
+                [reg_context rollback];
+                [self postFailureWithError:[NSError errorWithDomain:@"Exception Occurred" code:0 userInfo:@{@"errorMessage":[exception description]}]];
+            }
+        }
+    });
+    
+    
+}
 - (void)parseMigrant:(NSDictionary *)dictionary
 {
     //define queue if it's nil
     if (!migrantQueue) {
-        migrantQueue = dispatch_queue_create("MigrantQueue", NULL);
+                migrantQueue = dispatch_queue_create("MigrantQueue", NULL);
         dispatch_sync(migrantQueue, ^{
             context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
             context.parentContext = [IMDBManager sharedManager].localDatabase.managedObjectContext;
         });
     }
     
-    dispatch_async(migrantQueue, ^{
+    dispatch_sync(migrantQueue, ^{
         @autoreleasepool {
             @try {
                 //TODO: Parse migrant dictionary
-                
-                
+                Migrant * data = [Migrant migrantWithDictionary:dictionary inContext:context];
                 NSError *error;
-                if (![context save:&error]) {
-                    NSLog(@"Failed saving context after parsing migrant: %@\nError message: %@", dictionary, [error description]);
+                if (!data) {
+                    NSLog(@"Failed saving context after parsing migrant - JSON : \n %@", dictionary);
+                    [context rollback];
                     [self postFailureWithError:error];
                 }
-                
+                else{
+                     //save to registration
+                     Registration * reg = [Registration registrationFromMigrant:data inManagedObjectContext:context];
+
+                    BOOL result = [context save:&error];
+//                     NSLog(@"Result %hhd - Error : %@\n",result,[error description]);
+                    
+                     if (!result || !reg) {
+                     [context rollback];
+                     NSLog(@"Failed saving context Error : %@\n after parsing migrant - JSON : \n %@",[error description], data);
+                     [self postFailureWithError:error];
+                     }
+                    
+                }
+                NSLog(@"Process Migrant %ld from %ld ",(long)self.progress+1,(long)self.total);
                 //update fetcher's progress, end it if necessary
                 self.progress++;
                 if (self.progress == self.total) {
@@ -123,6 +197,7 @@
             }
             @catch (NSException *exception) {
                 NSLog(@"Error while parsing migrant dictionary: %@\nError message: %@", dictionary, [exception description]);
+                [context rollback];
                 [self postFailureWithError:[NSError errorWithDomain:@"Exception Occurred" code:0 userInfo:@{@"errorMessage":[exception description]}]];
             }
         }

@@ -13,7 +13,9 @@
 @interface IMHTTPClient : AFHTTPClient
 
 + (IMHTTPClient *)sharedClient;
+- (void)setNewBaseURL;
 
++ (void)setNewURL;
 - (void)getJSONWithPath:(NSString *)path
              parameters:(NSDictionary *)parameters
                 success:(void (^)(NSDictionary *jsonData, int statusCode))success
@@ -29,5 +31,7 @@
                failure:(void (^)(NSError *error))failure;
 
 - (void)setupAuthenticationHeader;
+
+
 
 @end

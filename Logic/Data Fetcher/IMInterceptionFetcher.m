@@ -44,7 +44,9 @@
             for (NSDictionary *interceptionDict in results) {
                 [context performBlockAndWait:^{
                     InterceptionData *data = [InterceptionData dataWithDictionary:interceptionDict inManagedObjectContext:context];
-                    if (!data) NSLog(@"Failed parsing interception case dictionary: %@", interceptionDict);
+                    if (!data){
+                     NSLog(@"Failed parsing interception case dictionary: %@", interceptionDict);   
+                    }
                     self.progress++;
                 }];
             }
@@ -54,7 +56,27 @@
                 [self postFinished];
                 [self updateLastUpdatedDate];
             }else {
-                [context rollback];
+                /*
+                 return [NSString stringWithFormat:@"Item is missing the mandatory
+                 property \"%@\" (item pointer = %p)", [error.userInfo
+                 objectForKey:NSValidationKeyErrorKey], [error.userInfo
+                 objectForKey:NSValidationObjectErrorKey] ];
+                */
+                /*
+                if( withDescription )
+                    return [NSString stringWithFormat:@"Item is missing the mandatory
+                            property \"%@\" (item = %@)", [error.userInfo
+                                                           objectForKey:NSValidationKeyErrorKey], [[error.userInfo
+                                                                                                    objectForKey:NSValidationObjectErrorKey] description] ];
+                 */
+                NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
+                NSArray* detailedErrors = [[error userInfo] objectForKey:NSDetailedErrorsKey];
+                if(detailedErrors != nil && [detailedErrors count] > 0) {
+                    for(NSError* detailedError in detailedErrors) {
+                        NSLog(@"  DetailedError: %@", [detailedError userInfo]);
+                        }
+                }
+                    [context rollback];
                 [self postFailureWithError:error];
             }
         }

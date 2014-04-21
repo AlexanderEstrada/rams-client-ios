@@ -25,6 +25,8 @@
 
 @interface Country (CoreDataGeneratedAccessors)
 
+- (void)addRegistrationBioDatasObject:(RegistrationBioData *)value;
+- (void)removeRegistrationBioDatasObject:(RegistrationBioData *)value;
 - (void)addBioDatasObject:(BioData *)value;
 - (void)removeBioDatasObject:(BioData *)value;
 - (void)addBioDatas:(NSSet *)values;
@@ -42,6 +44,8 @@
 
 - (void)addBioDatasCountryOfBirthObject:(BioData *)value;
 - (void)removeBioDatasCountryOfBirthObject:(BioData *)value;
+- (void)addRegistrationCountryOfBirthObject:(RegistrationBioData *)value;
+- (void)removeRegistrationCountryOfBirthObject:(RegistrationBioData *)value;
 - (void)addBioDatasCountryOfBirth:(NSSet *)values;
 - (void)removeBioDatasCountryOfBirth:(NSSet *)values;
 

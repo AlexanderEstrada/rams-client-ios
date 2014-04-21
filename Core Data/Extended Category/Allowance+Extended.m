@@ -56,7 +56,10 @@
         
         allowance = [results lastObject];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+    NSLog(@"Exception while creating allowanceWithId: \n%@", [exception description]);
+    }
     
     return allowance;
 }
@@ -70,7 +73,10 @@
             if (allowance) [result addObject:allowance];
         }
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+     NSLog(@"Exception while creating allowancesFromArrayDictionary: \n%@", [exception description]);
+    }
     
     return result;
 }

@@ -8,6 +8,7 @@
 
 #import "IMFormCell.h"
 #import "UIFont+IMMS.h"
+#import "UIColor+IMMS.h"
 
 @interface IMFormCell ()<UITextFieldDelegate>
 
@@ -113,6 +114,12 @@
             [self.switcher addTarget:self action:@selector(switcherValueChanged:) forControlEvents:UIControlEventValueChanged];
             [self.contentView addSubview:self.switcher];
             break;
+            case IMFormCellTypeButton:
+            self.button = [[UIButton alloc] init];
+            self.button.hidden = NO;
+            self.button.tintColor = [UIColor IMRed];
+            [self.button addTarget:self action:@selector(push) forControlEvents:UIControlEventTouchUpInside];
+            break;
     }
     
     [self setupUI];
@@ -120,6 +127,12 @@
     return self;
 }
 
+- (void)push
+{
+    if (self.onButtonPush) {
+        self.onButtonPush();
+    }
+}
 - (void)setupUI
 {
     NSDictionary *views;
@@ -221,6 +234,7 @@
                                                                           constant:0]];
             break;
         case IMFormCellTypeTitle:
+        case IMFormCellTypeButton:
             views = NSDictionaryOfVariableBindings(_labelTitle);
             [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[_labelTitle]-|"
                                                                                      options:NSLayoutFormatAlignAllCenterY

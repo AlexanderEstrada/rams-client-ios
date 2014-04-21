@@ -141,13 +141,40 @@
 
 - (void)updateTemplateFromBase64String:(NSString *)base64String forFingerPosition:(FingerPosition)position
 {
-    NSData *templateData = nil;
-    @try {
-        templateData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
-    }
-    @catch (NSException *exception) {}
     
-    [self updateTemplateWithData:templateData forFingerPosition:position];
+    @try {
+        if (!base64String) {
+            switch (position) {
+                case RightIndex:
+                    self.rightIndexTemplate = Nil;
+                    break;
+                case RightThumb:
+                    self.rightThumbTemplate = Nil;
+                    break;
+                case LeftIndex:
+                    self.leftIndexTemplate = Nil;
+                    break;
+                case LeftThumb:
+                    self.leftThumbTemplate = Nil;
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+        else
+        {
+        NSData *templateData = nil;
+        templateData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+            [self updateTemplateWithData:templateData forFingerPosition:position];
+        }
+        
+    }
+    @catch (NSException *exception) {
+    NSLog(@"Exception while creating updateTemplateFromBase64String: \n%@", [exception description]);
+    }
+    
+    
 }
 
 - (void)updateTemplateWithData:(NSData *)templateData forFingerPosition:(FingerPosition)position
@@ -177,13 +204,40 @@
 
 - (void)updateFingerImageFromBase64String:(NSString *)base64String forFingerPosition:(FingerPosition)position
 {
-    NSData *imageData = nil;
+   
     @try {
-        imageData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+        if (base64String == Nil) {
+            switch (position) {
+                case RightIndex:
+                    self.rightIndexImage = Nil;
+                    break;
+                case RightThumb:
+                    self.rightThumbImage = Nil;
+                    break;
+                case LeftIndex:
+                    self.leftIndexImage = Nil;
+                    break;
+                case LeftThumb:
+                    self.leftThumbImage = Nil;
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+        }
+        else{
+                NSData *imageData = nil;
+                imageData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+                [self updateFingerImageWithData:imageData forFingerPosition:position];
+        }
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+    NSLog(@"Exception while creating updateFingerImageFromBase64String: \n%@", [exception description]);
+    }
     
-    [self updateFingerImageWithData:imageData forFingerPosition:position];
+    
 }
 
 - (void)updateFingerImageWithData:(NSData *)imageData forFingerPosition:(FingerPosition)position
@@ -271,7 +325,10 @@
         [manager removeItemAtPath:self.rightIndexTemplate error:nil];
         [manager removeItemAtPath:self.rightThumbTemplate error:nil];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+    NSLog(@"Exception while creating deleteBiometricData: \n%@", [exception description]);
+    }
 }
 
 @end

@@ -15,7 +15,10 @@
 
 
 @implementation Registration
-
+@synthesize failureHandler;
+@synthesize successHandler;
+@synthesize onProgress;
+@dynamic registrationId;
 @dynamic dateCreated;
 @dynamic unhcrDocument;
 @dynamic unhcrNumber;
@@ -29,5 +32,6 @@
 @dynamic bioData;
 @dynamic biometric;
 @dynamic transferDestination;
+@dynamic detentionLocation;
 
 @end

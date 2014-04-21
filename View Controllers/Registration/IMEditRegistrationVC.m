@@ -46,11 +46,69 @@
 {
     IMScanFingerprintViewController *scanner = [self.storyboard instantiateViewControllerWithIdentifier:@"IMScanFingerprintViewController"];
     scanner.modalPresentationStyle = UIModalPresentationFormSheet;
-    scanner.currentFingerPosition = gesture.view.tag;
+    scanner.currentFingerPosition = (FingerPosition) gesture.view.tag;
+    //TODO set delegate implemetation
+    self.data =[[NSMutableDictionary alloc] init];
+    scanner.doneCompletionBlock = ^(NSMutableDictionary * value)
+    { self.data = value;
+        //TODO : save image on file
+        NSData *imageData = Nil;
+        //                    case RightThumb:
+        if ([self.data objectForKey:@(RightThumb)] != Nil) {
+            if (self.registration.biometric.rightThumb){
+                //delete the image
+                [self.registration.biometric deleteBiometricData:RightThumb];
+            }
+            self.imageRightThumb.image = [self.data objectForKey:@(RightThumb)];
+            imageData = UIImageJPEGRepresentation(self.imageRightThumb.image, 1);
+            [self.registration.biometric updateFingerImageWithData:imageData forFingerPosition:RightThumb];
+        }
+        //                    case RightIndex:
+        if ([self.data objectForKey:@(RightIndex)] != Nil) {
+            //if there is data to edit, then delete the image first
+            
+            if (self.registration.biometric.rightIndex){
+                //delete the image
+                [self.registration.biometric deleteBiometricData:RightIndex];
+            }
+            self.imageRightIndex.image = [self.data objectForKey:@(RightIndex)];
+            imageData = UIImageJPEGRepresentation(self.imageRightIndex.image, 1);
+            [self.registration.biometric updateFingerImageWithData:imageData forFingerPosition:RightIndex];
+        }
+        //        case LeftThumb:
+        if ([self.data objectForKey:@(LeftThumb)] != Nil) {
+            if (self.registration.biometric.leftThumb){
+                //delete the image
+                [self.registration.biometric deleteBiometricData:LeftThumb];
+            }
+            
+            self.imageLeftThumb.image = [self.data objectForKey:@(LeftThumb)];
+            imageData = UIImageJPEGRepresentation(self.imageLeftThumb.image, 1);
+            [self.registration.biometric updateFingerImageWithData:imageData forFingerPosition:LeftThumb];
+        }
+        
+        //                case LeftIndex:
+        if ([self.data objectForKey:@(LeftIndex)] != Nil) {
+            if (self.registration.biometric.leftIndex){
+                //delete the image
+                [self.registration.biometric deleteBiometricData:LeftIndex];
+                
+            }
+            self.imageLeftIndex.image = [self.data objectForKey:@(LeftIndex)];
+            imageData = UIImageJPEGRepresentation(self.imageLeftIndex.image, 1);
+            [self.registration.biometric updateFingerImageWithData:imageData forFingerPosition:LeftIndex];
+            
+        }
+        
+        //TODO : update image
+        [self updateBiometricImages];
+    };
+    
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:scanner];
     navCon.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:navCon animated:YES completion:nil];
+    
 }
 
 - (void)showPhotographOption:(UITapGestureRecognizer *)gesture
@@ -175,6 +233,18 @@
 
 - (void)save
 {
+    //set current date for date of entry
+    if (self.registration.interceptionData.dateOfEntry == Nil) {
+        self.registration.interceptionData.dateOfEntry =[NSDate date];
+    }
+    
+    //checking the value
+    if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
+            //show alert
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        return;
+    }
     [self.registration validateCompletion];
     NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
     NSError *error;
@@ -185,6 +255,8 @@
     }else {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+    
+
 }
 
 
@@ -234,6 +306,7 @@
         IMEditRegistrationDataVC *regVC = (IMEditRegistrationDataVC *)vc;
         regVC.registration = self.registration;
     }
+
 }
 
 - (void)setupFingerprintGestureRecognizer:(UIImageView *)imageView
@@ -248,6 +321,7 @@
     imageView.layer.cornerRadius = imageView.frame.size.width / 2;
     imageView.layer.masksToBounds = YES;
 }
+
 
 - (void)updateBiometricImages
 {

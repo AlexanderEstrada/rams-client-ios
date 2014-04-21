@@ -45,7 +45,11 @@ NSString *const PHOTO_CACHE_DIR_NAME    = @"Photos";
     @try {
         photoData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating updatePhotoFromBase64String: \n%@", [exception description]);
+
+    }
     
     [self updatePhotoWithData:photoData];
 }

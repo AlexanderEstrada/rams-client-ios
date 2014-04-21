@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+typedef void (^IMDBManagerOnProgressHandler)(void);
 
 @interface IMDBManager : NSObject
 
@@ -22,6 +23,7 @@
 - (void)openDatabase:(void (^)(BOOL success))success;
 - (void)saveDatabase:(void (^)(BOOL success))success;
 - (void)removeDatabase:(void (^)(BOOL success))success;
+@property (nonatomic, copy) IMDBManagerOnProgressHandler onProgress;
 
 //Updates
 - (void)checkForUpdates;

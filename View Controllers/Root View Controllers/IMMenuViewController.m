@@ -37,20 +37,21 @@ NSString *const MENU_VC_ID          = @"vc-id";
 //    NSMutableArray *common = [NSMutableArray array];
 //    [common addObject:[self menuWithTitle:@"Interception Case" identifier:@"Interception"]];
 //    [common addObject:[self menuWithTitle:@"Accommodation" identifier:@"Accommodation"]];
+//TODO : 
 //    [common addObject:[self menuWithTitle:@"Irregular Migrant Data" identifier:@"Migrant"]];
 //    [common addObject:[self menuWithTitle:@"Statistic" identifier:@"Statistic"]];
 //    [self.menu addObject:common];
-//    
-//    if ([IMAuthManager sharedManager].activeUser && ([IMAuthManager sharedManager].activeUser.roleOperation || [IMAuthManager sharedManager].activeUser.roleICC))
-//    {
-//        NSMutableArray *special = [NSMutableArray array];
-//        [special addObject:[self menuWithTitle:@"Registration" identifier:@"Registration"]];
+
+    if ([IMAuthManager sharedManager].activeUser && ([IMAuthManager sharedManager].activeUser.roleOperation || [IMAuthManager sharedManager].activeUser.roleICC))
+    {
+        NSMutableArray *special = [NSMutableArray array];
+        [special addObject:[self menuWithTitle:@"Registration" identifier:@"Registration"]];
 //        [special addObject:[self menuWithTitle:@"Allowance" identifier:@"Allowance"]];
 //        [special addObject:[self menuWithTitle:@"Transfer Request" identifier:@"Transfer"]];
 //        [special addObject:[self menuWithTitle:@"Update Movement" identifier:@"Movement"]];
-//        [self.menu addObject:special];
-//    }
-//    
+        [self.menu addObject:special];
+    }
+    
     [self.menu addObject:@[[self menuWithTitle:@"Settings" identifier:@"Settings"]]];
     [self.tableView reloadData];
     [self setCurrentIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];

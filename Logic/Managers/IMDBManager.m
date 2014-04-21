@@ -85,6 +85,9 @@
 - (void)removeDatabase:(void (^)(BOOL success))successHandler
 {
     @try {
+        if (self.onProgress) {
+            self.onProgress();
+        }
         NSManagedObjectContext *managedObjectContext = self.localDatabase.managedObjectContext;
         NSError * error;
         // retrieve the store URL

@@ -11,6 +11,7 @@
 #import "NSString+Encryption.h"
 #import "IMAuthManager.h"
 #import "NSDate+Relativity.h"
+#import "ServerSettingViewController.h"
 
 
 @interface IMLoginViewController ()<UITextFieldDelegate>
@@ -33,6 +34,33 @@
     
 }
 
+- (IBAction)settings
+{
+    NSLog(@"Finaly press setting");
+    //IMServerSettingViewController
+    
+    IMServerSettingViewController *serverSettingVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMServerSettingViewController"];
+    serverSettingVC.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    serverSettingVC.ServerSide.text =  IMBaseURL;
+    serverSettingVC.title = @"Server Setting";
+
+    UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:serverSettingVC];
+    
+    navCon.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:navCon animated:YES completion:nil];
+
+}
+
+
+#pragma mark View Transition
+- (void)changeContentViewTo:(NSString *)viewIdentifier fromSideMenu:(BOOL)fromSideMenu
+{
+   //create view controller
+    
+
+}
+
 - (IBAction)login
 {
     if (!self.textEmail.text.length || !self.textPassword.text.length) {
@@ -42,6 +70,10 @@
     
     self.view.userInteractionEnabled = NO;
     [self.activityIndicator startAnimating];
+    
+    if (IMAPIKey == Nil) {
+        [IMConstants initialize];
+    }
     
     NSDictionary *params = @{@"username": self.textEmail.text,
                              @"password": [self.textPassword.text SHA256],
@@ -116,16 +148,26 @@
 #pragma mark View lifecycle
 - (void)viewDidLoad
 {
+    //reload constants key
+//    [IMConstants initialize];
+    
     [super viewDidLoad];
     
     self.view.tintColor = [UIColor IMLightBlue];
     self.textEmail.delegate = self;
     self.textPassword.delegate = self;
+    
+    self.textServer.delegate = self;
     self.formContainerView.alpha = 0;
     
     [self.textEmail toggleBorder];
     [self.textPassword toggleBorder];
+    
+    [self.textServer toggleBorder];
+    
     [self.buttonLogin setTitleColor:[UIColor IMLightBlue] forState:UIControlStateNormal];
+    [self.buttonSettings setTitleColor:[UIColor IMLightBlue] forState:UIControlStateNormal];
+
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];

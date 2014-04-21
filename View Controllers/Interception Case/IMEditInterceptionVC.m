@@ -48,7 +48,7 @@
     IMInterceptionDataUpdater *updater = [[IMInterceptionDataUpdater alloc] init];
     updater.successHandler = ^{
         [self hideLoadingView];
-        
+        [self showAlertWithTitle:@"Upload Success" message:nil];
         if (self.creationMode) {
             NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
             [context deleteObject:self.interceptionData];
@@ -67,6 +67,14 @@
     
     [self showLoadingView];
     [updater submitInterceptionData:params];
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [self hideLoadingView];
+   [self.tableView reloadData];
+    
 }
 
 - (void)cancel

@@ -10,7 +10,10 @@
 #import "Migrant.h"
 
 
+
 @implementation Biometric
+
+
 
 @dynamic biometricId;
 @dynamic leftIndexImage;

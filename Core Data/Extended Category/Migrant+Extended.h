@@ -24,5 +24,6 @@
 + (Migrant *)migrantWithDictionary:(NSDictionary *)dictionary inContext:(NSManagedObjectContext *)context;
 + (Migrant *)migrantWithId:(NSString *)migrantId inContext:(NSManagedObjectContext *)context;
 + (Migrant *)newMigrantInContext:(NSManagedObjectContext *)context;
++ (Migrant *)newMigrantInContext:(NSManagedObjectContext *)context withId:(NSString*)Id;
 
 @end

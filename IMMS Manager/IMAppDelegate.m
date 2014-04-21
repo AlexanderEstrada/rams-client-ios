@@ -18,6 +18,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    if (IMGoogleAPIKey == Nil) {
+        [IMConstants initialize];
+    }
+    
     [GMSServices provideAPIKey:IMGoogleAPIKey];
     
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"FirstRun"]) {
@@ -54,11 +58,12 @@
 {
     if ([[IMAuthManager sharedManager] isLoggedOn]) {
         if ([[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+            //TODO : comment for testing
             [[IMDBManager sharedManager] checkForUpdates];
         }else {
             [[NSNotificationCenter defaultCenter] postNotificationName:IMSyncShouldStartedNotification object:nil userInfo:nil];
         }
-        
+        //TODO : comment for testing
         [self checkAppUpdates];
     }
     

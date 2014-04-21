@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class BioData, Biometric, FamilyData, Interception, IomData, Movement;
+@class BioData, Biometric, FamilyData, Interception, IomData, Movement,Accommodation;
 
 @interface Migrant : NSManagedObject
 
@@ -22,12 +22,14 @@
 @property (nonatomic, retain) NSString * unhcrStatus;
 @property (nonatomic, retain) NSString * vulnerabilityStatus;
 @property (nonatomic, retain) NSNumber * underIOMCare;
+@property (nonatomic, retain) NSDate * dateCreated;
 @property (nonatomic, retain) BioData *bioData;
 @property (nonatomic, retain) Biometric *biometric;
 @property (nonatomic, retain) FamilyData *familyData;
 @property (nonatomic, retain) NSSet *interceptions;
 @property (nonatomic, retain) IomData *iomData;
 @property (nonatomic, retain) NSSet *movements;
+@property (nonatomic, retain) NSString *detentionLocation;
 @end
 
 @interface Migrant (CoreDataGeneratedAccessors)

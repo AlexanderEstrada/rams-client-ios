@@ -8,7 +8,19 @@
 
 #import "Biometric+Extended.h"
 #import "IMConstants.h"
+#import "Biometric.h"
 
+
+//@interface Biometric () {
+//    dispatch_queue_t imageQueue;
+//    NSManagedObjectContext *context;
+//}
+//
+//@property (nonatomic) NSInteger currentProgress;
+//@property (nonatomic) NSInteger currentTotal;
+//@property (nonatomic) BOOL hasNext;
+//
+//@end
 
 @implementation Biometric (Extended)
 
@@ -29,6 +41,13 @@ NSString *const BIO_RIGHT_INDEX_TEMPLATE    = @"rightIndexTemplate";
 
 + (Biometric *)biometricFromDictionary:(NSDictionary *)dictionary inContext:(NSManagedObjectContext *)context{
     @try {
+        if (dictionary == Nil) {
+            return Nil;
+        }else
+        {
+//            NSLog(@" dictionary : %@",dictionary);
+
+            
         NSString *biometricId = [dictionary objectForKey:BIO_ID];
         Biometric *biometric = [Biometric biometricWithId:biometricId inContext:context];
         if (!biometric) {
@@ -49,7 +68,11 @@ NSString *const BIO_RIGHT_INDEX_TEMPLATE    = @"rightIndexTemplate";
         [biometric updateFingerImageFromBase64String:dictionary[BIO_RIGHT_INDEX_IMAGE] forFingerPosition:RightIndex];
         [biometric updateFingerImageFromBase64String:dictionary[BIO_LEFT_THUMB_IMAGE] forFingerPosition:LeftThumb];
         [biometric updateFingerImageFromBase64String:dictionary[BIO_LEFT_INDEX_IMAGE] forFingerPosition:LeftIndex];
+            
+            
+        }
     }
+                           
     @catch (NSException *exception) {
         NSLog(@"Exception while creating Biometric: %@\n%@", dictionary, [exception description]);
         return nil;
@@ -59,6 +82,9 @@ NSString *const BIO_RIGHT_INDEX_TEMPLATE    = @"rightIndexTemplate";
 + (Biometric *)biometricWithId:(NSString *)biometricId inContext:(NSManagedObjectContext *)context
 {
     @try {
+        if (!biometricId) {
+            return nil;
+        }
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:BIO_ENTITY_NAME];
         request.predicate = [NSPredicate predicateWithFormat:@"biometricId = %@", biometricId];
         NSError *error;

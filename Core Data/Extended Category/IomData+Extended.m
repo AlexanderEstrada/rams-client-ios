@@ -57,6 +57,9 @@
     IomData *data = nil;
     
     @try {
+        if (!iomDataId) {
+            return data;
+        }
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kIomDataEntityName];
         [request setFetchLimit:1];
         request.predicate = [NSPredicate predicateWithFormat:@"iomDataId = %@", iomDataId];
@@ -65,7 +68,11 @@
         NSArray *results = [context executeFetchRequest:request error:&error];
         data = [results lastObject];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating iomDataWithId: \n%@", [exception description]);
+
+    }
     
     return data;
 }

@@ -11,23 +11,61 @@
 #import "IMAuthManager.h"
 
 
+@interface IMHTTPClient () {
+    dispatch_queue_t client;
+    IMHTTPClient *mpClient;
+}
+@end
+
 @implementation IMHTTPClient
 
 + (IMHTTPClient *)sharedClient
 {
-    static dispatch_once_t once;
-    static IMHTTPClient *singleton = nil;
+//    static dispatch_once_t once;
+//    static IMHTTPClient *singleton = nil;
+//    
+//    dispatch_once(&once, ^{
+//        singleton = [[IMHTTPClient alloc] init];
+//    });
+//    
+//    return singleton;
     
-    dispatch_once(&once, ^{
-        singleton = [[IMHTTPClient alloc] init];
+        dispatch_queue_t clientQueue;
+    static IMHTTPClient *instance;
+    
+    clientQueue = dispatch_queue_create("clientQueue", NULL);
+    dispatch_sync(clientQueue, ^{
+        if (!instance) {
+            instance = [[IMHTTPClient alloc] init];
+        }else if(![instance.baseURL isEqual:[NSURL URLWithString:IMBaseURL]])
+        {
+            //reinit instance
+            instance = [[IMHTTPClient alloc] init];
+        }
     });
     
-    return singleton;
+    
+    return instance;
 }
 
 - (id)init
 {
+//    IMConstants* object = [[IMConstants alloc] init]; // Create an instance of SomeClass
+   //TODO : test set url
+//
+   // NSLog(@"Before: %@", [object getURL]);
+    //[object setURL:@"http://172.25.137.125:50000/api"];
+    // NSLog(@"After: %@", [object getURL]);
+//    NSString *gURL =  [object getURL];
+    
+    if (IMBaseURL == Nil) {
+        [IMConstants initialize];
+    }
+    
+    
+    
     self = [super initWithBaseURL:[NSURL URLWithString:IMBaseURL]];
+//    self = [super initWithBaseURL:[NSURL URLWithString:gURL]];
     
     self.parameterEncoding = AFFormURLParameterEncoding;
     [self setDefaultHeader:@"User-Agent" value:@"IMS for iPad"];
@@ -37,10 +75,36 @@
     
     return self;
 }
++ (void)setNewURL
+{
+    [self clientWithBaseURL:[NSURL URLWithString:IMBaseURL]];
+}
+
+- (void)setNewBaseURL
+{
+    IMHTTPClient *singleton = [IMHTTPClient sharedClient];
+    if (singleton) {
+//        [singleton release];
+//         [singleton setValue:IMBaseURL forKey:@"baseURL"];
+
+//        [];
+        
+//        singleton = [super initWithBaseURL:[NSURL URLWithString:IMBaseURL]];
+//        singleton.parameterEncoding = AFFormURLParameterEncoding;
+//        [singleton setDefaultHeader:@"User-Agent" value:@"IMS for iPad"];
+//        [singleton setDefaultHeader:@"Accept" value:@"application/json"];
+//        [singleton setupAuthenticationHeader];
+//        [singleton setAllowsInvalidSSLCertificate:YES];
+    }
+}
 
 - (void)setupAuthenticationHeader
 {
     NSString *accessToken = [IMAuthManager sharedManager].activeUser.accessToken;
+    
+    if (IMAPIKey == Nil) {
+        [IMConstants initialize];
+    }
     if (accessToken) { [self setAuthorizationHeaderWithUsername:IMAPIKey password:accessToken]; }
     else { [self clearAuthorizationHeader]; NSLog(@"default headers: %@", [self defaultValueForHeader:@"Authorization"]); }
 }

@@ -9,6 +9,7 @@
 #import "Biometric.h"
 #import "Biometric+Storage.h"
 
+
 @interface Biometric (Extended)
 
 extern NSString *const BIO_ENTITY_NAME;

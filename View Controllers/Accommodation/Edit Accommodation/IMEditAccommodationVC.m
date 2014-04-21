@@ -372,7 +372,7 @@
         cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeStepper reuseIdentifier:cellIdentifier];
         cell.labelTitle.text = indexPath.row == 0 ? @"Single Room" : @"Family Room";
         cell.stepper.value = indexPath.row == 0 ? [self.data[ACC_SINGLE_CAPACITY] integerValue] : [self.data[ACC_FAMILY_CAPACITY] integerValue];
-        cell.onStepperValueChanged = ^(NSInteger value){
+        cell.onStepperValueChanged = ^(int value){
             self.data[indexPath.row == 0 ? ACC_SINGLE_CAPACITY : ACC_FAMILY_CAPACITY] = @(value);
         };
     }else if (indexPath.section == 2) {

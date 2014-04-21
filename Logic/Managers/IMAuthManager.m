@@ -29,6 +29,12 @@
     return singleton;
 }
 
+- (void)reInit {
+    
+    if ([IMAuthManager sharedManager]) {
+//        [self.sharedManager ]
+    }
+}
 - (void)sendLoginCredentialWithParams:(NSDictionary *)params completion:(void (^)(BOOL success, NSString *message))completion
 {
     NSMutableURLRequest *request = [[IMHTTPClient sharedClient] requestWithMethod:@"POST" path:@"login" parameters:params];

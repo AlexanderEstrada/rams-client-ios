@@ -15,7 +15,7 @@
 
 @property (nonatomic, retain) NSDate * dateOfEntry;
 @property (nonatomic, retain) NSDate * interceptionDate;
-@property (nonatomic, retain) NSNumber * interceptionId;
+@property (nonatomic, retain) NSString * interceptionId;
 @property (nonatomic, retain) NSString * interceptionLocation;
 @property (nonatomic, retain) Migrant *migrant;
 

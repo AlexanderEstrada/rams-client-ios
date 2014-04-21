@@ -17,6 +17,11 @@
 @property (weak, nonatomic) IBOutlet UIButton *buttonLogin;
 @property (weak, nonatomic) IBOutlet UIButton *buttonForgotPassword;
 @property (weak, nonatomic) IBOutlet UIButton *buttonAssistance;
+
+//TODO : alex add
+@property (weak, nonatomic) IBOutlet UIButton *buttonSettings;
+@property (weak, nonatomic) IBOutlet IMTextField *textServer;
+
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UIView *formContainerView;

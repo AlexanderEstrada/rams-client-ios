@@ -10,4 +10,8 @@
 
 @interface Movement (Extended)
 
++ (Movement *)movementWithDictionary:(NSDictionary *)dictionary inContext:(NSManagedObjectContext *)context;
++ (Movement *)movementWithId:(NSString *)movementId inContext:(NSManagedObjectContext *)context;
++ (Movement *)newMovementInContext:(NSManagedObjectContext *)context;
+
 @end

@@ -10,6 +10,7 @@
 #import "InterceptionLocation+Extended.h"
 
 typedef void (^IMDataUpdaterSuccessHandler)(void);
+typedef void (^IMDataUpdaterOnProgressHandler)(void);
 typedef void (^IMDataUpdaterFailureHandler)(NSError *error);
 typedef void (^IMDataUpdaterConflictHandler)(NSDictionary *jsonData);
 
@@ -18,5 +19,6 @@ typedef void (^IMDataUpdaterConflictHandler)(NSDictionary *jsonData);
 @property (nonatomic, copy) IMDataUpdaterSuccessHandler successHandler;
 @property (nonatomic, copy) IMDataUpdaterFailureHandler failureHandler;
 @property (nonatomic, copy) IMDataUpdaterConflictHandler conflictHandler;
+@property (nonatomic, copy) IMDataUpdaterOnProgressHandler onProgress;
 
 @end

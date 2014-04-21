@@ -14,16 +14,16 @@
 @interface Movement : NSManagedObject
 
 @property (nonatomic, retain) NSDate * date;
-@property (nonatomic, retain) NSString * documentNumber;
-@property (nonatomic, retain) NSNumber * movementId;
-@property (nonatomic, retain) NSDate * proposedDate;
-@property (nonatomic, retain) NSString * travelMode;
-@property (nonatomic, retain) NSString * referenceCode;
+@property (nonatomic, retain) NSString * documentNumber;//all exclude escape
+@property (nonatomic, retain) NSString * movementId;
+@property (nonatomic, retain) NSDate * proposedDate; //all exclude escape
+@property (nonatomic, retain) NSString * travelMode; //all exclude escape
+@property (nonatomic, retain) NSString * referenceCode; //all exclude escape
 @property (nonatomic, retain) NSString * type;
-@property (nonatomic, retain) Port *departurePort;
-@property (nonatomic, retain) Country *destinationCountry;
+@property (nonatomic, retain) Port *departurePort; // all exclude escape
+@property (nonatomic, retain) Country *destinationCountry; //AVR , Deportation, Resettlement
 @property (nonatomic, retain) Migrant *migrant;
-@property (nonatomic, retain) Accommodation *originLocation;
-@property (nonatomic, retain) Accommodation *transferLocation;
+@property (nonatomic, retain) Accommodation *originLocation; // transfer
+@property (nonatomic, retain) Accommodation *transferLocation;// transfer
 
 @end

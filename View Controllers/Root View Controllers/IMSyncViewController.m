@@ -14,6 +14,10 @@
 #import "IMPhotoFetcher.h"
 #import "IMDBManager.h"
 #import "Photo+Extended.h"
+#import "IMMigrantFetcher.h"
+#import "IMAuthManager.h"
+#import "IMRegistrationFetcher.h"
+
 
 @interface IMSyncViewController ()<UIAlertViewDelegate>
 @property (nonatomic) BOOL updating;
@@ -27,6 +31,9 @@
 - (void)startSynchronization
 {
     if (self.updating) return;
+  
+    //start blocking
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
     
     [UIView animateWithDuration:.35 animations:^{
         self.warningContainer.alpha = 1;
@@ -50,16 +57,25 @@
         self.warningContainer.alpha = 0;
         [self.buttonStart setTitle:@"Try Again" forState:UIControlStateNormal];
         [self.buttonStart setHidden:NO];
+        if (++self.try_counter > 3) {
+            self.try_counter =0;
+            [[IMAuthManager sharedManager] logout];
+        }
+
     } completion:^(BOOL finished){
         self.updating = NO;
         self.success = NO;
         self.labelTitle.text = @"Updates Failed";
         self.labelProgress.text = @"Please check your internet connection and try again.\nIf problem persist, contact administrator.";
     }];
+    
 }
 
 - (void)finished
 {
+
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+
     self.updating = NO;
     self.labelProgress.text = @"";
     self.success = YES;
@@ -119,13 +135,17 @@
 {
     self.labelProgress.text = @"Updating Interception Cases";
     IMDataFetcher *fetcher = [[IMInterceptionFetcher alloc] init];
-    fetcher.onFinished = ^{ [self synchronizePhotos]; };
+    fetcher.onFinished = ^{ [self fetchMigrants]; };
     [self execute:fetcher];
 }
 
 - (void)fetchMigrants
 {
     self.labelProgress.text = @"Updating Irregular Migrant Data";
+    IMDataFetcher *fetcher = [[IMMigrantFetcher alloc] init];
+    fetcher.onFinished = ^{ [self synchronizePhotos]; };
+    [self execute:fetcher];
+//    [self synchronizePhotos] ;
 }
 
 - (void)synchronizePhotos
@@ -136,8 +156,16 @@
     [self execute:fetcher];
 }
 
+- (void)synchronizeRegistrations
+{
+    self.labelProgress.text = @"Synchronize Registration...";
+    IMDataFetcher *fetcher = [[IMRegistrationFetcher alloc] init];
+    fetcher.onFinished = ^{ [self finished]; };
+    [self execute:fetcher];
+}
 - (void)start
 {
+//   self.updating= self.success = TRUE;
     if (self.success) {
         [self.sideMenuDelegate showContent];
     }else {
@@ -155,6 +183,7 @@
     self.buttonStart.tintColor = [UIColor IMRed];
     self.labelTitle.textColor = [UIColor IMRed];
     [self.buttonStart addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
+    self.try_counter =0;
 }
 
 - (void)viewDidAppear:(BOOL)animated

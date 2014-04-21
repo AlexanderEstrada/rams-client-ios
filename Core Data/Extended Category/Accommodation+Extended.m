@@ -80,7 +80,10 @@ NSString *const ACC_PHOTOS               = @"photos";
         NSArray *results = [context executeFetchRequest:request error:&error];
         return [results lastObject];
     }
-    @catch (NSException *exception) {}
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while accommodationWithId : %@", [exception description]);
+    }
     
     return nil;
 }
