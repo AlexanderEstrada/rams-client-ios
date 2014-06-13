@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IMConstantKeys</key>
+	<dict>
+		<key>IMAPISecret</key>
+		<string>7cb0533b94446f4c49f1eadcffe5f19a31b25d5d</string>
+		<key>IMAPIKey</key>
+		<string>d67acd1c1fa33b68055f9f7dafaa3ae0</string>
+		<key>IMBaseURL</key>
+		<string>https://im.iom.or.id/api</string>
+		<key>IMGoogleAPIKey</key>
+		<string>AIzaSyDyxGaAlNHxtuz5RhUcGmM23JkTtdro-1U</string>
+	</dict>
+	<key>UNHCRDocument</key>
+	<array>
+		<string>No Document</string>
+		<string>Appointment Slip</string>
+		<string>Asylum Seeker Certificate</string>
+		<string>Temporary Protection Certificate</string>
+		<string>Refugee Certificate</string>
+		<string>Refugee Card</string>
+		<string>Rejection Certificate</string>
+	</array>
+	<key>UNHCRStatus</key>
+	<array>
+		<string>Unregistered</string>
+		<string>Registered</string>
+		<string>Undergoing Assessment</string>
+		<string>Refugee</string>
+		<string>Rejected</string>
+	</array>
+	<key>Gender</key>
+	<array>
+		<string>Male</string>
+		<string>Female</string>
+	</array>
+	<key>DetentionLocationType</key>
+	<array>
+		<string>Kanim</string>
+		<string>Rudenim</string>
+		<string>IOM Housing</string>
+		<string>Interception Site</string>
+	</array>
+	<key>MaritalStatus</key>
+	<array>
+		<string>Single</string>
+		<string>Married</string>
+		<string>Widow</string>
+	</array>
+	<key>MovementType</key>
+	<array>
+		<string>Escape</string>
+		<string>Transfer</string>
+		<string>AVR</string>
+		<string>Resettlement</string>
+		<string>Deportation</string>
+		<string>Released</string>
+		<string>Deceased</string>
+	</array>
+	<key>TravelMode</key>
+	<array>
+		<string>Airplane</string>
+		<string>Car</string>
+		<string>Ferry</string>
+		<string>Train</string>
+	</array>
+	<key>Vulnerability</key>
+	<array>
+		<string>No Vulnerability</string>
+		<string>Unaccompanied Minor</string>
+		<string>Pregnant</string>
+		<string>Elderly</string>
+		<string>Blindness</string>
+		<string>Deafness</string>
+		<string>Mental Disability</string>
+		<string>Medical Disability</string>
+		<string>Physical Disability</string>
+		<string>Psychiatric Disability</string>
+		<string>Speech Disability</string>
+	</array>
+</dict>
+</plist>

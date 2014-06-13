@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Accommodation" representedClassName="Accommodation" syncable="YES">
+        <attribute name="accommodationId" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="active" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="city" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="familyCapacity" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="familyOccupancy" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="singleCapacity" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="singleOccupancy" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="interceptionMovements" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterceptionMovement" inverseName="transferLocation" inverseEntity="InterceptionMovement" syncable="YES"/>
+        <relationship name="movementOrigins" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Movement" inverseName="originLocation" inverseEntity="Movement" syncable="YES"/>
+        <relationship name="movementTransfers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Movement" inverseName="transferLocation" inverseEntity="Movement" syncable="YES"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Photo" inverseName="accommodation" inverseEntity="Photo" syncable="YES"/>
+        <relationship name="registration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Registration" inverseName="transferDestination" inverseEntity="Registration" syncable="YES"/>
+    </entity>
+    <entity name="Allowance" representedClassName="Allowance" syncable="YES">
+        <attribute name="allowanceId" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="amount" attributeType="Decimal" syncable="YES"/>
+        <attribute name="date" attributeType="Date" indexed="YES" syncable="YES"/>
+        <attribute name="family" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <relationship name="iomData" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="IomData" inverseName="allowances" inverseEntity="IomData" syncable="YES"/>
+    </entity>
+    <entity name="BioData" representedClassName="BioData" syncable="YES">
+        <attribute name="alias" optional="YES" attributeType="String" maxValueString="80" syncable="YES"/>
+        <attribute name="cityOfBirth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateOfBirth" attributeType="Date" indexed="YES" syncable="YES"/>
+        <attribute name="familyName" optional="YES" attributeType="String" maxValueString="40" syncable="YES"/>
+        <attribute name="firstName" attributeType="String" maxValueString="40" indexed="YES" syncable="YES"/>
+        <attribute name="gender" attributeType="String" maxValueString="6" syncable="YES"/>
+        <attribute name="maritalStatus" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="countryOfBirth" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="bioDatasCountryOfBirth" inverseEntity="Country" syncable="YES"/>
+        <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="bioData" inverseEntity="Migrant" syncable="YES"/>
+        <relationship name="nationality" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="bioDatas" inverseEntity="Country" syncable="YES"/>
+    </entity>
+    <entity name="Biometric" representedClassName="Biometric" syncable="YES">
+        <attribute name="biometricId" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="leftIndexImage" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="leftIndexTemplate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="leftThumbImage" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="leftThumbTemplate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photograph" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rightIndexImage" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rightIndexTemplate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rightThumbImage" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rightThumbTemplate" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="migrant" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="biometric" inverseEntity="Migrant" syncable="YES"/>
+    </entity>
+    <entity name="Child" representedClassName="Child" syncable="YES">
+        <attribute name="registrationNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="familyData" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="FamilyData" inverseName="childs" inverseEntity="FamilyData" syncable="YES"/>
+    </entity>
+    <entity name="Country" representedClassName="Country" syncable="YES">
+        <attribute name="code" attributeType="String" minValueString="3" maxValueString="3" indexed="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="bioDatas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BioData" inverseName="nationality" inverseEntity="BioData" syncable="YES"/>
+        <relationship name="bioDatasCountryOfBirth" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BioData" inverseName="countryOfBirth" inverseEntity="BioData" syncable="YES"/>
+        <relationship name="interceptionGroups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterceptionGroup" inverseName="originCountry" inverseEntity="InterceptionGroup" syncable="YES"/>
+        <relationship name="movements" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Movement" inverseName="destinationCountry" inverseEntity="Movement" syncable="YES"/>
+        <relationship name="registrationCountryOfBirth" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RegistrationBioData" inverseName="countryOfBirth" inverseEntity="RegistrationBioData" syncable="YES"/>
+        <relationship name="registrationNationality" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RegistrationBioData" inverseName="nationality" inverseEntity="RegistrationBioData" syncable="YES"/>
+    </entity>
+    <entity name="FamilyData" representedClassName="FamilyData" syncable="YES">
+        <attribute name="father" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mother" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="spouse" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="childs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Child" inverseName="familyData" inverseEntity="Child" syncable="YES"/>
+        <relationship name="migrant" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="familyData" inverseEntity="Migrant" syncable="YES"/>
+    </entity>
+    <entity name="ImmigrationOfficer" representedClassName="ImmigrationOfficer" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="officerId" optional="YES" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="interceptionData" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="immigrationOfficer" inverseEntity="InterceptionData" syncable="YES"/>
+    </entity>
+    <entity name="Interception" representedClassName="Interception" syncable="YES">
+        <attribute name="dateOfEntry" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionDate" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="interceptionLocation" attributeType="String" syncable="YES"/>
+        <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="interceptions" inverseEntity="Migrant" syncable="YES"/>
+    </entity>
+    <entity name="InterceptionData" representedClassName="InterceptionData" syncable="YES">
+        <attribute name="active" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="expectedMovementDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionDataId" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="interceptionDate" attributeType="Date" indexed="YES" syncable="YES"/>
+        <attribute name="issues" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="immigrationOfficer" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ImmigrationOfficer" inverseName="interceptionData" inverseEntity="ImmigrationOfficer" syncable="YES"/>
+        <relationship name="interceptionGroups" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="InterceptionGroup" inverseName="interceptionData" inverseEntity="InterceptionGroup" syncable="YES"/>
+        <relationship name="interceptionLocation" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionLocation" inverseName="interceptionDatas" inverseEntity="InterceptionLocation" syncable="YES"/>
+        <relationship name="iomOffice" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="IomOffice" inverseName="interceptionData" inverseEntity="IomOffice" syncable="YES"/>
+        <relationship name="iomOfficer" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="IomOfficer" inverseName="interceptionDatas" inverseEntity="IomOfficer" syncable="YES"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Photo" inverseName="interceptionData" inverseEntity="Photo" syncable="YES"/>
+        <relationship name="policeOfficer" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PoliceOfficer" inverseName="interceptionData" inverseEntity="PoliceOfficer" syncable="YES"/>
+    </entity>
+    <entity name="InterceptionGroup" representedClassName="InterceptionGroup" syncable="YES">
+        <attribute name="adult" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="child" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="ethnicName" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="female" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="interceptionGroupId" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="male" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="medicalAttention" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="unaccompaniedMinor" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="interceptionData" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="interceptionGroups" inverseEntity="InterceptionData" syncable="YES"/>
+        <relationship name="interceptionMovements" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="InterceptionMovement" inverseName="interceptionGroup" inverseEntity="InterceptionMovement" syncable="YES"/>
+        <relationship name="originCountry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="interceptionGroups" inverseEntity="Country" syncable="YES"/>
+    </entity>
+    <entity name="InterceptionLocation" representedClassName="InterceptionLocation" syncable="YES">
+        <attribute name="administrativeArea" attributeType="String" syncable="YES"/>
+        <attribute name="interceptionLocationId" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="locality" attributeType="String" syncable="YES"/>
+        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="interceptionDatas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="interceptionLocation" inverseEntity="InterceptionData" syncable="YES"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Photo" inverseName="interceptionLocation" inverseEntity="Photo" syncable="YES"/>
+    </entity>
+    <entity name="InterceptionMovement" representedClassName="InterceptionMovement" syncable="YES">
+        <attribute name="adult" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="child" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="date" attributeType="Date" syncable="YES"/>
+        <attribute name="female" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="interceptionMovementId" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="male" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="medicalAttention" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" attributeType="String" syncable="YES"/>
+        <attribute name="unaccompaniedMinor" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="interceptionGroup" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionGroup" inverseName="interceptionMovements" inverseEntity="InterceptionGroup" syncable="YES"/>
+        <relationship name="transferLocation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Accommodation" inverseName="interceptionMovements" inverseEntity="Accommodation" syncable="YES"/>
+    </entity>
+    <entity name="IomData" representedClassName="IomData" syncable="YES">
+        <attribute name="iomDataId" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="allowances" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Allowance" inverseName="iomData" inverseEntity="Allowance" syncable="YES"/>
+        <relationship name="associatedOffice" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="IomOffice" inverseName="iomData" inverseEntity="IomOffice" syncable="YES"/>
+        <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="iomData" inverseEntity="Migrant" syncable="YES"/>
+    </entity>
+    <entity name="IomOffice" representedClassName="IomOffice" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="interceptionData" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="iomOffice" inverseEntity="InterceptionData" syncable="YES"/>
+        <relationship name="iomData" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="IomData" inverseName="associatedOffice" inverseEntity="IomData" syncable="YES"/>
+        <relationship name="registrations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Registration" inverseName="associatedOffice" inverseEntity="Registration" syncable="YES"/>
+    </entity>
+    <entity name="IomOfficer" representedClassName="IomOfficer" syncable="YES">
+        <attribute name="email" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="phone" attributeType="String" syncable="YES"/>
+        <relationship name="interceptionDatas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="iomOfficer" inverseEntity="InterceptionData" syncable="YES"/>
+    </entity>
+    <entity name="Migrant" representedClassName="Migrant" syncable="YES">
+        <attribute name="active" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="blacklist" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="dateCreated" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="deceased" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="detentionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="registrationNumber" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="underIOMCare" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="unhcrDocument" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unhcrNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unhcrStatus" attributeType="String" defaultValueString="Unregistered" indexed="YES" syncable="YES"/>
+        <attribute name="vulnerabilityStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="bioData" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="BioData" inverseName="migrant" inverseEntity="BioData" syncable="YES"/>
+        <relationship name="biometric" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Biometric" inverseName="migrant" inverseEntity="Biometric" syncable="YES"/>
+        <relationship name="familyData" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="FamilyData" inverseName="migrant" inverseEntity="FamilyData" syncable="YES"/>
+        <relationship name="interceptions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Interception" inverseName="migrant" inverseEntity="Interception" syncable="YES"/>
+        <relationship name="iomData" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="IomData" inverseName="migrant" inverseEntity="IomData" syncable="YES"/>
+        <relationship name="movements" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Movement" inverseName="migrant" inverseEntity="Movement" syncable="YES"/>
+    </entity>
+    <entity name="Movement" representedClassName="Movement" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="documentNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="movementId" attributeType="String" syncable="YES"/>
+        <attribute name="proposedDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="referenceCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="travelMode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="departurePort" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Port" inverseName="movements" inverseEntity="Port" syncable="YES"/>
+        <relationship name="destinationCountry" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="movements" inverseEntity="Country" syncable="YES"/>
+        <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="movements" inverseEntity="Migrant" syncable="YES"/>
+        <relationship name="originLocation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Accommodation" inverseName="movementOrigins" inverseEntity="Accommodation" syncable="YES"/>
+        <relationship name="transferLocation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Accommodation" inverseName="movementTransfers" inverseEntity="Accommodation" syncable="YES"/>
+    </entity>
+    <entity name="Photo" representedClassName="Photo" syncable="YES">
+        <attribute name="photoId" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="accommodation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Accommodation" inverseName="photos" inverseEntity="Accommodation" syncable="YES"/>
+        <relationship name="interceptionData" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="photos" inverseEntity="InterceptionData" syncable="YES"/>
+        <relationship name="interceptionLocation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionLocation" inverseName="photos" inverseEntity="InterceptionLocation" syncable="YES"/>
+    </entity>
+    <entity name="PoliceOfficer" representedClassName="PoliceOfficer" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="officerId" optional="YES" attributeType="Integer 16" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="interceptionData" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="policeOfficer" inverseEntity="InterceptionData" syncable="YES"/>
+    </entity>
+    <entity name="Port" representedClassName="Port" syncable="YES">
+        <attribute name="city" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="province" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="movements" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Movement" inverseName="departurePort" inverseEntity="Movement" syncable="YES"/>
+    </entity>
+    <entity name="Registration" representedClassName="Registration" syncable="YES">
+        <attribute name="active" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="captureDevice" attributeType="String" defaultValueString="FbF mobileOne" syncable="YES"/>
+        <attribute name="complete" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
+        <attribute name="detentionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="registrationId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="transferDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="underIOMCare" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="unhcrDocument" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unhcrNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="vulnerability" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="associatedOffice" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="IomOffice" inverseName="registrations" inverseEntity="IomOffice" syncable="YES"/>
+        <relationship name="bioData" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="RegistrationBioData" inverseName="registration" inverseEntity="RegistrationBioData" syncable="YES"/>
+        <relationship name="biometric" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="RegistrationBiometric" inverseName="registration" inverseEntity="RegistrationBiometric" syncable="YES"/>
+        <relationship name="interceptionData" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="RegistrationInterception" inverseName="registration" inverseEntity="RegistrationInterception" syncable="YES"/>
+        <relationship name="transferDestination" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Accommodation" inverseName="registration" inverseEntity="Accommodation" syncable="YES"/>
+    </entity>
+    <entity name="RegistrationBioData" representedClassName="RegistrationBioData" syncable="YES">
+        <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="familyName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="maritalStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="placeOfBirth" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="countryOfBirth" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="registrationCountryOfBirth" inverseEntity="Country" syncable="YES"/>
+        <relationship name="nationality" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="registrationNationality" inverseEntity="Country" syncable="YES"/>
+        <relationship name="registration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Registration" inverseName="bioData" inverseEntity="Registration" syncable="YES"/>
+    </entity>
+    <entity name="RegistrationBiometric" representedClassName="RegistrationBiometric" syncable="YES">
+        <attribute name="leftIndex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="leftThumb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photograph" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rightIndex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rightThumb" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="registration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Registration" inverseName="biometric" inverseEntity="Registration" syncable="YES"/>
+    </entity>
+    <entity name="RegistrationInterception" representedClassName="RegistrationInterception" syncable="YES">
+        <attribute name="dateOfEntry" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="registration" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Registration" inverseName="interceptionData" inverseEntity="Registration" syncable="YES"/>
+    </entity>
+    <entity name="RegistrationProfile" representedClassName="RegistrationProfile" syncable="YES">
+        <attribute name="accommodationId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cityOfBirth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="countryOfBirthCountryCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateOfEntry" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="interceptionDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iomOfficeName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="maritalStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalityCountryCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="profileName" attributeType="String" indexed="YES" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Accommodation" positionX="162" positionY="41" width="128" height="298"/>
+        <element name="Allowance" positionX="25" positionY="-369" width="128" height="118"/>
+        <element name="BioData" positionX="-144" positionY="-157" width="128" height="193"/>
+        <element name="Biometric" positionX="-576" positionY="-499" width="128" height="208"/>
+        <element name="Child" positionX="-756" positionY="-216" width="128" height="73"/>
+        <element name="Country" positionX="205" positionY="-135" width="128" height="165"/>
+        <element name="FamilyData" positionX="-576" positionY="-220" width="128" height="118"/>
+        <element name="ImmigrationOfficer" positionX="756" positionY="180" width="128" height="103"/>
+        <element name="Interception" positionX="-576" positionY="-37" width="128" height="118"/>
+        <element name="InterceptionData" positionX="583" positionY="290" width="128" height="223"/>
+        <element name="InterceptionGroup" positionX="468" positionY="-243" width="128" height="208"/>
+        <element name="InterceptionLocation" positionX="369" positionY="324" width="128" height="163"/>
+        <element name="InterceptionMovement" positionX="378" positionY="18" width="128" height="208"/>
+        <element name="IomData" positionX="-173" positionY="-403" width="128" height="103"/>
+        <element name="IomOffice" positionX="25" positionY="-568" width="128" height="163"/>
+        <element name="IomOfficer" positionX="756" positionY="50" width="128" height="103"/>
+        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="313"/>
+        <element name="Movement" positionX="-236" positionY="68" width="128" height="225"/>
+        <element name="Photo" positionX="358" positionY="524" width="128" height="103"/>
+        <element name="PoliceOfficer" positionX="754" positionY="320" width="128" height="103"/>
+        <element name="Port" positionX="-441" positionY="113" width="128" height="103"/>
+        <element name="Registration" positionX="207" positionY="-676" width="128" height="298"/>
+        <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="178"/>
+        <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="133"/>
+        <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="103"/>
+        <element name="RegistrationProfile" positionX="576" positionY="-532" width="128" height="208"/>
+    </elements>
+</model>
