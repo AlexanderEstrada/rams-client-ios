@@ -13,6 +13,9 @@
 #import "IMEditRegistrationVC.h"
 #import "IMDBManager.h"
 
+#import "DataReceiver.h"
+#import "DataProvider.h"
+
 @interface IMMigrantViewController ()<UIPopoverControllerDelegate, UITabBarControllerDelegate>
 
 //View Controllers
@@ -26,6 +29,7 @@
 @end
 
 @implementation IMMigrantViewController
+
 
 - (void)updateBasePredicateForSelectedIndex
 {
@@ -78,11 +82,16 @@
                 if (self.selectedIndex == 0) {
                     self.basePredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate]];
                 }
+            }else {
+                //reset base predicate
+                [self updateBasePredicateForSelectedIndex];
             }
             
         }];
         
         self.filterChooser.view.tintColor = [UIColor IMMagenta];
+        //set predicate
+        self.filterChooser.basePredicate = self.basePredicate;
     }else{
         //set predicate
         self.filterChooser.basePredicate = self.basePredicate;
@@ -145,6 +154,9 @@
     
     return YES;
 }
+
+
+
 
 #pragma mark UIPopoverControllerDelegate
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController

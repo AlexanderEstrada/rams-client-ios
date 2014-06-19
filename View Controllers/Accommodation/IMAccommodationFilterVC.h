@@ -23,6 +23,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, copy) void (^onSelectedValue)(BOOL active,NSString *city,NSPredicate *basePredicate);
 @property (nonatomic, copy) void (^onUpdateView)(filter_type type);
+@property (nonatomic, copy) void (^onFilterClear)(void);
 
 - (id)initWithAction:(void (^)(NSPredicate *basePredicate))onSelected;
 - (id)initWithValues:(void (^)(BOOL active,NSString * city,NSPredicate *basePredicate))onSelectedValue;

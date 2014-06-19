@@ -13,6 +13,7 @@
 #import "IMFormCell.h"
 #import "Registration.h"
 #import "IMConstants.h"
+#import "Migrant.h"
 
 
 @interface IMAccommodationChooserVC ()<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate>
@@ -25,6 +26,7 @@
 @property (nonatomic, strong) NSArray *indexTitles;
 @property (nonatomic) NSString* entity;
 @property (nonatomic) NSString* sortDescriptorWithKey;
+@property (nonatomic,strong) NSString * searchString;
 
 @end
 
@@ -50,13 +52,16 @@
     NSFetchRequest *request = Nil;
     if (self.entity) {
         request = [NSFetchRequest fetchRequestWithEntityName:self.entity];
+        request.propertiesToFetch = @[@"detentionLocation"];
+        request.returnsDistinctResults = YES;
+        [request setResultType:NSDictionaryResultType];
+        request.returnsObjectsAsFaults = YES;
+        
     }else{
         request = [NSFetchRequest fetchRequestWithEntityName:@"Accommodation"];
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"city" ascending:YES], [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     }
-    //todo : test
-//    [request setReturnsObjectsAsFaults:YES];
-
+    
     if (self.basePredicate && filterPredicate) {
         request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[self.basePredicate, filterPredicate]];
     }else if (self.basePredicate && !filterPredicate) {
@@ -64,6 +69,7 @@
     }else if (!self.basePredicate && filterPredicate) {
         request.predicate = filterPredicate;
     }
+    
     
     NSManagedObjectContext *moc = [IMDBManager sharedManager].localDatabase.managedObjectContext;
     
@@ -73,45 +79,123 @@
     
     //sort first
     if (self.sortDescriptorWithKey) {
-        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]
-                                            initWithKey:self.sortDescriptorWithKey ascending:YES];
-        NSArray *sortDescriptors = [[NSArray alloc]
-                                    initWithObjects:sortDescriptor, nil];
-        NSMutableArray * sortedElements = [results mutableCopy];
+        
+        NSArray *locationID = [results valueForKeyPath:@"@distinctUnionOfObjects.detentionLocation"];
+        //remove redundent data
+        NSArray * cleanedArray = [[NSSet setWithArray:locationID] allObjects];
+        
         NSMutableArray * tmp = [NSMutableArray array];
+        NSPredicate *searchPredicate = Nil;
+        Accommodation * place = Nil;
+        if (self.searchString) {
+            searchPredicate = [NSPredicate predicateWithFormat:@"name CONTAINS[cd] %@ OR city CONTAINS[cd] %@", self.searchString, self.searchString];
+            self.searchString = Nil;
+        }
         
-        [sortedElements sortUsingDescriptors:sortDescriptors];
-        
-        for (Registration * registration in sortedElements) {
-            Accommodation * place = [Accommodation accommodationWithId:registration.detentionLocation inManagedObjectContext:moc];
-            if (![tmp containsObject:place]) {
-                [tmp addObject:place];
+        for (NSString * detentionLocation in cleanedArray) {
+            if (detentionLocation) {
+                place = [Accommodation accommodationWithId:detentionLocation inManagedObjectContext:moc];
+                //                NSLog(@"place.name : %@",place.name);
+                if (![tmp containsObject:place]) {
+                    if (searchPredicate) {
+                        if ([searchPredicate evaluateWithObject:place]) {
+                            [tmp addObject:place];
+                        }
+                    }else{
+                        [tmp addObject:place];
+                    }
+                }
             }
         }
         
-        NSArray *cities = [tmp valueForKeyPath:@"@distinctUnionOfObjects.city"];
-                for (NSString *city in cities) {
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"active = YES AND city = %@ AND type = %@", city,[[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
-                    if (![dictionary objectForKey:city]) {
-                        [dictionary setObject:[tmp filteredArrayUsingPredicate:predicate] forKey:city];
-                    }
-                    
-                }
         
+        NSArray *cities = [tmp valueForKeyPath:@"@distinctUnionOfObjects.city"];
+        for (NSString *city in cities) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"city = %@ AND type = %@", city,[[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
+            if (![dictionary objectForKey:city]) {
+                [dictionary setObject:[tmp filteredArrayUsingPredicate:predicate] forKey:city];
+            }
+            
+        }
+        //cleanup data
+        cities = Nil;
+        searchPredicate = Nil;
+        place = Nil;
+        locationID = Nil;
+        cleanedArray = Nil;
+        tmp = Nil;
     }else{
-    
-    NSArray *cities = [results valueForKeyPath:@"@distinctUnionOfObjects.city"];
-    for (NSString *city in cities) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"active = YES AND city = %@", city];
-        [dictionary setObject:[results filteredArrayUsingPredicate:predicate] forKey:city];
+        
+        NSArray *cities = [results valueForKeyPath:@"@distinctUnionOfObjects.city"];
+        for (NSString *city in cities) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"active = YES AND city = %@", city];
+            [dictionary setObject:[results filteredArrayUsingPredicate:predicate] forKey:city];
+        }
     }
-    }
     
+    //cleanup data
+    request = Nil;
+    results = Nil;
+    moc = Nil;
     self.data = dictionary;
     self.indexTitles = [[self.data allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
     [self.tableView reloadData];
 }
 
+- (void)setupFetchRequestWithPredicateTest:(NSPredicate *)filterPredicate
+{
+    NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+    NSMutableArray *cityList = [NSMutableArray array];
+    NSMutableDictionary *locationList = [NSMutableDictionary dictionary];
+    
+    NSArray *results;
+    NSError *error;
+    //todo : only display  location that occupide by migrant
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
+    request.propertiesToFetch = @[@"detentionLocation"];
+    request.returnsDistinctResults = YES;
+    [request setResultType:NSDictionaryResultType];
+    request.returnsObjectsAsFaults = YES;
+    results = [context executeFetchRequest:request error:&error];
+    NSArray *locationID = [results valueForKeyPath:@"@distinctUnionOfObjects.detentionLocation"];
+    
+    //remove redundent data
+    NSArray * cleanedArray = [[NSSet setWithArray:locationID] allObjects];
+    
+    
+    
+    for (NSString * place in cleanedArray) {
+        if (place) {
+            Accommodation *location = [Accommodation accommodationWithId:place inManagedObjectContext:context];
+            if (location) {
+                NSString *cityName = location.city;
+                
+                if (![cityList containsObject:cityName]) [cityList addObject:cityName];
+                
+                NSMutableArray *locationInCity = [locationList[cityName] mutableCopy];
+                if (!locationInCity) locationInCity = [NSMutableArray array];
+                
+                if(![locationInCity containsObject:location]) [locationInCity addObject:location];
+                if (![locationList[cityList] isEqualToArray:locationInCity]) {
+                    locationList[cityName] = [locationInCity sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
+                }
+            }//end if (location)
+        }//end if (place)
+    }//end for
+    
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    for (NSString *city in cityList) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"active = YES AND city = %@", city];
+        [dictionary setObject:[results filteredArrayUsingPredicate:predicate] forKey:city];
+    }
+    
+    self.data = dictionary;
+    self.indexTitles = [[self.data allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    [self.tableView reloadData];
+    context = Nil;
+    cityList = Nil;
+    locationList = Nil;
+}//end all
 
 #pragma mark View Lifecycle
 - (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal
@@ -132,6 +216,7 @@
     searchBar.showsCancelButton = NO;
     searchBar.placeholder = @"Search by accommodation's name or city";
     [searchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
     
     [self.view addSubview:searchBar];
     
@@ -154,43 +239,43 @@
 
 - (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal withEntity:(NSString *)entity sortDescriptorWithKey:(NSString*)key
 {
-     if (entity && key) {
-    self = [super init];
-    self.modal = modal;
-    self.basePredicate = basePredicate;
-    self.entity = entity;
-         self.sortDescriptorWithKey = key;
-         
-    
-    self.segmentedControl = [[UISegmentedControl alloc] initWithItems:[self accommodationTypes]];
-    self.segmentedControl.selectedSegmentIndex = 0;
-    [self.segmentedControl addTarget:self action:@selector(filterControlValueChanged:) forControlEvents:UIControlEventValueChanged];
-    self.navigationItem.titleView = self.segmentedControl;
-    
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectZero];
-    searchBar.delegate = self;
-    searchBar.showsCancelButton = NO;
-    searchBar.placeholder = @"Search by accommodation's name or city";
-    [searchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
-    [self.view addSubview:searchBar];
-    
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-    self.tableView.dataSource = self;
-    self.tableView.delegate = self;
-    self.tableView.separatorColor = [UIColor IMBorderColor];
-    self.tableView.backgroundColor = [UIColor whiteColor];
-    [self.tableView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.view addSubview:self.tableView];
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(searchBar, _tableView);
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[searchBar]|" options:NSLayoutFormatDirectionLeftToRight metrics:nil views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[_tableView]|" options:NSLayoutFormatDirectionLeftToRight metrics:nil views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar(44)][_tableView]|" options:0 metrics:nil views:views]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:searchBar attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tableView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
-    
-         return self;
-     }else return Nil;
+    if (entity && key) {
+        self = [super init];
+        self.modal = modal;
+        self.basePredicate = basePredicate;
+        self.entity = entity;
+        self.sortDescriptorWithKey = key;
+        
+        
+        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:[self accommodationTypes]];
+        self.segmentedControl.selectedSegmentIndex = 0;
+        [self.segmentedControl addTarget:self action:@selector(filterControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+        self.navigationItem.titleView = self.segmentedControl;
+        
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectZero];
+        searchBar.delegate = self;
+        searchBar.showsCancelButton = NO;
+        searchBar.placeholder = @"Search by accommodation's name or city";
+        [searchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
+        
+        [self.view addSubview:searchBar];
+        
+        self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        self.tableView.dataSource = self;
+        self.tableView.delegate = self;
+        self.tableView.separatorColor = [UIColor IMBorderColor];
+        self.tableView.backgroundColor = [UIColor whiteColor];
+        [self.tableView setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self.view addSubview:self.tableView];
+        
+        NSDictionary *views = NSDictionaryOfVariableBindings(searchBar, _tableView);
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[searchBar]|" options:NSLayoutFormatDirectionLeftToRight metrics:nil views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[_tableView]|" options:NSLayoutFormatDirectionLeftToRight metrics:nil views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar(44)][_tableView]|" options:0 metrics:nil views:views]];
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:searchBar attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tableView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+        
+        return self;
+    }else return Nil;
 }
 - (void)viewDidLoad
 {
@@ -213,7 +298,7 @@
 
 - (NSArray *)accommodationTypes
 {
-//    return @[@"Housing", @"Rudenim", @"Kanim",@"Interception Site"];
+    //    return @[@"Housing", @"Rudenim", @"Kanim",@"Interception Site"];
     return [IMConstants constantsForKey:CONST_LOCATION];
 }
 
@@ -222,20 +307,27 @@
     if (self.entity) {
         return Nil;
     }else return [NSPredicate predicateWithFormat:@"active = YES AND type = %@", [[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
+    //    return [NSPredicate predicateWithFormat:@"active = YES AND type = %@", [[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
 }
 
 - (NSPredicate *)filterPredicateWithSearchQuery:(NSString *)searchText
 {
     NSPredicate *filterPredicate = [self filterPredicate];
     NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"name CONTAINS[cd] %@ OR city CONTAINS[cd] %@", searchText, searchText];
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[filterPredicate, searchPredicate]];
+    if (self.entity) {
+        self.searchString  = searchText;
+        return Nil;
+    }else {
+        return [NSCompoundPredicate andPredicateWithSubpredicates:@[filterPredicate, searchPredicate]];
+    }
+    
 }
 
 
 #pragma mark UISearchBarDelegate Methods
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
 {
-    searchBar.text = @"";
+    self.searchString = searchBar.text = Nil;
     searchBar.showsCancelButton = NO;
     [searchBar resignFirstResponder];
     [self setupFetchRequestWithPredicate:[self filterPredicate]];
@@ -287,7 +379,7 @@
     
     cell.labelTitle.text = rowData.name;
     cell.labelValue.text = rowData.address;
-
+    
     return cell;
 }
 

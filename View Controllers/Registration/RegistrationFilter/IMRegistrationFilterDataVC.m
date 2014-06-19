@@ -184,8 +184,11 @@
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // Clear the search text
     // Deactivate the UISearchBar
-    searchBar.text=@"";
+    self.name = searchBar.text=@"";
+    self.namePredicate = Nil;
     [self searchBar:searchBar activate:NO];
+    //send update predicate
+    [self sendPredicateChanges];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
@@ -195,17 +198,14 @@
     // You'll probably want to do this on another thread
     // SomeService is just a dummy class representing some
     // api that you are using to do the search
-    if ([searchBar.text length] > 0 ) {
-        
-        self.name = searchBar.text;
-        self.namePredicate = [NSPredicate predicateWithFormat:@"bioData.firstName CONTAINS[cd] %@ || bioData.familyName CONTAINS[cd] %@ || unhcrNumber CONTAINS[cd] %@", self.name,self.name,self.name];
-        
-        //send update predicate
-        [self sendPredicateChanges];
-    }
+    
+    self.name = searchBar.text;
+    self.namePredicate = ([searchBar.text length] > 0 ) ? [NSPredicate predicateWithFormat:@"bioData.firstName CONTAINS[cd] %@ || bioData.familyName CONTAINS[cd] %@ || unhcrNumber CONTAINS[cd] %@", self.name,self.name,self.name]: Nil;
 	
+    //send update predicate
+    [self sendPredicateChanges];
+    
     [self searchBar:searchBar activate:NO];
-	
     
 }
 
@@ -417,11 +417,11 @@
             vc.selectedValue = self.gender;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }else if (indexPath.row == filter_Nationality) {
-            NSPredicate *reg = [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"bioData.nationality.name != %@",Nil],self.basePredicate]];
-            NSLog(@"nationality_basePredicate :%@", [reg description]);
+//            NSPredicate *reg = [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"bioData.nationality.name != %@",Nil],self.basePredicate]];
+//            NSLog(@"nationality_basePredicate :%@", [reg description]);
 //            NSPredicate *reg =[NSPredicate predicateWithFormat:@"bioData.nationality.name != %@",Nil];
 
-            IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:reg presentAsModal:NO popover:YES withEntity:@"Registration" sortDescriptorWithKey:@"bioData.nationality.name"];
+            IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:Nil presentAsModal:NO popover:YES withEntity:@"Registration" sortDescriptorWithKey:@"bioData.nationality.name"];
                 //IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:Nil presentAsModal:NO popover:YES];
             vc.onSelected = ^(Country *country){
                 Country *selectedCountry = [Country countryWithCode:country.code inManagedObjectContext:context];
@@ -448,26 +448,6 @@
         }else if (indexPath.row == filter_Location) {
             [self showAccommodation:indexPath withContext:context];
         
-        }else if (indexPath.row == filter_AgeMin){
-            
-            
-//            //implement Age Min
-//            if (self.age_min > 0) {
-//                
-//                //send change
-//                [self sendPredicateChanges];
-//            }
-//            
-//            
-//        }else if (indexPath.row == filter_AgeMax){
-//            //implement Age Max
-//            if (self.age_max > 0) {
-//                
-//                //send change
-//                [self sendPredicateChanges];
-//                
-//            }
-//           
         }else if (indexPath.row == filter_Apply){
             if (self.age_max < self.age_min) {
                 //show alert
@@ -501,17 +481,9 @@
 {
     if (optionChooser.constantsKey == CONST_GENDER) {
         self.gender = value;
-//        if ([self.gender isEqualToString:@"All"]) {
-//            //reset value
-//            self.genderPredicate = Nil;
-//        }else {
-            //set predicate
             self.genderPredicate = [NSPredicate predicateWithFormat:@"bioData.gender = %@", self.gender];
-//        }
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
 
-//        //send change
-//        [self sendPredicateChanges];
         //show button
         self.applyCell.hidden = self.resetCell.hidden = false;
     }
@@ -528,12 +500,9 @@
 
 - (void)showAccommodation:(NSIndexPath *)indexPath withContext:(NSManagedObjectContext *)context
 {
-//    NSPredicate *reg =[NSPredicate predicateWithFormat:@"detentionLocation != %@",Nil];
-      NSPredicate *reg = [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"detentionLocation != %@",Nil],self.basePredicate]];
-    NSLog(@"showAccommodation_basePredicate :%@", [reg description]);
-    IMAccommodationChooserVC *vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:reg presentAsModal:NO withEntity:@"Registration" sortDescriptorWithKey:@"transferDestination.city"];
-    
-//    IMAccommodationChooserVC *vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
+
+//    NSPredicate *reg = (self.basePredicate != Nil) ? [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"detentionLocation != %@",Nil],self.basePredicate]]:Nil;
+    IMAccommodationChooserVC *vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:Nil presentAsModal:NO withEntity:@"Registration" sortDescriptorWithKey:@"detentionLocation"];
     
     vc.onSelected = ^(Accommodation *accommodation){
         self.detentionLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:context];
@@ -543,8 +512,6 @@
         self.popover = nil;
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 
-//        //send change
-//        [self sendPredicateChanges];
         //show button
         self.applyCell.hidden = self.resetCell.hidden = false;
         
@@ -580,6 +547,10 @@
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
+    if (self.nationalityPredicate || self.genderPredicate || self.namePredicate || self.detentionLocationPredicate || self.ageMinPredicate || self.ageMaxPredicate || self.activePredicate)
+    {
+        self.applyCell.hidden = self.resetCell.hidden = false;
+    }
 }
 
 - (NSDate *)calculateAge:(int)ageValue

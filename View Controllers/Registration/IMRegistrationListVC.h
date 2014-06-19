@@ -7,9 +7,10 @@
 //
 
 #import "IMCollectionViewController.h"
+#import "DataReceiver.h"
 
 
-@interface IMRegistrationListVC : IMCollectionViewController
+@interface IMRegistrationListVC : IMCollectionViewController <DataReceiver>
 
 @property (nonatomic, strong) NSPredicate *basePredicate;
 @property (nonatomic, strong) NSMutableArray *data;

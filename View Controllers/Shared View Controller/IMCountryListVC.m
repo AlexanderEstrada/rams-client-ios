@@ -11,6 +11,8 @@
 #import "IMFormCell.h"
 #import "Registration.h"
 #import "RegistrationBioData.h"
+#import "Migrant.h"
+#import "BioData.h"
 
 @interface IMCountryListVC ()<UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 
@@ -20,6 +22,7 @@
 @property (nonatomic) NSString* entity;
 @property (nonatomic) NSString* sortDescriptorWithKey;
 @property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic) BOOL fromSearchBar;
 
 @end
 
@@ -30,14 +33,15 @@
 - (void)setupFetchRequestWithPredicate:(NSPredicate *)predicate
 {
     NSFetchRequest *request = Nil;
+     NSManagedObjectContext *moc = [IMDBManager sharedManager].localDatabase.managedObjectContext;
     if (self.entity) {
         request = [NSFetchRequest fetchRequestWithEntityName:self.entity];
-        //        request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:self.sortDescriptorWithKey ascending:YES], nil];
+        request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"bioData.nationality.name" ascending:YES], nil];
+        request.returnsDistinctResults = YES;
     }else {
         request = [NSFetchRequest fetchRequestWithEntityName:@"Country"];
         request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES], nil];
     }
-    
     
     [request setReturnsObjectsAsFaults:YES];
     
@@ -47,48 +51,89 @@
         }else{
             request.predicate = self.basePredicate;
         }
-    }else if (predicate){
+    }else if (predicate && !self.fromSearchBar){
         request.predicate = predicate;
     }
-    
-    NSManagedObjectContext *moc = [IMDBManager sharedManager].localDatabase.managedObjectContext;
     
     NSError *error;
     NSArray *results = [moc executeFetchRequest:request error:&error];
     
-    self.countries = [NSMutableDictionary dictionary];
-    self.indexTitles = [NSMutableArray array];
+    if (error) {
+        NSLog(@"Fail to Query : %@",[error description]);
+        return;
+    }
+
+    NSMutableDictionary * dict = [NSMutableDictionary dictionary];
+    NSMutableArray * indexArray = [NSMutableArray array];
     
     //sort first
     if (self.sortDescriptorWithKey) {
-        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]
-                                            initWithKey:self.sortDescriptorWithKey ascending:YES];
-        NSArray *sortDescriptors = [[NSArray alloc]
-                                    initWithObjects:sortDescriptor, nil];
-        NSMutableArray * sortedElements = [results mutableCopy];
-        [sortedElements sortUsingDescriptors:sortDescriptors];
-        
-        for (Registration * registration in sortedElements) {
-            Country *country = registration.bioData.nationality;
-            NSString *indexTitle = [country.name substringToIndex:1];
-            
-            //add index (first char)
-            if (![self.indexTitles containsObject:indexTitle]) {
-                [self.indexTitles addObject:indexTitle];
-            }
-            
-            //add the country data to section data
-            NSMutableArray *sectionData = [[self.countries objectForKey:indexTitle] mutableCopy];
-            if (!sectionData) {
-                sectionData = [NSMutableArray array];
+        if ([self.entity isEqualToString:@"Registration"]) {
+            for (Registration * data in results) {
+                if (data) {
+                    //check if search flag is set, case TRUE, then show only Country that equal from searchBar
+                    if (self.fromSearchBar) {
+                        self.fromSearchBar = NO;
+                        if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
+                    }
+                    
+                    NSString *indexTitle = [data.bioData.nationality.name substringToIndex:1];
+                    
+                    //add index (first char)
+                    if (![indexArray containsObject:indexTitle]) {
+                        [indexArray addObject:indexTitle];
+                    }
+                    
+                    //add the country data to section data
+                    NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
+                    if (!sectionData) {
+                        sectionData = [NSMutableArray array];
+                    }
+                    
+                    if (![sectionData containsObject:data.bioData.nationality]) {
+                        [sectionData addObject:data.bioData.nationality];
+                        [dict setObject:sectionData forKey:indexTitle];
+                    }
+                    
+                }
             }
 
-            if (![sectionData containsObject:country]) {
-                [sectionData addObject:country];
-                [self.countries setObject:sectionData forKey:indexTitle];
+        }else {
+     
+        
+        for (Migrant * data in results) {
+            if (data) {
+                //check if search flag is set, case TRUE, then show only Country that equal from searchBar
+                if (self.fromSearchBar) {
+                    if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
+                }
+                
+                NSString *indexTitle = [data.bioData.nationality.name substringToIndex:1];
+                
+                //add index (first char)
+                if (![indexArray containsObject:indexTitle]) {
+                    [indexArray addObject:indexTitle];
+                }
+                
+                //add the country data to section data
+                NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
+                if (!sectionData) {
+                    sectionData = [NSMutableArray array];
+                }
+                
+                if (![sectionData containsObject:data.bioData.nationality]) {
+                    [sectionData addObject:data.bioData.nationality];
+                    [dict setObject:sectionData forKey:indexTitle];
+                }
+                
             }
-            
         }
+        }
+        //cleanup data
+//        nationID = Nil;
+//        cleanedArray = Nil;
+        
+        
     }else
     {
         for (int i=0; i<[results count]; i++) {
@@ -96,21 +141,25 @@
             NSString *indexTitle = [country.name substringToIndex:1];
             
             //add index (first char)
-            if (![self.indexTitles containsObject:indexTitle]) {
-                [self.indexTitles addObject:indexTitle];
+            if (![indexArray containsObject:indexTitle]) {
+                [indexArray addObject:indexTitle];
             }
             
             //add the country data to section data
-            NSMutableArray *sectionData = [[self.countries objectForKey:indexTitle] mutableCopy];
+            NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
             if (!sectionData) {
                 sectionData = [NSMutableArray array];
             }
             
             [sectionData addObject:country];
-            [self.countries setObject:sectionData forKey:indexTitle];
+            [dict setObject:sectionData forKey:indexTitle];
         }
     }
+    //reset flag
+     self.fromSearchBar = NO;
     results = nil;
+    self.countries = dict;
+    self.indexTitles = indexArray;
     [self.tableView reloadData];
 }
 
@@ -134,6 +183,8 @@
 {
     if ([searchText length] > 0) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name CONTAINS[cd] %@", searchText];
+        //set flag to know this is from searchBar
+        self.fromSearchBar =YES;
         [self setupFetchRequestWithPredicate:predicate];
     }else{
         [self setupFetchRequestWithPredicate:nil];
@@ -294,7 +345,8 @@
     if (self.modal) {
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
     }
-    
+    //set from searchBar to NO
+    self.fromSearchBar = NO;
     self.modalInPopover = YES;
 }
 

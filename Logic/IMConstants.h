@@ -30,6 +30,9 @@ typedef enum
 
 @interface IMConstants : NSObject
 
+#define FluentPagingCollectionViewPreloadMargin  10;
+
+//#define Default_Page_Size 10;
 //@"AIzaSyBX9FNqp2GnryIZGk_yeLY_OrN_9xCORQE"
 #define IMGoogleAPIKey      [[NSUserDefaults standardUserDefaults] stringForKey:@"Google Places API KEY"]
 //#define IMGoogleAPIKey      @"AIzaSyCLrpojeFdP5RVK5M4iRbDgYRcOdIBcZc8"
@@ -86,6 +89,7 @@ extern NSString *const CONST_ROOT;
 extern NSString *const CONST_IOM_OFFICE;
 extern NSString *const CONST_LOCATION;
 extern NSString * _UrlName;
+extern NSInteger const Default_Page_Size;
 
 - (NSString *)getURL;
 - (void)setURL:(NSString*)URLname;

@@ -21,6 +21,7 @@ NSString *const CONST_VULNERABILITY             = @"Vulnerability";
 NSString *const CONST_ROOT                      = @"Root";
 NSString *const CONST_IMConstantKeys            = @"IMConstantKeys";
 NSString *const CONST_LOCATION                  = @"DetentionLocationType";
+NSInteger const Default_Page_Size = 10;
 
 
 //NSString  * _UrlName = @"http://172.25.137.149:8080/";

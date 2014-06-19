@@ -119,8 +119,7 @@
         }
     }
     //send to caller
-    self.onSelected(tmp);
-    
+    self.onSelected(tmp);    
 }
 
 
@@ -184,8 +183,11 @@
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // Clear the search text
     // Deactivate the UISearchBar
-    searchBar.text=@"";
+    self.name = searchBar.text= Nil;
+    self.namePredicate = Nil;
     [self searchBar:searchBar activate:NO];
+    //send update predicate
+    [self sendPredicateChanges];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
@@ -195,15 +197,13 @@
     // You'll probably want to do this on another thread
     // SomeService is just a dummy class representing some
     // api that you are using to do the search
-    if ([searchBar.text length] > 0 ) {
-        
-        self.name = searchBar.text;
-        self.namePredicate = [NSPredicate predicateWithFormat:@"bioData.firstName CONTAINS[cd] %@ || bioData.familyName CONTAINS[cd] %@ || unhcrNumber CONTAINS[cd] %@", self.name,self.name,self.name];
-        
-        //send update predicate
-        [self sendPredicateChanges];
-    }
+    
+    self.name = searchBar.text;
+    self.namePredicate = ([searchBar.text length] > 0 ) ? [NSPredicate predicateWithFormat:@"bioData.firstName CONTAINS[cd] %@ || bioData.familyName CONTAINS[cd] %@ || unhcrNumber CONTAINS[cd] %@", self.name,self.name,self.name]: Nil;
 	
+    //send update predicate
+    [self sendPredicateChanges];
+    
     [self searchBar:searchBar activate:NO];
 	
     
@@ -411,8 +411,8 @@
             vc.selectedValue = self.gender;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }else if (indexPath.row == filter_Nationality) {
-            NSPredicate *reg = [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"bioData.nationality.name != %@",Nil],self.basePredicate]];
-            IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:reg presentAsModal:NO popover:YES withEntity:@"Migrant" sortDescriptorWithKey:@"bioData.nationality.name"];
+//            NSPredicate *reg = [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"bioData.nationality.name != %@",Nil],self.basePredicate]];
+            IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:Nil presentAsModal:NO popover:YES withEntity:@"Migrant" sortDescriptorWithKey:@"bioData.nationality.name"];
             vc.onSelected = ^(Country *country){
                 Country *selectedCountry = [Country countryWithCode:country.code inManagedObjectContext:context];
                 self.country = selectedCountry;
@@ -484,8 +484,11 @@
 
 - (void)showAccommodation:(NSIndexPath *)indexPath withContext:(NSManagedObjectContext *)context
 {
-    NSPredicate *reg = [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"detentionLocation != %@",Nil],self.basePredicate]];
-    IMAccommodationChooserVC *vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:reg presentAsModal:NO withEntity:@"Migrant" sortDescriptorWithKey:@"transferDestination.city"];
+//    NSPredicate *reg = (self.basePredicate != Nil) ? [NSCompoundPredicate andPredicateWithSubpredicates:@[[NSPredicate predicateWithFormat:@"detentionLocation != %@",Nil],self.basePredicate]]:Nil;
+//    NSLog(@"self.basePredicate : %@",[self.basePredicate description]);
+    IMAccommodationChooserVC *vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:Nil presentAsModal:NO withEntity:@"Migrant" sortDescriptorWithKey:@"detentionLocation"];
+    if (vc) {
+   
     vc.onSelected = ^(Accommodation *accommodation){
         self.detentionLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:context];
         //set predicate
@@ -499,6 +502,8 @@
     };
     vc.preferredContentSize = CGSizeMake(500, 400);
     [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:YES];
+        
+    }
 }
 
 - (void)viewDidLoad
@@ -526,6 +531,12 @@
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
+    //check if there is any of filter value is fill, then show apply and reset button
+    
+    if (self.nationalityPredicate || self.genderPredicate || self.namePredicate || self.detentionLocationPredicate || self.ageMinPredicate || self.ageMaxPredicate || self.activePredicate)
+    {
+     self.applyCell.hidden = self.resetCell.hidden = false;
+    }
 }
 
 - (NSDate *)calculateAge:(int)ageValue

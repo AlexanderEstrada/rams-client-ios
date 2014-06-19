@@ -9,9 +9,10 @@
 #import "IMCollectionViewController.h"
 #import <Foundation/NSObject.h>
 #import <Foundation/NSOperation.h>
+#import "DataReceiver.h"
 
 
-@interface IMMigrantListVC : IMCollectionViewController
+@interface IMMigrantListVC : IMCollectionViewController <DataReceiver>
 
 
 @property (nonatomic, strong) NSPredicate *basePredicate;
@@ -19,5 +20,6 @@
 @property (nonatomic) BOOL reloadingData;
 @property (nonatomic, strong) NSOperationQueue *thumbnailQueue;
 @property (nonatomic) BOOL firstLaunch;
+@property (nonatomic) int currentIndex;
 
 @end

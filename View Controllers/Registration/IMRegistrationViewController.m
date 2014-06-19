@@ -15,6 +15,7 @@
 #import "IMViewController.h"
 #import "Registration+Export.h"
 #import "MBProgressHUD.h"
+#import "DataProvider.h"
 
 #define alert_tag_upload 1
 
@@ -112,6 +113,8 @@
         } andBasePredicate:self.basePredicate];
         
         self.filterChooser.view.tintColor = [UIColor IMMagenta];
+        //set predicate
+        self.filterChooser.basePredicate = self.basePredicate;
     }else{
         //set predicate
         self.filterChooser.basePredicate = self.basePredicate;

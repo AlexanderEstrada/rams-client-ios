@@ -218,6 +218,9 @@
 		ACE694EF17F199770095F90C /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EE17F199770095F90C /* GoogleMaps.framework */; };
 		ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = ACE694F017F199AE0095F90C /* GoogleMaps.bundle */; };
 		F2AD1DBA194B089700B05D0D /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F2AD1DB9194B089700B05D0D /* MBProgressHUD.m */; };
+		F2B09A21194EA05B00289E8F /* AWPagedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A20194EA05B00289E8F /* AWPagedArray.m */; };
+		F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A23194EA07F00289E8F /* DataLoadingOperation.m */; };
+		F2B09A28194EA07F00289E8F /* DataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A25194EA07F00289E8F /* DataProvider.m */; };
 		F2B2A7C3193C2A1B00991614 /* IMMigrantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */; };
 		F2B2A7C6193C31C700991614 /* IMMigrantFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C5193C31C700991614 /* IMMigrantFilterDataVC.m */; };
 		F2C139F519487CA8006F8EDD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F419487CA8006F8EDD /* Main.storyboard */; };
@@ -651,6 +654,13 @@
 		ACE694F017F199AE0095F90C /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = Libraries/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
 		F2AD1DB8194B089700B05D0D /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		F2AD1DB9194B089700B05D0D /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		F2B09A1F194EA05B00289E8F /* AWPagedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWPagedArray.h; sourceTree = "<group>"; };
+		F2B09A20194EA05B00289E8F /* AWPagedArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWPagedArray.m; sourceTree = "<group>"; };
+		F2B09A22194EA07F00289E8F /* DataLoadingOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLoadingOperation.h; sourceTree = "<group>"; };
+		F2B09A23194EA07F00289E8F /* DataLoadingOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLoadingOperation.m; sourceTree = "<group>"; };
+		F2B09A24194EA07F00289E8F /* DataProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataProvider.h; sourceTree = "<group>"; };
+		F2B09A25194EA07F00289E8F /* DataProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataProvider.m; sourceTree = "<group>"; };
+		F2B09A26194EA07F00289E8F /* DataReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReceiver.h; sourceTree = "<group>"; };
 		F2B2A7C1193C2A1B00991614 /* IMMigrantListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantListVC.h; sourceTree = SOURCE_ROOT; };
 		F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantListVC.m; sourceTree = SOURCE_ROOT; };
 		F2B2A7C4193C31C700991614 /* IMMigrantFilterDataVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantFilterDataVC.h; sourceTree = SOURCE_ROOT; };
@@ -824,6 +834,7 @@
 		AC807D2517F14F58000988D0 = {
 			isa = PBXGroup;
 			children = (
+				F2B09A1E194E9FCE00289E8F /* 3rdparty */,
 				ACE693F817F159E80095F90C /* View Controllers */,
 				ACE6926517F1599A0095F90C /* Logic */,
 				ACE692A117F159AC0095F90C /* Core Data */,
@@ -1565,6 +1576,20 @@
 			path = Statistic;
 			sourceTree = "<group>";
 		};
+		F2B09A1E194E9FCE00289E8F /* 3rdparty */ = {
+			isa = PBXGroup;
+			children = (
+				F2B09A22194EA07F00289E8F /* DataLoadingOperation.h */,
+				F2B09A23194EA07F00289E8F /* DataLoadingOperation.m */,
+				F2B09A24194EA07F00289E8F /* DataProvider.h */,
+				F2B09A25194EA07F00289E8F /* DataProvider.m */,
+				F2B09A26194EA07F00289E8F /* DataReceiver.h */,
+				F2B09A1F194EA05B00289E8F /* AWPagedArray.h */,
+				F2B09A20194EA05B00289E8F /* AWPagedArray.m */,
+			);
+			name = 3rdparty;
+			sourceTree = "<group>";
+		};
 		F93AFCA418F7A1E100AB63DA /* Filter Registration Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1735,6 +1760,7 @@
 				AC3BA08017FA6A930043235A /* IMinterceptionInfoVC.m in Sources */,
 				ACE6946817F159E80095F90C /* IMOptionChooserViewController.m in Sources */,
 				F2AD1DBA194B089700B05D0D /* MBProgressHUD.m in Sources */,
+				F2B09A28194EA07F00289E8F /* DataProvider.m in Sources */,
 				ACE6934017F159BA0095F90C /* IMFormCell.m in Sources */,
 				ACE6934317F159BA0095F90C /* IMPhotoViewer.m in Sources */,
 				AC4FE833181510680043111B /* Biometric+Storage.m in Sources */,
@@ -1762,6 +1788,7 @@
 				ACE6930617F159AC0095F90C /* Accommodation.m in Sources */,
 				ACE6926417F158E90095F90C /* IMMS.xcdatamodeld in Sources */,
 				AC4092B718161C7400FAA04E /* IMAccommodationViewController.m in Sources */,
+				F2B09A21194EA05B00289E8F /* AWPagedArray.m in Sources */,
 				AC8A6B6E1820F646005A1C3C /* IMRegistrationViewController.m in Sources */,
 				ACE6931117F159AC0095F90C /* InterceptionLocation.m in Sources */,
 				ACE6931B17F159AC0095F90C /* Registration.m in Sources */,
@@ -1823,6 +1850,7 @@
 				ACE6930D17F159AC0095F90C /* ImmigrationOfficer.m in Sources */,
 				ACE6945117F159E80095F90C /* IMInterceptionMovementHistoryVC.m in Sources */,
 				ACE6946517F159E80095F90C /* IMAddPhotoTableViewCell.m in Sources */,
+				F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */,
 				ACE6945917F159E80095F90C /* IMInterceptionMapVC.m in Sources */,
 				ACE6946117F159E80095F90C /* IMRootViewController.m in Sources */,
 				ACE6929E17F1599A0095F90C /* IMGPlace.m in Sources */,
@@ -2001,7 +2029,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2030,7 +2058,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
