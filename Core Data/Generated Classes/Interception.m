@@ -16,6 +16,7 @@
 @dynamic interceptionDate;
 @dynamic interceptionId;
 @dynamic interceptionLocation;
+@dynamic selfReporting;
 @dynamic migrant;
 
 @end

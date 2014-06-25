@@ -7,7 +7,9 @@
 //
 
 @import UIKit;
+#import "IMViewController.h"
 
 @interface IMAccommodationViewController : UITabBarController
+@property (nonatomic, assign) id<IMSideMenuDelegate> sideMenuDelegate;
 
 @end

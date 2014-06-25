@@ -83,6 +83,7 @@
         <attribute name="interceptionDate" attributeType="Date" syncable="YES"/>
         <attribute name="interceptionId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="interceptionLocation" attributeType="String" syncable="YES"/>
+        <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
         <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="interceptions" inverseEntity="Migrant" syncable="YES"/>
     </entity>
     <entity name="InterceptionData" representedClassName="InterceptionData" syncable="YES">
@@ -251,6 +252,7 @@
         <attribute name="dateOfEntry" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="interceptionDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="interceptionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
         <relationship name="registration" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Registration" inverseName="interceptionData" inverseEntity="Registration" syncable="YES"/>
     </entity>
     <entity name="RegistrationProfile" representedClassName="RegistrationProfile" syncable="YES">
@@ -275,7 +277,7 @@
         <element name="Country" positionX="205" positionY="-135" width="128" height="165"/>
         <element name="FamilyData" positionX="-576" positionY="-220" width="128" height="118"/>
         <element name="ImmigrationOfficer" positionX="756" positionY="180" width="128" height="103"/>
-        <element name="Interception" positionX="-576" positionY="-37" width="128" height="118"/>
+        <element name="Interception" positionX="-576" positionY="-37" width="128" height="135"/>
         <element name="InterceptionData" positionX="583" positionY="290" width="128" height="223"/>
         <element name="InterceptionGroup" positionX="468" positionY="-243" width="128" height="208"/>
         <element name="InterceptionLocation" positionX="369" positionY="324" width="128" height="163"/>
@@ -291,7 +293,7 @@
         <element name="Registration" positionX="207" positionY="-676" width="128" height="298"/>
         <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="178"/>
         <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="133"/>
-        <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="103"/>
+        <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>
         <element name="RegistrationProfile" positionX="576" positionY="-532" width="128" height="208"/>
     </elements>
 </model>

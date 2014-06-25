@@ -18,7 +18,6 @@
 #import "IMAuthManager.h"
 #import "IMRegistrationFetcher.h"
 
-
 typedef enum : NSUInteger {
     state_start,
     state_finish,
@@ -55,6 +54,7 @@ typedef enum : NSUInteger {
         self.warningContainer.alpha = 1;
         self.updating = YES;
         self.buttonStart.hidden = YES;
+        self.buttonTryLater.hidden = YES;
         self.progressBar.hidden = NO;
         self.progressBar.progress = 0;
         self.labelTitle.text = @"Data Updates";
@@ -102,10 +102,11 @@ typedef enum : NSUInteger {
         self.warningContainer.alpha = 0;
         [self.buttonStart setTitle:@"Try Again" forState:UIControlStateNormal];
         [self.buttonStart setHidden:NO];
-        if (++self.try_counter > 3) {
-            self.try_counter =0;
-            [[IMAuthManager sharedManager] logout];
-        }
+        [self.buttonTryLater setHidden:NO];
+//        if (++self.try_counter > 3) {
+//            self.try_counter =0;
+//            [[IMAuthManager sharedManager] logout];
+//        }
 
     } completion:^(BOOL finished){
         self.updating = NO;
@@ -138,6 +139,7 @@ typedef enum : NSUInteger {
         self.labelWarning2.hidden = YES;
         self.labelWarning3.hidden = YES;
         self.labelProgress.hidden = YES;
+        self.buttonTryLater.hidden = YES;
         self.warningContainer.alpha = 0;
         self.labelTitle.text = @"Updates Finished";
     }];
@@ -253,9 +255,12 @@ typedef enum : NSUInteger {
     
     self.view.tintColor = [UIColor IMRed];
     self.buttonStart.hidden = YES;
+    self.buttonTryLater.hidden = YES;
     self.buttonStart.tintColor = [UIColor IMRed];
+    self.buttonTryLater.tintColor = [UIColor IMRed];
     self.labelTitle.textColor = [UIColor IMRed];
     [self.buttonStart addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
+     [self.buttonTryLater addTarget:self action:@selector(tryLater) forControlEvents:UIControlEventTouchUpInside];
     self.try_counter =0;
     self.currentState = state_start;
 }
@@ -273,5 +278,29 @@ typedef enum : NSUInteger {
     return UIInterfaceOrientationMaskPortrait;
     
 }
+
+- (void)tryLater
+{
+    //TODO : show alert to user : they need to synch before they can use apps, if yes then showApps, if not then retry again
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Start RAMS without Sync"
+                                                    message:@"There is no data on RAMS, please manually synchronize, before you use RAMS.\nContinue ?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"Yes", nil];
+    alert.tag = IMAlertStartWithoutSynch_Tag;
+    [alert show];
+    
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    
+    if (alertView.tag == IMAlertStartWithoutSynch_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+     //start apps without synch
+         [self.sideMenuDelegate showContent];
+    }
+}
+
 
 @end

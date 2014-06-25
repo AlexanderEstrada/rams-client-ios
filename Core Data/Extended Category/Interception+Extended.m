@@ -34,6 +34,12 @@
         data.dateOfEntry = data.interceptionDate;
         data.interceptionLocation = CORE_DATA_OBJECT([dictionary objectForKey:@"interceptionLocation"]);
         
+        //save selfReporting
+        if (dictionary[@"selfReporting"]) {
+            data.selfReporting = [[dictionary objectForKey:@"selfReporting"] isEqualToString:@"true"] ? @(1):@(0);
+            
+        }else data.selfReporting = FALSE;
+
         return data;
     }
     @catch (NSException *exception) {
@@ -59,6 +65,12 @@
         data.interceptionDate = [NSDate dateFromUTCString:[dictionary objectForKey:@"interceptionDate"]];
         data.dateOfEntry = data.interceptionDate;
         data.interceptionLocation = CORE_DATA_OBJECT([dictionary objectForKey:@"interceptionLocation"]);
+        //save selfReporting
+        if (dictionary[@"selfReporting"]) {
+            data.selfReporting = [[dictionary objectForKey:@"selfReporting"] isEqualToString:@"true"] ? @(1):@(0);
+            
+        }else data.selfReporting = FALSE;
+        
         
         return data;
     }

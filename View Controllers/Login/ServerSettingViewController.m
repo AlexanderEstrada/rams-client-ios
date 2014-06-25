@@ -14,23 +14,6 @@
 @implementation IMServerSettingViewController
 
 
-//- (IBAction)setServerPort:(id)sender {
-//    
-//    if (_ServerPort.isSelected) {
-//
-//    if (![self isNumeric:_ServerPort.text]) {
-//        _ServerPort.text =@"";
-//    }
-//    }
-//}
-//- (IBAction)checkValue:(UITextField *)sender {
-//    if(sender.hasText){
-//        if (![self isNumeric:sender.text]) {
-//            _ServerPort.text =@"";
-//        }
-//    }
-//}
-
 -(BOOL)isNumeric:(NSString*)inputString{
     BOOL isValid = NO;
     NSCharacterSet *alphaNumbersSet = [NSCharacterSet decimalDigitCharacterSet];

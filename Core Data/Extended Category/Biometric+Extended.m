@@ -11,17 +11,6 @@
 #import "Biometric.h"
 
 
-//@interface Biometric () {
-//    dispatch_queue_t imageQueue;
-//    NSManagedObjectContext *context;
-//}
-//
-//@property (nonatomic) NSInteger currentProgress;
-//@property (nonatomic) NSInteger currentTotal;
-//@property (nonatomic) BOOL hasNext;
-//
-//@end
-
 @implementation Biometric (Extended)
 
 NSString *const BIO_ENTITY_NAME             = @"Biometric";
@@ -45,8 +34,6 @@ NSString *const BIO_RIGHT_INDEX_TEMPLATE    = @"rightIndexTemplate";
             return Nil;
         }else
         {
-//            NSLog(@" dictionary : %@",dictionary);
-
             
         NSString *biometricId = [dictionary objectForKey:BIO_ID];
         Biometric *biometric = [Biometric biometricWithId:biometricId inContext:context];

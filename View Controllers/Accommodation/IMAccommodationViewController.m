@@ -14,7 +14,7 @@
 #import "Photo+Extended.h"
 #import "IMAccommodationListVC.h"
 
-@interface IMAccommodationViewController ()<UIPopoverControllerDelegate, UITabBarControllerDelegate>
+@interface IMAccommodationViewController ()<UIPopoverControllerDelegate, UITabBarControllerDelegate,UIAlertViewDelegate>
 
 //View Controllers
 @property (nonatomic, strong) IMAccommodationFilterVC *cityChooser;
@@ -73,13 +73,6 @@
             if ([viewController respondsToSelector:@selector(reloadDataAll)]) {
                 [viewController performSelector:@selector(reloadDataAll) withObject:Nil];
             }
-//             __weak typeof(self) weakSelf = self;
-//            self.cityChooser.onSelected = ^(NSPredicate *basePredicate){
-//                if (basePredicate) {
-//                    weakSelf.basePredicate = basePredicate;
-//                }
-//            };
-            
             break;
         }
         case type_value:{
@@ -144,10 +137,29 @@
 
 - (void)showCreateAccommodation
 {
+    //TODO : check if apps already competely synch, case not, then show alert to synch the apps
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+        alert.tag = IMAlertNeedSynch_Tag;
+        [alert show];
+        return;
+    };
+        
     IMEditAccommodationVC *vc = [[IMEditAccommodationVC alloc] initWithAccommodation:nil];
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
     navCon.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;
     [self presentViewController:navCon animated:YES completion:nil];
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMAlertNeedSynch_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        
+        [self.sideMenuDelegate openSynchronizationDialog:nil];
+        
+    }
+    
 }
 
 

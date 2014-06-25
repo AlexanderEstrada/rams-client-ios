@@ -37,7 +37,7 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
             request.fetchOffset = [indexes firstIndex];
             request.fetchLimit = Default_Page_Size;
             if (basePredicate) request.predicate = basePredicate;
-            
+
             // Generate data
             NSError *error;
             weakSelf->_dataPage = [context executeFetchRequest:request error:&error];

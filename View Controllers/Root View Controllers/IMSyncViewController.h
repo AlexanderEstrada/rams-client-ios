@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
 @property (weak, nonatomic) IBOutlet UILabel *labelProgress;
 @property (weak, nonatomic) IBOutlet UIButton *buttonStart;
+@property (weak, nonatomic) IBOutlet UIButton *buttonTryLater;
 
 @property (weak, nonatomic) IBOutlet UILabel *labelWarning1;
 @property (weak, nonatomic) IBOutlet UILabel *labelWarning2;

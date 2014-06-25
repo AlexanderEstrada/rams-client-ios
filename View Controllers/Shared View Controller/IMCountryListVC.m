@@ -73,7 +73,6 @@
                 if (data) {
                     //check if search flag is set, case TRUE, then show only Country that equal from searchBar
                     if (self.fromSearchBar) {
-                        self.fromSearchBar = NO;
                         if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
                     }
                     
@@ -138,6 +137,10 @@
     {
         for (int i=0; i<[results count]; i++) {
             Country *country = results[i];
+            //check if search flag is set, case TRUE, then show only Country that equal from searchBar
+            if (self.fromSearchBar) {
+                if (![predicate evaluateWithObject:country]) continue;
+            }
             NSString *indexTitle = [country.name substringToIndex:1];
             
             //add index (first char)

@@ -17,7 +17,7 @@
 #import "IomOffice+Extended.h"
 #import "Migrant+Extended.h"
 
-#define TAG_NO_UNHCR_DOC 1
+
 
 @interface IMEditRegistrationDataVC ()<UIPopoverControllerDelegate, IMOptionChooserDelegate>
 
@@ -29,10 +29,6 @@
 
 @implementation IMEditRegistrationDataVC
 
-#define kOptionGenderTag                1
-#define kOptionMaritalStatusTag         2
-#define kOptionDateOfBirthTag           3
-#define kNationality
 
 - (void)setRegistration:(Registration *)registration
 {
@@ -218,7 +214,7 @@
                 if (!self.registration.unhcrDocument){
                         //show alert
                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    alert.tag = TAG_NO_UNHCR_DOC;
+                    alert.tag = IMAlertNOUNHCR_Tag;
                         [alert show];
                     self.registration.unhcrNumber = value = Nil;
                 }else self.registration.unhcrNumber = [value uppercaseString]; };
@@ -250,7 +246,9 @@
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = @"Self Reporting";
             cell.switcher.on = self.registration.selfReporting.boolValue;
-            cell.onSwitcherValueChanged = ^(BOOL value){ self.registration.selfReporting = @(value); };
+            cell.onSwitcherValueChanged = ^(BOOL value){ self.registration.selfReporting = @(value);
+            self.registration.interceptionData.selfReporting = @(value);
+            };
         }
         else {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
@@ -278,7 +276,7 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == TAG_NO_UNHCR_DOC) {
+    if (alertView.tag == IMAlertNOUNHCR_Tag) {
         //reset UNHCR document number
         self.registration.unhcrNumber = Nil;
     }
@@ -345,7 +343,7 @@
             if (!self.registration.unhcrDocument) {
                 //show alert
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                alert.tag = TAG_NO_UNHCR_DOC;
+                alert.tag = IMAlertNOUNHCR_Tag;
                 [alert show];
                 
             }

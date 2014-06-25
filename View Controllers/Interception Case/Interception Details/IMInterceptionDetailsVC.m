@@ -231,7 +231,7 @@
     InterceptionGroup *group = self.groups[section - 3];
     IMTableHeaderView *header = [[IMTableHeaderView alloc] initWithTitle:[group description]
                                                              actionTitle:@"Movements"
-                                                            alignCenterY:YES
+                                                            alignCenterY:NO
                                                          reuseIdentifier:withActionIdentifier];
     UIView *backgroundView = [[UIView alloc] init];
     backgroundView.backgroundColor = [UIColor IMTableHeaderColor];

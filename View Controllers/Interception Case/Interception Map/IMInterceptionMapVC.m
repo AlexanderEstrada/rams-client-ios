@@ -24,14 +24,14 @@
 
 @implementation IMInterceptionMapVC
 
-#define kLatitude -0.5
-#define kLongitude 117
+
+
 
 #pragma mark UI Logic
 - (void)reloadData
 {
     [self.mapView clear];
-    [self.mapView setCamera:[GMSCameraPosition cameraWithLatitude:kLatitude longitude:kLongitude zoom:5]];
+    [self.mapView setCamera:[GMSCameraPosition cameraWithLatitude:IMLatitude longitude:IMLongitude zoom:5]];
         
     for (NSDictionary *groupDict in [self.dataSource interceptionDataByLocation]) {
         GMSMarker *marker = [[GMSMarker alloc] init];
@@ -118,7 +118,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
     dispatch_async(dispatch_get_main_queue(), ^{
-        GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:kLatitude longitude:kLongitude zoom:5];
+        GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:IMLatitude longitude:IMLongitude zoom:5];
         self.mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
         self.mapView.delegate = self;
         self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;

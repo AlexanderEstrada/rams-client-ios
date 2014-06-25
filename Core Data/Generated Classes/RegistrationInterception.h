@@ -16,6 +16,7 @@
 @property (nonatomic, retain) NSDate * dateOfEntry;
 @property (nonatomic, retain) NSDate * interceptionDate;
 @property (nonatomic, retain) NSString * interceptionLocation;
+@property (nonatomic, retain) NSNumber * selfReporting;
 @property (nonatomic, retain) Registration *registration;
 
 @end

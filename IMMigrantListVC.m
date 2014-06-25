@@ -89,8 +89,8 @@
         }
         
         NSError *error;
-        NSUInteger count = [context countForFetchRequest:request error:&error];
-            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:Default_Page_Size initWithTotalData:count withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:self.basePredicate ? self.basePredicate:Nil];
+        NSUInteger total = [context countForFetchRequest:request error:&error];
+        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:self.basePredicate ? self.basePredicate:Nil];
             
             self.dataProvider = dataProvider;
         self.reloadingData = NO;
@@ -189,10 +189,10 @@
         
         UIImage *image = migrant.biometric.photographImage;
         if (image) {
-            cell.photoView.image = [image scaledToWidthInPoint:140];
+            cell.photoView.image = [image scaledToWidthInPoint:100];
         }else {
             cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
-        }
+        }        
         cell.buttonUpload.hidden = TRUE;
         
         if (animated) {
@@ -205,7 +205,7 @@
             cell.labelDetail4.alpha = 0;
             cell.labelDetail5.alpha = 0;
             cell.buttonUpload.alpha = 0;
-            [UIView animateWithDuration:0.3 animations:^{
+            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
                 cell.photoView.alpha = 1;
                 cell.labelTitle.alpha = 1;
                 cell.labelSubtitle.alpha = 1;
@@ -232,14 +232,19 @@
     IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     editVC.registration = registration;
     
-    editVC.registrationSave  = ^(void)
+    editVC.registrationSave  = ^(BOOL remove)
     {
         //TODO : reload Data
         dispatch_async(dispatch_get_main_queue(), ^
                        {
-                           //delete data on data source
-                           [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
-                           [self.collectionView reloadData];
+                           if (remove) {
+                               //delete data on data source
+                               [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
+                               [self.collectionView reloadData];
+                           }else {
+                               //reload Data
+                               [self reloadData];
+                           }
                            
                        });
     };

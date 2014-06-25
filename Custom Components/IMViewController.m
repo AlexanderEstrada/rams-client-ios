@@ -27,6 +27,7 @@
 #pragma mark Specific Custom Implementation
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message{
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    alert.tag = IMDefaultAlertTag;
     [alert show];
 }
 

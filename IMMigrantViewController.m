@@ -16,7 +16,7 @@
 #import "DataReceiver.h"
 #import "DataProvider.h"
 
-@interface IMMigrantViewController ()<UIPopoverControllerDelegate, UITabBarControllerDelegate>
+@interface IMMigrantViewController ()<UIPopoverControllerDelegate, UITabBarControllerDelegate,UIAlertViewDelegate>
 
 //View Controllers
 @property (nonatomic, strong) IMMigrantFilterDataVC * filterChooser;
@@ -126,11 +126,30 @@
 
 - (void)showCreateRegistration
 {
+    //TODO : check if apps already competely synch, case not, then show alert to synch the apps
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+        alert.tag = IMAlertNeedSynch_Tag;
+        [alert show];
+        return;
+    };
+    
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
     navCon.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;
     [self presentViewController:navCon animated:YES completion:nil];
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMAlertNeedSynch_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        
+        [self.sideMenuDelegate openSynchronizationDialog:nil];
+        
+    }
+    
 }
 
 #pragma mark UITabBarControllerDelegate

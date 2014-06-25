@@ -16,6 +16,8 @@
 @property (nonatomic, strong) InterceptionData *interceptionData;
 @property (nonatomic) BOOL allowsEditing;
 
+@property (nonatomic, copy) void (^Cancel)(void);
+
 - (id)initWithInterceptionData:(InterceptionData *)data delegate:(id<IMInterceptionDelegate>)delegate;
 
 @end

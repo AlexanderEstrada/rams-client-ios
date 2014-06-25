@@ -291,10 +291,9 @@ typedef enum : NSUInteger {
 
 - (void)save
 {
-    //set current date for date of entry
-    if (self.registration.interceptionData.dateOfEntry == Nil) {
-        self.registration.interceptionData.dateOfEntry =[NSDate date];
-    }
+    
+    NSNumber * lastStatus = self.registration.complete;
+    BOOL needRemove = NO;
     
     //checking the value
     if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
@@ -303,7 +302,16 @@ typedef enum : NSUInteger {
         [alert show];
         return;
     }
+    //set current date for date of entry
+    if (self.registration.interceptionData.dateOfEntry == Nil) {
+        self.registration.interceptionData.dateOfEntry =[NSDate date];
+    }
+    
     [self.registration validateCompletion];
+    needRemove = (lastStatus != self.registration.complete);
+    
+    self.registration.dateCreated = [NSDate date];
+    
     NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
     NSError *error;
     
@@ -322,6 +330,7 @@ typedef enum : NSUInteger {
         for (NSManagedObject *managedObject in data) {
             [workingContext deleteObject:managedObject];
             NSLog(@"%i object deleted",i);
+            needRemove = YES;
         }
         
     }
@@ -330,13 +339,14 @@ typedef enum : NSUInteger {
         NSLog(@"Error saving context: %@", [error description]);
         [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
     }else {
+        //save database
+        [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
         [self dismissViewControllerAnimated:YES completion:nil];
         if (self.registrationSave) {
-            self.registrationSave();
+            self.registrationSave(needRemove);
         }
     }
     
-    // [workingContext reset];
 }
 
 

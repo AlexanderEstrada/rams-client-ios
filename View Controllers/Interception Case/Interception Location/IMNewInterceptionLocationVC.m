@@ -33,10 +33,6 @@
 
 @implementation IMNewInterceptionLocationVC
 
-#define kAlertLocationConfirmationTag   100
-#define kAlertLocationExistsTag         200
-#define kAlertContinueToPopNavigation   300
-
 
 #pragma mark Logical Methods
 - (void)save
@@ -64,7 +60,7 @@
                                 [self hideLoadingView];
                                 
                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Location Saved" message:nil delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                                alert.tag = kAlertContinueToPopNavigation;
+                                alert.tag = IMAlertContinueToPopNavigation_Tag;
                                 [alert show];
                             };
     updater.conflictHandler = ^(NSDictionary *jsonData){
@@ -74,7 +70,7 @@
                                 
                                 NSString *message = [NSString stringWithFormat:@"Location with same coordinate exists. Do you want to update \n\"%@, %@, %@\" \ninformation with your input?", self.fetchedLocation[@"name"], self.fetchedLocation[@"locality"], self.fetchedLocation[@"administrativeArea"]];
                                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Duplicate Location" message:message delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
-                                alert.tag = kAlertLocationExistsTag;
+                                alert.tag = IMAlertLocationExists_Tag;
                                 [alert show];
                             };
     updater.failureHandler = ^(NSError *error){
@@ -119,7 +115,7 @@
         if (self.foundPlace) {
             NSString *message = [NSString stringWithFormat:@"Found location:\n%@", [self.foundPlace description]];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Location" message:message delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];
-            alert.tag = kAlertLocationConfirmationTag;
+            alert.tag = IMAlertLocationConfirmation_Tag;
             [alert show];
         }else {
             [self showAlertWithTitle:@"Location Not Found" message:@"Try changing location name and search again."];
@@ -133,7 +129,7 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == kAlertLocationConfirmationTag) {
+    if (alertView.tag == IMAlertLocationConfirmation_Tag) {
         if (buttonIndex != [alertView cancelButtonIndex]) {
             self.coordinate = self.foundPlace.coordinate;
             self.city = self.foundPlace.city;
@@ -143,11 +139,11 @@
             self.foundPlace = nil;
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
-    }else if (alertView.tag == kAlertLocationExistsTag) {
+    }else if (alertView.tag == IMAlertLocationExists_Tag) {
         if (buttonIndex != [alertView cancelButtonIndex]) {
             [self save];
         }
-    }else if (alertView.tag == kAlertContinueToPopNavigation) {
+    }else if (alertView.tag == IMAlertContinueToPopNavigation_Tag) {
         [self.navigationController popViewControllerAnimated:YES];
     }
 }

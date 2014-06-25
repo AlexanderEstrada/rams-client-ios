@@ -15,6 +15,7 @@
 @dynamic dateOfEntry;
 @dynamic interceptionDate;
 @dynamic interceptionLocation;
+@dynamic selfReporting;
 @dynamic registration;
 
 @end

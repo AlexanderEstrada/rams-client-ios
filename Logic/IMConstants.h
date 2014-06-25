@@ -32,24 +32,10 @@ typedef enum
 
 #define FluentPagingCollectionViewPreloadMargin  10;
 
-//#define Default_Page_Size 10;
-//@"AIzaSyBX9FNqp2GnryIZGk_yeLY_OrN_9xCORQE"
 #define IMGoogleAPIKey      [[NSUserDefaults standardUserDefaults] stringForKey:@"Google Places API KEY"]
-//#define IMGoogleAPIKey      @"AIzaSyCLrpojeFdP5RVK5M4iRbDgYRcOdIBcZc8"
 #define IMBaseURL           [[NSUserDefaults standardUserDefaults] stringForKey:@"API URL"]
-//#define IMBaseURL           @"https://im.iom.or.id/api"
-//#define IMBaseURL           @"http://172.25.137.149:8080/api"
-//#define IMBaseURL           @"http://172.25.137.227:8080/api"
-//#define IMBaseURL           @"http://192.168.43.236:8080/api"
-//#define IMBaseURL           @"http://172.25.137.125:50000/api"
-
-//NSString *IMBaseURL;
-//@"d67acd1c1fa33b68055f9f7dafaa3ae0"
 #define IMAPIKey            [[NSUserDefaults standardUserDefaults] stringForKey:@"API Key"]
-//#define IMAPIKey            @"d67acd1c1fa33b68055f9f7dafaa3ae0"
-//@"7cb0533b94446f4c49f1eadcffe5f19a31b25d5d"
 #define IMAPISecret         [[NSUserDefaults standardUserDefaults] stringForKey:@"API Secret"]
-//#define IMAPISecret     @"7cb0533b94446f4c49f1eadcffe5f19a31b25d5d"
 
 
 #define CORE_DATA_OBJECT(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -76,6 +62,35 @@ typedef enum
 #define IMBaseURLKey                    @"IMBaseURL"
 #define IMAPIKeyConstant                @"IMAPIKey"
 #define IMAPISecretKey                  @"IMAPISecret"
+
+
+// Tag value
+#define IMDefaultAlertTag               666
+#define IMAlertUpload_Tag                   1
+#define IMAlertUpdate_Tag                   2
+#define IMAlertRelogin_Tag                  3
+#define IMAlertNeedSynch_Tag                4
+#define IMAlertNOUNHCR_Tag                  5
+#define IMAlertLocationConfirmation_Tag     6
+#define IMAlertLocationExists_Tag           7
+#define IMAlertContinueToPopNavigation_Tag  8
+#define IMAlertStartWithoutSynch_Tag        9
+
+
+
+//Longitude & Latitude
+#define IMLatitude                          -0.5
+#define IMLongitude                         117
+
+
+//Root View Controller
+#define IMRootViewSideMenuOffsetX        -50
+#define IMRootViewContentCenterOffsetX   300
+#define IMRootViewAnimationDuration      0.3
+
+//Anymous
+
+
 
 extern NSString *const CONST_UNHCR_DOCUMENT;
 extern NSString *const CONST_UNHCR_STATUS;

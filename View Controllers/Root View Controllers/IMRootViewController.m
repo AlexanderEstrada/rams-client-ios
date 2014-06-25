@@ -15,6 +15,8 @@
 #import "NSDate+Relativity.h"
 
 
+
+
 @interface IMRootViewController ()<IMSideMenuDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, readwrite) BOOL menuHidden;
@@ -33,9 +35,6 @@
 @synthesize swipeRightGesture = _swipeRightGesture;
 @synthesize tapGesture = _tapGesture;
 
-#define kSideMenuOffsetX        -50
-#define kContentCenterOffsetX   300
-#define kAnimationDuration      0.3
 
 - (CGRect)rectWithOffsetX:(CGFloat)offsetX originalRect:(CGRect)rect
 {
@@ -54,11 +53,11 @@
     topViewController.view.userInteractionEnabled = NO;
     
     if (self.menuHidden) {
-        self.menuContainerView.frame = [self rectWithOffsetX:kSideMenuOffsetX originalRect:self.menuContainerView.frame];
+        self.menuContainerView.frame = [self rectWithOffsetX:IMRootViewSideMenuOffsetX originalRect:self.menuContainerView.frame];
         [self.menuViewController viewWillAppear:YES];
-        [UIView animateWithDuration:kAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseIn
+        [UIView animateWithDuration:IMRootViewAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseIn
                          animations:^{
-                             self.contentContainerView.frame = [self rectWithOffsetX:kContentCenterOffsetX originalRect:self.contentContainerView.frame];
+                             self.contentContainerView.frame = [self rectWithOffsetX:IMRootViewContentCenterOffsetX originalRect:self.contentContainerView.frame];
                              self.menuContainerView.frame = [self rectWithOffsetX:0 originalRect:self.menuContainerView.frame];
                          } completion:^(BOOL finished){
                              self.menuHidden = !self.menuHidden;
@@ -68,10 +67,10 @@
                          }];
         
     }else {
-        [UIView animateWithDuration:kAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseIn
+        [UIView animateWithDuration:IMRootViewAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              self.contentContainerView.frame = [self rectWithOffsetX:0 originalRect:self.contentContainerView.frame];
-                             self.menuContainerView.frame = [self rectWithOffsetX:kSideMenuOffsetX originalRect:self.menuContainerView.frame];
+                             self.menuContainerView.frame = [self rectWithOffsetX:IMRootViewSideMenuOffsetX originalRect:self.menuContainerView.frame];
                          }
                          completion:^(BOOL finished){
                              self.menuHidden = !self.menuHidden;
@@ -85,6 +84,16 @@
     self.menuDisable = value;
 }
 
+- (void)ExpiredToken
+{
+    //show alert to let user know that token has expired
+    [self showAlertWithTitle:@"Token Expired" message:@"Please Relogin."];
+    
+}
+#pragma mark UIAlertViewDelegate
+
+
+
 - (void)showLogin
 {
     [self changeContentViewTo:@"IMLoginViewController" fromSideMenu:NO];
@@ -93,7 +102,7 @@
 - (void)showContent
 {
     [self changeContentViewTo:@"IMInterceptionViewController" fromSideMenu:NO];
-//    [self changeContentViewTo:@"IMRegistrationViewController" fromSideMenu:NO];
+    //    [self changeContentViewTo:@"IMRegistrationViewController" fromSideMenu:NO];
 }
 
 - (void)openSynchronizationDialog:(NSNotification *)notification
@@ -101,6 +110,7 @@
     if (notification && notification.userInfo) {
         int numUpdates = [[notification.userInfo objectForKey:IMUpdatesAvailable] intValue];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Updates Available" message:[NSString stringWithFormat:@"You have %i data updates available. Do you want to sync now?", numUpdates] delegate:self cancelButtonTitle:@"Later" otherButtonTitles:@"Sync Now", nil];
+        alert.tag = IMAlertUpdate_Tag;
         [alert show];
     }else {
         [self changeContentViewTo:@"IMSyncViewController" fromSideMenu:NO];
@@ -109,7 +119,10 @@
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != [alertView cancelButtonIndex]) [self openSynchronizationDialog:nil];
+    if (alertView.tag == IMAlertUpdate_Tag &&  buttonIndex != [alertView cancelButtonIndex]){ [self openSynchronizationDialog:nil];}
+    else if (alertView.tag == IMDefaultAlertTag){
+        [self showLogin];
+    }
 }
 
 
@@ -121,7 +134,7 @@
         if (!self.menuHidden) [self showMenu];
         return;
     }
-
+    
     UIViewController *nextVC = [self.storyboard instantiateViewControllerWithIdentifier:viewIdentifier];
     if (self.childViewController) {
         [self.childViewController.view removeGestureRecognizer:self.tapGesture];
@@ -133,7 +146,7 @@
         
         [self transitionFromViewController:self.childViewController
                           toViewController:nextVC
-                                  duration:kAnimationDuration
+                                  duration:IMRootViewAnimationDuration
                                    options:UIViewAnimationOptionTransitionCrossDissolve
                                 animations:^{}
                                 completion:^(BOOL finished){
@@ -213,14 +226,14 @@
     self.firstLaunch = YES;
     self.menuDisable = NO;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showLogin) name:IMAccessExpiredNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ExpiredToken) name:IMAccessExpiredNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(openSynchronizationDialog:) name:IMSyncShouldStartedNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    
     if (self.firstLaunch) {
         for (UIViewController *vc in self.childViewControllers) {
             if ([vc isKindOfClass:[IMMenuViewController class]]) {
@@ -231,7 +244,7 @@
         }
         
         self.childViewController = nil;
-
+        
         if ([[IMAuthManager sharedManager] isLoggedOn]) {
             [self showContent];
         }else {

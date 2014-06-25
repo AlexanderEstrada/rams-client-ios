@@ -39,6 +39,14 @@
         _dataProvider.delegate = self;
         _dataProvider.shouldLoadAutomatically = YES;
         _dataProvider.automaticPreloadMargin = FluentPagingCollectionViewPreloadMargin;
+        
+        dispatch_async(dispatch_get_main_queue(), ^
+                       {
+                           if ([self isViewLoaded]) {
+                               [self.collectionView reloadData];
+                           }
+                       });
+        
     }
 }
 
@@ -74,20 +82,24 @@
         
         NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
-        request.predicate = self.basePredicate;
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"dateCreated" ascending:NO]];
+        if (self.basePredicate) {
+            request.predicate = self.basePredicate;
+        }else {
+            //default
+            self.basePredicate = request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+        }
+        
         request.returnsObjectsAsFaults = YES;
         
         NSError *error;
         
         NSUInteger total = [context countForFetchRequest:request error:&error];
-            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:Default_Page_Size initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:(self.basePredicate != Nil)? self.basePredicate:Nil];
-            self.dataProvider = dataProvider;
-            dispatch_async(dispatch_get_main_queue(), ^
-                           {
-                               [self.collectionView reloadData];
-                           });
+        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:(self.basePredicate != Nil)? self.basePredicate:Nil];
+        self.dataProvider = Nil;
+        [self setDataProvider:dataProvider];
+        
         self.reloadingData = NO;
+        
     }
     
     
@@ -228,10 +240,12 @@
         
         UIImage *image = registration.biometric.photographImage;
         if (image) {
-            cell.photoView.image = [image scaledToWidthInPoint:140];
+            cell.photoView.image = [image scaledToWidthInPoint:100];
         }else {
             cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
         }
+        
+        [self circleImageView:cell.photoView];
         
         cell.buttonUpload.hidden = !registration.complete.boolValue;
         [cell.buttonUpload removeTarget:self action:@selector(upload:) forControlEvents:UIControlEventTouchUpInside];
@@ -247,7 +261,7 @@
             cell.labelDetail4.alpha = 0;
             cell.labelDetail5.alpha = 0;
             cell.buttonUpload.alpha = 0;
-            [UIView animateWithDuration:0.3 animations:^{
+            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
                 cell.photoView.alpha = 1;
                 cell.labelTitle.alpha = 1;
                 cell.labelSubtitle.alpha = 1;
@@ -262,6 +276,12 @@
     }
 }
 
+- (void)circleImageView:(UIImageView *)imageView
+{
+    imageView.layer.cornerRadius = imageView.frame.size.width / 2;
+    imageView.layer.masksToBounds = YES;
+}
+
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     Registration *registration = self.dataProvider.dataObjects[indexPath.row];
@@ -269,18 +289,16 @@
     IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     editVC.registration = registration;
     
-    editVC.registrationSave  = ^(void)
+    editVC.registrationSave = ^(BOOL remove)
     {
-        
-        //TODO : reload Data
-        dispatch_async(dispatch_get_main_queue(), ^
-                       {
-                           //delete data on data source
-                           [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
-                           [self.collectionView reloadData];
-                           
-                       });
-        
+        if (remove) {
+            //delete data on data source
+            [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
+            [self.collectionView reloadData];
+        }else {
+            //reload Data
+            [self reloadData];
+        }
     };
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:editVC];

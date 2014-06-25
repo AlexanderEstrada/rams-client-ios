@@ -17,8 +17,6 @@
 #import "MBProgressHUD.h"
 #import "DataProvider.h"
 
-#define alert_tag_upload 1
-
 
 @interface IMRegistrationViewController ()<UIPopoverControllerDelegate, UITabBarControllerDelegate,MBProgressHUDDelegate>
 
@@ -55,9 +53,14 @@
         }else if(self.selectedIndex == 1){
             self.basePredicate = vc.basePredicate =  [NSPredicate predicateWithFormat:@"complete = YES"];
             self.itemUploadAll.enabled = TRUE;
-        }else {
+        }else if(self.selectedIndex == 2){
             self.basePredicate = vc.basePredicate = [NSPredicate predicateWithFormat:@"complete = %@",@(REG_STATUS_LOCAL)];
             self.itemUploadAll.enabled = FALSE;
+        }else {
+            //default is indext 0
+            self.basePredicate = vc.basePredicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+            self.itemUploadAll.enabled = FALSE;
+
         }
         
         if (self.filterChooser) {
@@ -142,6 +145,14 @@
 
 - (void)showCreateRegistration
 {
+    //TODO : check if apps already competely synch, case not, then show alert to synch the apps
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+        alert.tag = IMAlertNeedSynch_Tag;
+        [alert show];
+        return;
+    };
+    
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -158,16 +169,20 @@
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
 {
-    NSUInteger index = [self.viewControllers indexOfObject:viewController];
-    
-    if (index == 0) {
-        self.title = @"Incomplete Registration";
-    }else if (index == 1) {
-        self.title = @"Pending Registration";
-    }else {
-        self.title = @"Local Migrant Data";
+    switch ([self.viewControllers indexOfObject:viewController]) {
+        case 0:
+            self.title = @"Incomplete Registration";
+            break;
+        case 1:
+            self.title = @"Pending Registration";
+            break;
+        case 2:
+            self.title = @"Local Migrant Data";
+            break;
+        default:
+             self.title = @"Incomplete Registration";
+            break;
     }
-    
     
     return YES;
 }
@@ -203,6 +218,11 @@
     
     self.navigationItem.rightBarButtonItems = @[itemCreate,itemFilter,self.itemUploadAll];
     self.receive_warning = FALSE;
+    //reset top layout
+//    self.edgesForExtendedLayout=UIRectEdgeNone;
+    //TODO : reload Data
+//    self.basePredicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+    
     
 }
 
@@ -211,7 +231,7 @@
 {
     
     
-    if (alertView.tag == alert_tag_upload && buttonIndex != [alertView cancelButtonIndex]) {
+    if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
         if (!_HUD) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
@@ -235,6 +255,10 @@
         // Show the HUD while the provided method executes in a new thread
         [_HUD showWhileExecuting:@selector(uploading) onTarget:self withObject:nil animated:YES];
         
+        
+    } else if (alertView.tag == IMAlertNeedSynch_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        
+        [self.sideMenuDelegate openSynchronizationDialog:nil];
         
     }
     
@@ -294,7 +318,7 @@
                 if(self.progress < self.total ){
                     self.progress += 1;
                     _HUD.progress = self.progress/self.total;
-                    _HUD.labelText = [NSString stringWithFormat:@"Uploaded %i of %i",(int)self.progress,[results count]];
+                    _HUD.labelText = [NSString stringWithFormat:@"Uploaded %i of %lu",(int)self.progress,(unsigned long)[results count]];
                     NSLog(@"Upload : %f from %lu",self.progress,(unsigned long)[results count]);
                     
                 }else self.upload_finish = TRUE;
@@ -361,8 +385,6 @@
         _HUD.mode = MBProgressHUDModeIndeterminate;
         
         //save database
-        
-        
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
         [self dismissViewControllerAnimated:YES completion:nil];
         
@@ -391,7 +413,7 @@
                                                    delegate:self
                                           cancelButtonTitle:@"Cancel"
                                           otherButtonTitles:@"Yes", nil];
-    alert.tag = alert_tag_upload;
+    alert.tag = IMAlertUpload_Tag;
     [alert show];
     
 }

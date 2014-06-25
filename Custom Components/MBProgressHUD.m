@@ -5,7 +5,7 @@
 //
 
 #import "MBProgressHUD.h"
-//#import "UIColor+IMMS.h"
+#import "IMConstants.h"
 
 @interface MBProgressHUD ()
 
@@ -557,7 +557,7 @@
     // Fade in
     if (animated) {
         [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationDuration:0.30];
+        [UIView setAnimationDuration:IMRootViewAnimationDuration];
         self.alpha = 1.0;
         if (animationType == MBProgressHUDAnimationZoom) {
             self.transform = rotationTransform;
@@ -573,7 +573,7 @@
     // Fade out
     if (animated) {
         [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationDuration:0.30];
+        [UIView setAnimationDuration:IMRootViewAnimationDuration];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationFinished: finished: context:)];
         // 0.02 prevents the hud from passing through touches during the animation the hud will get completely hidden

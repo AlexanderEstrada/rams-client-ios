@@ -19,15 +19,11 @@
 
 #import "MBProgressHUD.h"
 
+@interface IMSettingsViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,MBProgressHUDDelegate>
 
-@interface IMSettingsViewController () <MBProgressHUDDelegate> {
+{
 	MBProgressHUD *HUD;
 }
-
-@end
-
-
-@interface IMSettingsViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 
 @end
 

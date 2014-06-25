@@ -76,7 +76,7 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
         //Registration Data
         [formatted setObject:self.captureDevice forKey:REG_CAPTURE_DEVICE];
         [formatted setObject:self.underIOMCare?@"true":@"false" forKey:REG_IOM_CARE];
-        [formatted setObject:self.selfReporting?@"true":@"false" forKey:REG_SELF_REPORT];
+        
         //    [formatted setObject:self.underIOMCare forKey:REG_IOM_CARE];
         [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
         if (self.unhcrDocument) [formatted setObject:self.unhcrDocument forKey:REG_UNHCR_DOCUMENT];
@@ -105,6 +105,7 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
         
         [interception setObject:[self.interceptionData.interceptionDate toUTCString] forKey:REG_INTERCEPTION_DATE];
         [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
+        [interception setObject:self.selfReporting?@"true":@"false" forKey:REG_SELF_REPORT];
         [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
@@ -121,7 +122,6 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
         if (self.biometric.leftThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftThumb] forKey:REG_LEFT_THUMB];
         if (self.biometric.leftIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftIndex] forKey:REG_LEFT_INDEX];
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
-        
         
         return formatted;
     }

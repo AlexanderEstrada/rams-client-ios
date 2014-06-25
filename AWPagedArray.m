@@ -32,7 +32,6 @@ NSString *const AWPagedArrayObjectsPerPageMismatchException = @"AWPagedArrayObje
     NSMutableDictionary *_pages;
     BOOL _needsUpdateProxiedArray;
     NSMutableArray *_proxiedArray;
-//    NSArray *allData;
 }
 
 #pragma mark - Public methods
@@ -40,9 +39,6 @@ NSString *const AWPagedArrayObjectsPerPageMismatchException = @"AWPagedArrayObje
     
     _totalCount = count;
     _objectsPerPage = objectsPerPage;
-//    _needsUpdateProxiedArray = NO;
-//    _proxiedArray = array;
-//    allData = array;
     _pages = [[NSMutableDictionary alloc] initWithCapacity:[self numberOfPages]];
     
     return self;
@@ -83,13 +79,26 @@ NSString *const AWPagedArrayObjectsPerPageMismatchException = @"AWPagedArrayObje
 #pragma mark - NSArray overrides
 - (id)objectAtIndex:(NSUInteger)index {
     
-    id object = [[self _proxiedArray] objectAtIndex:index];
     
-    [self.delegate pagedArray:self
-              willAccessIndex:index
-                 returnObject:&object];
-    
-    return object;
+    @try {
+       
+        //check validity of the array
+        if (index >= [[self _proxiedArray] count]) return Nil;
+        
+        id object = [[self _proxiedArray] objectAtIndex:index];
+        
+        [self.delegate pagedArray:self
+                  willAccessIndex:index
+                     returnObject:&object];
+        
+        return object;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Object out of Bond : %@",[exception description]);
+        return Nil;
+        
+    }
+   
 }
 - (id)objectAtIndexedSubscript:(NSUInteger)index {
     return [self objectAtIndex:index];
@@ -135,7 +144,8 @@ NSString *const AWPagedArrayObjectsPerPageMismatchException = @"AWPagedArrayObje
     NSMutableArray *objects = [[NSMutableArray alloc] initWithCapacity:_totalCount];
     
     for (NSInteger pageIndex = 1; pageIndex <= [self numberOfPages]; pageIndex++) {
-        
+//      for (NSInteger pageIndex = 0; pageIndex <= [self numberOfPages]; pageIndex++) {
+    
         NSArray *page = _pages[@(pageIndex)];
         if (!page) page = [self _placeholdersForPage:pageIndex];
         

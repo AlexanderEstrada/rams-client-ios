@@ -16,7 +16,7 @@
 @property (nonatomic, strong) Registration *registration;
 @property (nonatomic, strong) NSMutableArray *previewingPhotos;
 
-@property (nonatomic, copy) void (^registrationSave)(void);
+@property (nonatomic, copy) void (^registrationSave)(BOOL remove);
 @property (nonatomic, copy) void (^registrationCancel)(void);
 
 

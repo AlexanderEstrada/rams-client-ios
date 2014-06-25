@@ -22,7 +22,7 @@
 #import "IMAuthManager.h"
 
 
-@interface IMInterceptionViewController ()<IMInterceptionDataSource, IMInterceptionDelegate, UIPopoverControllerDelegate>
+@interface IMInterceptionViewController ()<IMInterceptionDataSource, IMInterceptionDelegate, UIPopoverControllerDelegate,UIAlertViewDelegate>
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic) BOOL listViewHidden;
@@ -52,12 +52,34 @@
 {
     self.data = nil;
     [self.mapVC reloadData];
-    if (!self.listViewHidden) [self.listVC reloadData];
+    if (!self.listViewHidden){
+        [self.listVC reloadData];
+    }else self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
+    
 }
 
 - (void)showNewInterceptionCase
 {
+    //TODO : check if apps already competely synch, case not, then show alert to synch the apps
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+        alert.tag = IMAlertNeedSynch_Tag;
+        [alert show];
+        return;
+    };
+    
     [self showInterceptionVCWithData:nil];
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMAlertNeedSynch_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        
+        [self.sideMenuDelegate openSynchronizationDialog:nil];
+        
+    }
+    
 }
 
 - (void)showInterceptionVCWithData:(InterceptionData *)interceptionData
@@ -212,6 +234,13 @@
     
     IMInterceptionDetailsVC *vc = [[IMInterceptionDetailsVC alloc] initWithInterceptionData:data delegate:self];
     vc.allowsEditing = YES;
+    vc.Cancel = ^(void)
+    {
+        if (self.listViewHidden) {
+            self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
+        }
+    };
+    
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -272,6 +301,8 @@
     
     if (!self.listViewHidden) {
         [self.listVC reloadData];
+    }else {
+        self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
     }
 }
 
@@ -309,7 +340,7 @@
     if (!self.listViewHidden) [self.mapVC hidePopover];
     self.listViewContainer.frame = [self listViewContainerFrame:!self.listViewHidden];
     
-    [UIView animateWithDuration:0.35 animations:^{
+    [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
         self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
         self.listViewContainer.alpha = 1;
     } completion:^(BOOL finished){
