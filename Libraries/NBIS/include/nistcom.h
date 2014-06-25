@@ -50,7 +50,7 @@ of the software.
 #endif
 
 #ifndef _FET_H
-#include <fet.h>
+#include "fet.h"
 typedef FET NISTCOM;
 #endif
 

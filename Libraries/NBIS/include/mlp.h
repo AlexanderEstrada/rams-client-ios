@@ -45,15 +45,15 @@ of the software.
 #ifndef _MLP_H
 #define _MLP_H
 
-#include <usebsd.h>
+#include "usebsd.h"
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include <math.h>
-#include <defs.h>
-#include <swap.h>
+#include "defs.h"
+#include "swap.h"
 #include <util.h>
-#include <memalloc.h>
+#include "memalloc.h"
 
 /***********************************************************************/
 /* Formerly in mlp/defs.h */

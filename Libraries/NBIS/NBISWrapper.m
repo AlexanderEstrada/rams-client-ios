@@ -8,10 +8,10 @@
 
 #import "NBISWrapper.h"
 
-#include <nfiq.h>
-#include <imgdecod.h>
+#include "nfiq.h"
+#include "imgdecod.h"
 #include <sys/param.h>
-#include <img_io.h>
+#include "img_io.h"
 
 int debug = 0;
 

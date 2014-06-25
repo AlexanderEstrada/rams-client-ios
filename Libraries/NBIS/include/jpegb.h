@@ -45,9 +45,9 @@ of the software.
 #ifndef _JPEGB_H
 #define _JPEGB_H
 
-#include <jpeglib.h>
-#include <jerror.h>
-#include <jconfig.h>
+#include "jpeglib.h"
+#include "jerror.h"
+#include "jconfig.h"
 
 #ifndef _NISTCOM_H
 #include <nistcom.h>

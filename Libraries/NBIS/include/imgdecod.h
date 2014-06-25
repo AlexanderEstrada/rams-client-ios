@@ -45,7 +45,7 @@ of the software.
 #ifndef _IMGDECOD_H
 #define _IMGDECOD_H
 
-#include <imgtype.h>
+#include "imgtype.h"
 
 #define IMG_IGNORE  2
 

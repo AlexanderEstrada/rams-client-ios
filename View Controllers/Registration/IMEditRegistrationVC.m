@@ -321,8 +321,6 @@ typedef enum : NSUInteger {
     
     request.predicate = [NSPredicate predicateWithFormat:@"registrationNumber = %@",self.registration.registrationId];
     request.returnsObjectsAsFaults = YES;
-    // Set the batch size to a suitable number.
-    //        [request setFetchBatchSize:15];
     
     NSArray *data = [workingContext executeFetchRequest:request error:&error];
     if ([data count]) {

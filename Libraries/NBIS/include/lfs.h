@@ -66,7 +66,7 @@ of the software.
 
 #include <math.h>
 #include <stdio.h>
-#include <an2k.h>  /* Needed by to_type9.c */
+#include "an2k.h"  /* Needed by to_type9.c */
 
 /*************************************************************************/
 /*        OUTPUT FILE EXTENSIONS                                         */

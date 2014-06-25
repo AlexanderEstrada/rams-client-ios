@@ -47,9 +47,9 @@ of the software.
 
 /* UPDATED: 11/21/2006 by KKO */
 
-#include <defs.h>
-#include <lfs.h>
-#include <mlp.h>
+#include "defs.h"
+#include "lfs.h"
+#include "mlp.h"
 
 #ifndef DEFAULT_PPI
 #define DEFAULT_PPI       500

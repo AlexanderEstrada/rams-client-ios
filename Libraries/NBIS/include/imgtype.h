@@ -51,13 +51,13 @@ of the software.
 /* UPDATED: 09/03/2008 by Kenneth Ko */
 /* UPDATED: 01/06/2009 by Kenneth Ko - add support for HPUX compile */
 
-#include <wsq.h>
-#include <jpegb.h>
-#include <jpegl.h>
-#include <ihead.h>
-#include <an2k.h>
-#include <dataio.h>
-#include <computil.h>
+#include "wsq.h"
+#include "jpegb.h"
+#include "jpegl.h"
+#include "ihead.h"
+#include "an2k.h"
+#include "dataio.h"
+#include "computil.h"
 #ifdef __NBIS_JASPER__
 	#include <jasper/jasper.h>
 #endif

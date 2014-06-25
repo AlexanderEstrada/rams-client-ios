@@ -9,7 +9,8 @@
 #import "IMAppDelegate.h"
 #import "IMDBManager.h"
 #import "IMAuthManager.h"
-#import <GoogleMaps/GoogleMaps.h>
+//#import <GoogleMaps/GoogleMaps.h>
+#import "GoogleMaps/GoogleMaps.h"
 #import "IMHTTPClient.h"
 #import "IMConstants.h"
 

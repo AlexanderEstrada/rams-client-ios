@@ -50,11 +50,11 @@ of the software.
 #endif
 
 #ifndef _IHEAD_H
-#include <ihead.h>
+#include "ihead.h"
 #endif
 
 #ifndef _JPEGL_H
-#include <jpegl.h>
+#include "jpegl.h"
 #endif
 
 #ifndef TRUE

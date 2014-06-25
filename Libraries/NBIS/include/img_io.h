@@ -52,11 +52,11 @@ of the software.
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <wsq.h>
-#include <ihead.h>
-#include <ioutil.h>
-#include <memalloc.h>
-#include <imgutil.h>
+#include "wsq.h"
+#include "ihead.h"
+#include "ioutil.h"
+#include "memalloc.h"
+#include "imgutil.h"
 #include <util.h>
 
 /* grp4comp.c */

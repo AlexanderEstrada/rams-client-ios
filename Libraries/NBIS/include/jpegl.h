@@ -58,7 +58,7 @@ of the software.
 #define _JPEGL_H
 
 #ifndef _NISTCOM_H
-#include <nistcom.h>
+#include "nistcom.h"
 #endif
 
 /* JPEGL Marker Definitions */

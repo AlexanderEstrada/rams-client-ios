@@ -1949,6 +1949,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1964,6 +1965,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/NBIS/lib",
+					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
 				SDKROOT = iphoneos;
@@ -1990,6 +1995,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = "/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1998,6 +2004,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/NBIS/lib",
+					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
 				SDKROOT = iphoneos;
@@ -2009,24 +2019,20 @@
 		AC807D6117F14F58000988D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries",
+					"$(PROJECT_DIR)/Libraries",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "IMMS Manager/IMMS Manager-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/NBIS/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2037,24 +2043,20 @@
 		AC807D6217F14F58000988D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries",
+					"$(PROJECT_DIR)/Libraries",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "IMMS Manager/IMMS Manager-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/NBIS/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
