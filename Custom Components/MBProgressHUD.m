@@ -170,7 +170,6 @@
 	
     if (mode == MBProgressHUDModeDeterminate) {
         self.indicator = [[MBRoundProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
-//         self.indicator = [[MBRoundProgressView alloc] initWithDefaultSize];
     }
     else if (mode == MBProgressHUDModeCustomView && self.customView != nil){
         self.indicator = self.customView;
@@ -286,6 +285,7 @@
 }
 
 - (void)dealloc {
+    delegate = Nil;
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 }
@@ -309,25 +309,10 @@
 	
     // Add label if label text was set
     if (nil != self.labelText) {
-        
-//        NSAttributedString *attributedText =
-//        [[NSAttributedString alloc]
-//         initWithString:self.labelText
-//         attributes:@
-//         {
-//         NSFontAttributeName: self.labelFont
-//         }];
-//        CGRect rect = [attributedText boundingRectWithSize:(CGSize){LABELFONTSIZE, CGFLOAT_MAX}
-//                                                   options:NSStringDrawingUsesLineFragmentOrigin
-//                                                   context:nil];
-//        CGSize size = rect.size;
+
         CGSize dims = [self.labelText sizeWithAttributes:
                        @{NSFontAttributeName:
                              [UIFont systemFontOfSize:17.0f]}];
-        
-        // Get size of label text
-//        CGSize dims = [self.labelText sizeWithFont:self.labelFont];
-//        CGSize dims = rect.size;
 		
         // Compute label dimensions based on font metrics if size is larger than max then clip the label width
         float lHeight = dims.height;
@@ -342,7 +327,6 @@
         // Set label properties
         label.font = self.labelFont;
         label.adjustsFontSizeToFitWidth = NO;
-//        label.textAlignment = UITextAlignmentCenter;
         label.textAlignment = NSTextAlignmentCenter;
         label.opaque = NO;
         label.backgroundColor = [UIColor clearColor];
@@ -369,24 +353,9 @@
 		
         // Add details label delatils text was set
         if (nil != self.detailsLabelText) {
-//            NSAttributedString *attributedText =
-//            [[NSAttributedString alloc]
-//             initWithString:self.detailsLabelText
-//             attributes:@
-//             {
-//             NSFontAttributeName: self.detailsLabelFont
-//             }];
-//            CGRect rect = [attributedText boundingRectWithSize:(CGSize){LABELDETAILSFONTSIZE, CGFLOAT_MAX}
-//                                                       options:NSStringDrawingUsesLineFragmentOrigin
-//                                                       context:nil];
-//            
-            // Get size of label text
-//            dims = [self.detailsLabelText sizeWithFont:self.detailsLabelFont];
             dims = [self.detailsLabelText sizeWithAttributes:
                            @{NSFontAttributeName:
                                  [UIFont systemFontOfSize:17.0f]}];
-            
-//            dims = rect.size;
 			
             // Compute label dimensions based on font metrics if size is larger than max then clip the label width
             lHeight = dims.height;
@@ -400,7 +369,6 @@
             // Set label properties
             detailsLabel.font = self.detailsLabelFont;
             detailsLabel.adjustsFontSizeToFitWidth = NO;
-//            detailsLabel.textAlignment = UITextAlignmentCenter;
             detailsLabel.textAlignment = NSTextAlignmentCenter;
             detailsLabel.opaque = NO;
             detailsLabel.backgroundColor = [UIColor clearColor];
@@ -490,7 +458,7 @@
     methodForExecution = method;
     targetForExecution = target;
     objectForExecution = object;
-	
+    
     // Launch execution in new thread
 	taskInProgress = YES;
     [NSThread detachNewThreadSelector:@selector(launchExecution) toTarget:self withObject:nil];
@@ -503,8 +471,6 @@
     @autoreleasepool {
 
         ((void (*)(id, SEL,id))[targetForExecution methodForSelector:methodForExecution])(targetForExecution, methodForExecution,objectForExecution);
-        
-//        [targetForExecution performSelector:methodForExecution withObject:objectForExecution afterDelay:0.0f];
 	
         // Task completed, update view in main thread (note: view operations should
         // be done only in the main thread)
@@ -519,7 +485,8 @@
 }
 
 - (void)done {
-    isFinished = YES;
+    
+   isFinished = YES;
 	
     // If delegate was set make the callback
     self.alpha = 0.0;
@@ -533,6 +500,7 @@
 	if (removeFromSuperViewOnHide) {
 		[self removeFromSuperview];
 	}
+
 }
 
 - (void)cleanUp {
@@ -562,6 +530,8 @@
         if (animationType == MBProgressHUDAnimationZoom) {
             self.transform = rotationTransform;
         }
+        
+        
         [UIView commitAnimations];
     }
     else {
@@ -582,6 +552,7 @@
             self.transform = CGAffineTransformConcat(rotationTransform, CGAffineTransformMakeScale(0.5, 0.5));
         }
         self.alpha = 0.02;
+
         [UIView commitAnimations];
     }
     else {

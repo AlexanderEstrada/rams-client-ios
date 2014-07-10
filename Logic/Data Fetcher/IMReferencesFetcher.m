@@ -60,7 +60,7 @@
                 [self postFailureWithError:error];
             }
             
-//             [context reset];
+             [context reset];
         }
         @catch (NSException *exception) {
             NSLog(@"Exception while parsing references: %@", [exception description]);

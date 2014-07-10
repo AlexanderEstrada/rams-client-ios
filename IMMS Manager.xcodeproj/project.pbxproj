@@ -223,12 +223,13 @@
 		F2B09A28194EA07F00289E8F /* DataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A25194EA07F00289E8F /* DataProvider.m */; };
 		F2B2A7C3193C2A1B00991614 /* IMMigrantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */; };
 		F2B2A7C6193C31C700991614 /* IMMigrantFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C5193C31C700991614 /* IMMigrantFilterDataVC.m */; };
+		F2B30F241962761600B643C4 /* IMMovementVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B30F231962761600B643C4 /* IMMovementVC.m */; };
+		F2BA6C04195D596B00E26B31 /* IMPortChooserVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */; };
 		F2C139F519487CA8006F8EDD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F419487CA8006F8EDD /* Main.storyboard */; };
 		F2C139F719487D04006F8EDD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F619487D04006F8EDD /* InfoPlist.strings */; };
 		F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F926697918EEA73600A95E94 /* Child+Extended.m */; };
 		F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */; };
 		F977449518F3E5C8001D30FA /* ServerSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F977449418F3E5C8001D30FA /* ServerSettingViewController.m */; };
-		F9C6042118E5ED7400D9A450 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C6042018E5ED7400D9A450 /* Base64.m */; };
 		F9C6042818E6D05000D9A450 /* IMRegistrationFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C6042718E6D05000D9A450 /* IMRegistrationFetcher.m */; };
 		F9C6042C18E903FB00D9A450 /* Constants.plist in Resources */ = {isa = PBXBuildFile; fileRef = F9C6042B18E903FB00D9A450 /* Constants.plist */; };
 		F9E3A43A18FD3CFA00749977 /* IMMigrantViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E3A43918FD3CFA00749977 /* IMMigrantViewController.m */; };
@@ -665,6 +666,10 @@
 		F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantListVC.m; sourceTree = SOURCE_ROOT; };
 		F2B2A7C4193C31C700991614 /* IMMigrantFilterDataVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantFilterDataVC.h; sourceTree = SOURCE_ROOT; };
 		F2B2A7C5193C31C700991614 /* IMMigrantFilterDataVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantFilterDataVC.m; sourceTree = SOURCE_ROOT; };
+		F2B30F221962761600B643C4 /* IMMovementVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementVC.h; sourceTree = "<group>"; };
+		F2B30F231962761600B643C4 /* IMMovementVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementVC.m; sourceTree = "<group>"; };
+		F2BA6C02195D596B00E26B31 /* IMPortChooserVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMPortChooserVC.h; sourceTree = "<group>"; };
+		F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMPortChooserVC.m; sourceTree = "<group>"; };
 		F2C139F419487CA8006F8EDD /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		F2C139F619487D04006F8EDD /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F926697818EEA73600A95E94 /* Child+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Child+Extended.h"; sourceTree = "<group>"; };
@@ -673,8 +678,6 @@
 		F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IMRegistrationFilterDataVC.m; path = RegistrationFilter/IMRegistrationFilterDataVC.m; sourceTree = "<group>"; };
 		F977449318F3E5C8001D30FA /* ServerSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerSettingViewController.h; sourceTree = "<group>"; };
 		F977449418F3E5C8001D30FA /* ServerSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerSettingViewController.m; sourceTree = "<group>"; };
-		F9C6041F18E5ED7400D9A450 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
-		F9C6042018E5ED7400D9A450 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		F9C6042618E6D05000D9A450 /* IMRegistrationFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMRegistrationFetcher.h; sourceTree = "<group>"; };
 		F9C6042718E6D05000D9A450 /* IMRegistrationFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMRegistrationFetcher.m; sourceTree = "<group>"; };
 		F9C6042B18E903FB00D9A450 /* Constants.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Constants.plist; sourceTree = "<group>"; };
@@ -938,6 +941,8 @@
 				AC14E0A0181F6F4400EB356B /* IMEditRegistrationVC.m */,
 				AC14E0A5181FD98B00EB356B /* IMEditRegistrationDataVC.h */,
 				AC14E0A6181FD98B00EB356B /* IMEditRegistrationDataVC.m */,
+				F2B30F221962761600B643C4 /* IMMovementVC.h */,
+				F2B30F231962761600B643C4 /* IMMovementVC.m */,
 			);
 			name = "Edit Registration Data";
 			sourceTree = "<group>";
@@ -1308,7 +1313,6 @@
 		ACE6934B17F159E10095F90C /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				F9C6041E18E5ED7400D9A450 /* base64 */,
 				ACB28FC318221375000322B4 /* NBIS */,
 				ACB28FBA18220639000322B4 /* FbF mobileOne Lib */,
 				ACE6934C17F159E10095F90C /* AFNetworking */,
@@ -1563,6 +1567,8 @@
 				AC8A6B7F1821384E005A1C3C /* IMScanFingerprintViewController.m */,
 				AC8A6B7B18213825005A1C3C /* IMFingerprintPreviewCell.h */,
 				AC8A6B7C18213825005A1C3C /* IMFingerprintPreviewCell.m */,
+				F2BA6C02195D596B00E26B31 /* IMPortChooserVC.h */,
+				F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */,
 			);
 			path = "Shared View Controller";
 			sourceTree = "<group>";
@@ -1597,15 +1603,6 @@
 				F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */,
 			);
 			name = "Filter Registration Data";
-			sourceTree = "<group>";
-		};
-		F9C6041E18E5ED7400D9A450 /* base64 */ = {
-			isa = PBXGroup;
-			children = (
-				F9C6041F18E5ED7400D9A450 /* Base64.h */,
-				F9C6042018E5ED7400D9A450 /* Base64.m */,
-			);
-			path = base64;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1755,6 +1752,7 @@
 				F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */,
 				ACCBD251181E27DB00CC3EDE /* RegistrationBioData.m in Sources */,
 				ACE693BE17F159E20095F90C /* UIImageView+AFNetworking.m in Sources */,
+				F2B30F241962761600B643C4 /* IMMovementVC.m in Sources */,
 				ACE693CD17F159E20095F90C /* NSDate+Relativity.m in Sources */,
 				ACE6930517F159AC0095F90C /* RegistrationProfile+Extended.m in Sources */,
 				AC3BA08017FA6A930043235A /* IMinterceptionInfoVC.m in Sources */,
@@ -1766,6 +1764,7 @@
 				AC4FE833181510680043111B /* Biometric+Storage.m in Sources */,
 				ACE692F617F159AC0095F90C /* Accommodation+Extended.m in Sources */,
 				AC6D728B18068C1100E5F845 /* Child.m in Sources */,
+				F2BA6C04195D596B00E26B31 /* IMPortChooserVC.m in Sources */,
 				ACE692F717F159AC0095F90C /* Allowance+Extended.m in Sources */,
 				ACE6933C17F159BA0095F90C /* IMCollectionHeaderView.m in Sources */,
 				F2B2A7C6193C31C700991614 /* IMMigrantFilterDataVC.m in Sources */,
@@ -1858,7 +1857,6 @@
 				ACE6930E17F159AC0095F90C /* Interception.m in Sources */,
 				ACE693BB17F159E20095F90C /* AFPropertyListRequestOperation.m in Sources */,
 				ACE6933F17F159BA0095F90C /* IMDataTableViewController.m in Sources */,
-				F9C6042118E5ED7400D9A450 /* Base64.m in Sources */,
 				ACE6946017F159E80095F90C /* IMMenuViewController.m in Sources */,
 				ACE6930717F159AC0095F90C /* Allowance.m in Sources */,
 				AC8A6B691820B67B005A1C3C /* IMRegistrationCollectionViewCell.m in Sources */,

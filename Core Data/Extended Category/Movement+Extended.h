@@ -14,4 +14,6 @@
 + (Movement *)movementWithId:(NSString *)movementId inContext:(NSManagedObjectContext *)context;
 + (Movement *)newMovementInContext:(NSManagedObjectContext *)context;
 
+- (NSDictionary *)format;
+
 @end

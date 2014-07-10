@@ -10,6 +10,7 @@
 #import "IMDBManager.h"
 #import "IMHTTPClient.h"
 #import "Migrant+Extended.h"
+#import "IMAuthManager.h"
 
 
 
@@ -52,6 +53,8 @@ NSString *const REG_LEFT_INDEX                  = @"leftIndex";
 NSString *const REG_RIGHT_THUMB                 = @"rightThumb";
 NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
 
+
+NSString *const REG_MOVEMENT                 = @"movements";
 
 + (Registration *)newRegistrationInContext:(NSManagedObjectContext *)context
 {
@@ -109,11 +112,11 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
         [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
-        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
-            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
-                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
-            [formatted setObject:transfer forKey:REG_TRANSFER];
-        }
+//        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
+//            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+//                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+//            [formatted setObject:transfer forKey:REG_TRANSFER];
+//        }
         
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
@@ -123,6 +126,26 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
         if (self.biometric.leftIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftIndex] forKey:REG_LEFT_INDEX];
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
         
+        //Movement
+        
+        //check if There is movement to upload
+        Migrant * migrant = [Migrant migrantWithId:self.registrationId inContext:self.managedObjectContext];
+        
+        if (migrant) {
+            //only proccess if there is movement history to upload
+//            NSMutableDictionary *movements = [NSMutableDictionary dictionary];
+            int counter =0;
+            NSString *key = [NSString string];
+            for (Movement * movement in migrant.movements) {
+                key =[NSString stringWithFormat:@"%@[%i]",REG_MOVEMENT,counter++];
+                //parse movement history
+                [formatted setObject:[movement format] forKey:key];
+            }
+           
+//            [formatted setObject:movements forKey:REG_MOVEMENT];
+        }
+        
+        NSLog(@"format : %@",[formatted description]);
         return formatted;
     }
     @catch (NSException *exception)
@@ -386,10 +409,21 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
             migrant.biometric = Nil;
         }
         
+        //save flag to complete
+        migrant.complete = @(TRUE);
+        
+        //save uploader and last uploader
+        if (!migrant.uploader) {
+            migrant.uploader = [IMAuthManager sharedManager].activeUser.email;
+        }
+        migrant.lastUploader  = [IMAuthManager sharedManager].activeUser.email;
+        
+        
         if (![context save:&error]) {
             NSLog(@"Error : %@",[error description]);
         }
 
+        
         return YES;
     }
     @catch (NSException *exception) {
@@ -495,7 +529,7 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
     stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length];
     
     if (self.unhcrDocument) stat &= self.unhcrDocument && [self.unhcrNumber length];
-    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
+//    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
     self.complete = @(stat);
 }
 
@@ -558,22 +592,7 @@ NSString *const REG_RIGHT_INDEX                 = @"rightIndex";
         //deep copy
         data.associatedOffice = [IomOffice officeWithName:migrant.iomData.associatedOffice.name inManagedObjectContext:context];
         
-        
-        //        if (dictionary[@"bioData"]) {
-        //            //get country from dictionary
-        //            NSDictionary *bioData = [dictionary objectForKey:@"bioData"];
-        //            data.bioData.countryOfBirth = [Country countryWithName:[bioData objectForKey:@"countryOfBirth"] inManagedObjectContext:context];
-        //            data.bioData.nationality = [Country countryWithName:[bioData objectForKey:@"nationality"] inManagedObjectContext:context];
-        //            NSLog(@"Nationality : %@",data.bioData.nationality.name);
-        //            NSLog(@" Registration Nationality : %@ - code : %@",data.bioData.nationality.name,data.bioData.nationality.code);
-        //            NSLog(@" Migrant Nationality : %@ - code : %@",migrant.bioData.nationality.name,migrant.bioData.nationality.code);
-        //
-        //            if (migrant.bioData.nationality.name != data.bioData.nationality.name) {
-        //                NSLog(@"Something Wrong ...!!!");
-        //
-        //            }
-        //
-        //        }
+     
         
         //Biodata
         data.bioData.firstName = migrant.bioData.firstName;

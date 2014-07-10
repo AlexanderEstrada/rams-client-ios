@@ -43,6 +43,7 @@
             self.labelValue.font = font;
             self.labelValue.textColor = [UIColor darkGrayColor];
             self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//            self.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
             [self.labelValue setTranslatesAutoresizingMaskIntoConstraints:NO];
             [self.contentView addSubview:self.labelValue];
             break;

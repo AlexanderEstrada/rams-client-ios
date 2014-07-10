@@ -180,7 +180,8 @@
                      NSLog(@"Failed saving context Error : %@\n after parsing migrant - JSON : \n %@",[error description], data);
                      [self postFailureWithError:error];
                      }
-//                     [context reset];
+                    //commit database
+                     [context reset];
                     
                 }
                 NSLog(@"Process Migrant %ld from %ld ",(long)self.progress+1,(long)self.total);

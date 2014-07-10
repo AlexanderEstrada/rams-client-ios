@@ -20,6 +20,8 @@
 @property (nonatomic, retain) NSString * unhcrDocument;
 @property (nonatomic, retain) NSString * unhcrNumber;
 @property (nonatomic, retain) NSString * unhcrStatus;
+@property (nonatomic, retain) NSString * uploader;
+@property (nonatomic, retain) NSString * lastUploader;
 @property (nonatomic, retain) NSString * vulnerabilityStatus;
 @property (nonatomic, retain) NSNumber * underIOMCare;
 @property (nonatomic, retain) NSNumber * selfReporting;
@@ -31,6 +33,7 @@
 @property (nonatomic, retain) IomData *iomData;
 @property (nonatomic, retain) NSSet *movements;
 @property (nonatomic, retain) NSString *detentionLocation;
+@property (nonatomic, retain) NSNumber * complete;
 @end
 
 @interface Migrant (CoreDataGeneratedAccessors)

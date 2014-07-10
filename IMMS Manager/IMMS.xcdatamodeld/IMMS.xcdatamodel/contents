@@ -79,10 +79,10 @@
         <relationship name="interceptionData" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InterceptionData" inverseName="immigrationOfficer" inverseEntity="InterceptionData" syncable="YES"/>
     </entity>
     <entity name="Interception" representedClassName="Interception" syncable="YES">
-        <attribute name="dateOfEntry" attributeType="Date" syncable="YES"/>
-        <attribute name="interceptionDate" attributeType="Date" syncable="YES"/>
+        <attribute name="dateOfEntry" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="interceptionDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="interceptionId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="interceptionLocation" attributeType="String" syncable="YES"/>
+        <attribute name="interceptionLocation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
         <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="interceptions" inverseEntity="Migrant" syncable="YES"/>
     </entity>
@@ -161,27 +161,30 @@
     <entity name="Migrant" representedClassName="Migrant" syncable="YES">
         <attribute name="active" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="blacklist" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="complete" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="dateCreated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="deceased" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="detentionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastUploader" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="registrationNumber" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="underIOMCare" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="unhcrDocument" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unhcrNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unhcrStatus" attributeType="String" defaultValueString="Unregistered" indexed="YES" syncable="YES"/>
+        <attribute name="uploader" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="vulnerabilityStatus" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="bioData" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="BioData" inverseName="migrant" inverseEntity="BioData" syncable="YES"/>
-        <relationship name="biometric" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Biometric" inverseName="migrant" inverseEntity="Biometric" syncable="YES"/>
+        <relationship name="bioData" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="BioData" inverseName="migrant" inverseEntity="BioData" syncable="YES"/>
+        <relationship name="biometric" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Biometric" inverseName="migrant" inverseEntity="Biometric" syncable="YES"/>
         <relationship name="familyData" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="FamilyData" inverseName="migrant" inverseEntity="FamilyData" syncable="YES"/>
         <relationship name="interceptions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Interception" inverseName="migrant" inverseEntity="Interception" syncable="YES"/>
-        <relationship name="iomData" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="IomData" inverseName="migrant" inverseEntity="IomData" syncable="YES"/>
+        <relationship name="iomData" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="IomData" inverseName="migrant" inverseEntity="IomData" syncable="YES"/>
         <relationship name="movements" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Movement" inverseName="migrant" inverseEntity="Movement" syncable="YES"/>
     </entity>
     <entity name="Movement" representedClassName="Movement" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="documentNumber" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="movementId" attributeType="String" syncable="YES"/>
+        <attribute name="movementId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="proposedDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="referenceCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="travelMode" optional="YES" attributeType="String" syncable="YES"/>
@@ -277,7 +280,7 @@
         <element name="Country" positionX="205" positionY="-135" width="128" height="165"/>
         <element name="FamilyData" positionX="-576" positionY="-220" width="128" height="118"/>
         <element name="ImmigrationOfficer" positionX="756" positionY="180" width="128" height="103"/>
-        <element name="Interception" positionX="-576" positionY="-37" width="128" height="135"/>
+        <element name="Interception" positionX="-576" positionY="-37" width="128" height="133"/>
         <element name="InterceptionData" positionX="583" positionY="290" width="128" height="223"/>
         <element name="InterceptionGroup" positionX="468" positionY="-243" width="128" height="208"/>
         <element name="InterceptionLocation" positionX="369" positionY="324" width="128" height="163"/>
@@ -285,8 +288,8 @@
         <element name="IomData" positionX="-173" positionY="-403" width="128" height="103"/>
         <element name="IomOffice" positionX="25" positionY="-568" width="128" height="163"/>
         <element name="IomOfficer" positionX="756" positionY="50" width="128" height="103"/>
-        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="313"/>
-        <element name="Movement" positionX="-236" positionY="68" width="128" height="225"/>
+        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="358"/>
+        <element name="Movement" positionX="-236" positionY="68" width="128" height="223"/>
         <element name="Photo" positionX="358" positionY="524" width="128" height="103"/>
         <element name="PoliceOfficer" positionX="754" positionY="320" width="128" height="103"/>
         <element name="Port" positionX="-441" positionY="113" width="128" height="103"/>

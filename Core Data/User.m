@@ -83,7 +83,7 @@ NSString *const IM_ROLE_OPERATION       = @"Operation";
 {
     PDKeychainBindings *keychain = [PDKeychainBindings sharedKeychainBindings];
     [keychain setString:self.name forKey:IM_USER_NAME];
-    [keychain setString:self.email forKey:IM_USER_NAME];
+    [keychain setString:self.email forKey:IM_USER_EMAIL];
     [keychain setString:self.accessToken forKey:IM_USER_TOKEN];
     [keychain setString:[self.accessExpiryDate toUTCString] forKey:IM_USER_TOKEN_EXPIRY];
     [keychain setString:self.officeName forKey:IM_USER_OFFICE];

@@ -13,7 +13,6 @@
 NSString *const CONST_UNHCR_DOCUMENT            = @"UNHCRDocument";
 NSString *const CONST_UNHCR_STATUS              = @"UNHCRStatus";
 NSString *const CONST_GENDER                    = @"Gender";
-NSString *const CONST_DETENTION_LOCATION_TYPE   = @"MovementType";
 NSString *const CONST_MARITAL_STATUS            = @"MaritalStatus";
 NSString *const CONST_MOVEMENT_TYPE             = @"MovementType";
 NSString *const CONST_TRAVEL_MODE               = @"TravelMode";

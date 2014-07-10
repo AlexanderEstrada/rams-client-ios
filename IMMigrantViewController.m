@@ -12,6 +12,7 @@
 #import "Migrant.h"
 #import "IMEditRegistrationVC.h"
 #import "IMDBManager.h"
+#import "IMAuthManager.h"
 
 #import "DataReceiver.h"
 #import "DataProvider.h"
@@ -35,11 +36,13 @@
 {
     if ([self.selectedViewController isKindOfClass:[IMMigrantListVC class]]) {
         IMMigrantListVC *vc = (IMMigrantListVC *)self.selectedViewController;
-    
+        
         if (self.selectedIndex == 0) {
-            self.basePredicate = vc.basePredicate =  [NSPredicate predicateWithFormat:@"active = YES"];
+            self.basePredicate = vc.basePredicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
+        }else if (self.selectedIndex ==1) {
+            self.basePredicate = vc.basePredicate =  [NSPredicate predicateWithFormat:@"active = YES AND lastUploader = %@",[IMAuthManager sharedManager].activeUser.email];
         }
-    
+        
         if (self.filterChooser) {
             //reset values
             [self.filterChooser resetValue];
@@ -75,19 +78,23 @@
 {
     
     if (!self.filterChooser) {
-        self.filterChooser = [[IMMigrantFilterDataVC alloc] initWithAction:^(NSPredicate *basePredicate){
-            [self.popover dismissPopoverAnimated:YES];
-            self.popover = nil;
-            if (basePredicate) {
-                if (self.selectedIndex == 0) {
-                    self.basePredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate]];
-                }
-            }else {
-                //reset base predicate
-                [self updateBasePredicateForSelectedIndex];
-            }
-            
-        }];
+        //remove active predicate, we use active predicate from filter chooser
+        self.basePredicate = [NSPredicate predicateWithFormat:@"complete = YES"];
+        self.filterChooser = [[IMMigrantFilterDataVC alloc] initWithAction:^(NSPredicate *basePredicate)
+                              {
+                                  [self.popover dismissPopoverAnimated:YES];
+                                  self.popover = nil;
+                                  if (basePredicate) {
+                                      if (self.selectedIndex == 0) {
+                                          self.basePredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate]];
+                                      }
+                                  }else {
+                                      //reset base predicate
+                                      [self updateBasePredicateForSelectedIndex];
+                                  }
+                                  
+                              } andBasePredicate:self.basePredicate
+                              ];
         
         self.filterChooser.view.tintColor = [UIColor IMMagenta];
         //set predicate
@@ -101,7 +108,7 @@
     self.filterChooser.doneCompletionBlock = ^(NSMutableDictionary * value)
     {
         //TODO : reload Data
-         [weakSelf updateBasePredicateForSelectedIndex];        
+        [weakSelf updateBasePredicateForSelectedIndex];
     };
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.filterChooser];
@@ -165,7 +172,7 @@
     if (index == 0) {
         self.title = @"Migrant List";
     }else if (index == 1) {
-        self.title = @"tab 2";
+        self.title = @"My Upload";
     }else {
         self.title = @"tab 3";
     }
@@ -199,8 +206,10 @@
     
     UIBarButtonItem *itemFilter = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                                 target:self action:@selector(showFilterOptions:)];
-   
+    
     self.navigationItem.rightBarButtonItems = @[itemCreate,itemFilter];
+    //reset top layout
+    self.edgesForExtendedLayout=UIRectEdgeNone;
 }
 
 - (void)didReceiveMemoryWarning
@@ -210,14 +219,14 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+ {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

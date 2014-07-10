@@ -22,12 +22,13 @@
 
 
 
-@interface IMMigrantListVC () <MBProgressHUDDelegate,DataProviderDelegate> {
-	MBProgressHUD *HUD;
-}
+@interface IMMigrantListVC () <MBProgressHUDDelegate,DataProviderDelegate>
+
+@property (nonatomic,strong) MBProgressHUD *HUD;
+@property (nonatomic) pthread_mutex_t mutex;
+@property (nonatomic,strong) NSLock *theLock;
 
 @end
-
 
 @implementation IMMigrantListVC
 
@@ -41,61 +42,71 @@
         _dataProvider.delegate = self;
         _dataProvider.shouldLoadAutomatically = YES;
         _dataProvider.automaticPreloadMargin = FluentPagingCollectionViewPreloadMargin;
-        
-        dispatch_async(dispatch_get_main_queue(), ^
-                       {
-                           if ([self isViewLoaded]) {
-                               [self.collectionView reloadData];
-                           }
-                           
-                       });
+        [self.collectionView reloadData];
     }
 }
 
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
-    
-    _basePredicate = basePredicate;
-    
-    if (!HUD) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    }
-    // Add HUD to screen
-    [self.navigationController.view addSubview:HUD];
-    
-    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    HUD.delegate = self;
-    
-    
-    
-    HUD.labelText = @"Reloading Data";
-    
-    // Show the HUD while the provided method executes in a new thread
-    [HUD showWhileExecuting:@selector(reloadData) onTarget:self withObject:nil animated:YES];
-    
+    @synchronized(self)
+    {
+        if ( self.reloadingData || [_basePredicate isEqual:basePredicate]) {
+            //            /do not do anything until data complete reload
+            return;
+        }
+        _basePredicate = basePredicate;
+        
+        if (!_HUD) {
+            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+            // Regisete for HUD callbacks so we can remove it from the window at the right time
+            _HUD.delegate = self;
+        }
+        // Back to indeterminate mode
+        _HUD.mode = MBProgressHUDModeIndeterminate;
+        
+        // Add HUD to screen
+        [self.navigationController.view addSubview:_HUD];
+        
+        _HUD.labelText = @"Reloading Data";
+        
+        // Show the HUD while the provided method executes in a new thread
+        [_HUD showWhileExecuting:@selector(reloadData) onTarget:self withObject:nil animated:YES];
+        
+    };
 }
 
 - (void)reloadData
 {
     
-    if(!self.reloadingData){
-        self.reloadingData = YES;
-        
-        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
-        if (self.basePredicate) {
-            request.predicate = self.basePredicate;
-        }
-        
-        NSError *error;
-        NSUInteger total = [context countForFetchRequest:request error:&error];
-        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:self.basePredicate ? self.basePredicate:Nil];
+    
+    @synchronized(self)
+    {
+        if(!self.reloadingData){
+            self.reloadingData = YES;
             
-            self.dataProvider = dataProvider;
-        self.reloadingData = NO;
-        
-    }
+            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
+            if (self.basePredicate) {
+                //check if complete = YES flag already set, if not we must set it
+                NSPredicate *localPredicate =  [NSPredicate predicateWithFormat:@"complete = YES"];
+                self.basePredicate =[NSCompoundPredicate andPredicateWithSubpredicates:@[self.basePredicate,localPredicate]];
+                request.predicate = self.basePredicate;
+            }else {
+                //default
+                self.basePredicate = request.predicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
+            }
+            request.returnsObjectsAsFaults = YES;
+            NSError *error;
+            NSUInteger total = [context countForFetchRequest:request error:&error];
+            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:self.basePredicate ? self.basePredicate:Nil];
+            
+            self.dataProvider = Nil;
+            [self setDataProvider:dataProvider];
+            self.reloadingData = NO;
+            
+        }
+    };
     
 }
 
@@ -119,6 +130,9 @@
     static NSString *cellIdentifier = @"IMRegistrationCollectionViewCell";
     IMRegistrationCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
     
+    id data = self.dataProvider.dataObjects[indexPath.row];
+    [self _configureCell:cell forDataObject:data animated:NO];
+    cell.buttonUpload.tag = indexPath.row;
     // load photo images in the background
     __weak IMMigrantListVC *weakSelf = self;
     NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
@@ -137,10 +151,6 @@
     }];
     
     [self.thumbnailQueue addOperation:operation];
-    
-    id data = self.dataProvider.dataObjects[indexPath.row];
-    [self _configureCell:cell forDataObject:data animated:NO];
-    cell.buttonUpload.tag = indexPath.row;
     
     return cell;
 }
@@ -192,7 +202,14 @@
             cell.photoView.image = [image scaledToWidthInPoint:100];
         }else {
             cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
-        }        
+        }
+        
+        //add double gesture to photoview cell
+        UITapGestureRecognizer *doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc]
+                                                              initWithTarget:self
+                                                              action:@selector(handleTapFrom:)];
+        [doubleTapGestureRecognizer setNumberOfTapsRequired:2];
+        [cell.photoView addGestureRecognizer:doubleTapGestureRecognizer];
         cell.buttonUpload.hidden = TRUE;
         
         if (animated) {
@@ -205,19 +222,31 @@
             cell.labelDetail4.alpha = 0;
             cell.labelDetail5.alpha = 0;
             cell.buttonUpload.alpha = 0;
-            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
-                cell.photoView.alpha = 1;
-                cell.labelTitle.alpha = 1;
-                cell.labelSubtitle.alpha = 1;
-                cell.labelDetail1.alpha = 1;
-                cell.labelDetail2.alpha = 1;;
-                cell.labelDetail3.alpha = 1;
-                cell.labelDetail4.alpha = 1;
-                cell.labelDetail5.alpha = 1;
-                cell.buttonUpload.alpha = 1;
-            }];
+            //            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
+            
+            [UIView animateWithDuration:IMRootViewAnimationDuration
+                                  delay:0.0f
+                                options:UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
+                             animations:^{
+                                 cell.photoView.alpha = 1;
+                                 cell.labelTitle.alpha = 1;
+                                 cell.labelSubtitle.alpha = 1;
+                                 cell.labelDetail1.alpha = 1;
+                                 cell.labelDetail2.alpha = 1;;
+                                 cell.labelDetail3.alpha = 1;
+                                 cell.labelDetail4.alpha = 1;
+                                 cell.labelDetail5.alpha = 1;
+                                 cell.buttonUpload.alpha = 1;
+                             }completion:Nil];
         }
     }
+}
+
+- (void) handleTapFrom: (UITapGestureRecognizer *)recognizer
+{
+    //Code to handle the gesture
+    NSLog(@"recognizer.numberOfTouches : %i",recognizer.numberOfTouches);
+    
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -276,13 +305,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES"];
+    _theLock = [[NSLock alloc] init];
+    
+    
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    }
     
     [self.collectionView registerNib:[UINib nibWithNibName:@"IMRegistrationCollectionViewCell"
                                                     bundle:[NSBundle mainBundle]]
           forCellWithReuseIdentifier:@"IMRegistrationCollectionViewCell"];
-    self.collectionView.delegate=self;
-    [self.collectionView setDataSource:self];
+    //    self.collectionView.delegate=self;
+    //    [self.collectionView setDataSource:self];
     
     self.thumbnailQueue = [[NSOperationQueue alloc] init];
     self.thumbnailQueue.maxConcurrentOperationCount = 3;
@@ -294,7 +329,7 @@
 {
     
     [super viewWillDisappear:animated];
-    self.dataProvider = Nil;
+    //    self.dataProvider = Nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -382,9 +417,15 @@
 #pragma mark MBProgressHUDDelegate methods
 
 - (void)hudWasHidden {
-    // Remove HUD from screen when the HUD was hidded
-    [HUD removeFromSuperview];
-    //    [HUD release];
+    
+    @try {
+        // Remove HUD from screen when the HUD was hidded
+        if (_HUD) {
+            [_HUD removeFromSuperview];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"Error on hudWasHidden with message: %@",[exception description]);
+    }
 }
 
 

@@ -233,6 +233,8 @@
                                                              actionTitle:@"Movements"
                                                             alignCenterY:NO
                                                          reuseIdentifier:withActionIdentifier];
+  
+    
     UIView *backgroundView = [[UIView alloc] init];
     backgroundView.backgroundColor = [UIColor IMTableHeaderColor];
     header.backgroundView = backgroundView;
@@ -243,8 +245,10 @@
     [header.buttonAction setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -90)];
     [header.buttonAction setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 15)];
     [header.buttonAction.titleLabel setFont:[UIFont systemFontOfSize:17]];
+    [header.buttonAction.titleLabel setAdjustsFontSizeToFitWidth:TRUE];
+    header.buttonAction.titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
     [header.buttonAction addTarget:self action:@selector(showMovementHistory:) forControlEvents:UIControlEventTouchUpInside];
-    
+
     return header;
 }
 

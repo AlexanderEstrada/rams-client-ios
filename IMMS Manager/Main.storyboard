@@ -1076,7 +1076,7 @@ Monitoring System</string>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VoQ-Y7-6ay" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1754" y="9404"/>
+            <point key="canvasLocation" x="1310" y="9324"/>
         </scene>
         <!--Migrant View Controller - Migrant-->
         <scene sceneID="rRg-7I-3Oe">
@@ -1093,11 +1093,12 @@ Monitoring System</string>
                     </tabBar>
                     <connections>
                         <segue destination="xDe-U6-8tD" kind="relationship" relationship="viewControllers" id="xQK-uc-4Ju"/>
+                        <segue destination="Jco-3b-ueV" kind="relationship" relationship="viewControllers" id="mBi-hE-QRv"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5bw-Xj-8P2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2782" y="9504"/>
+            <point key="canvasLocation" x="2224" y="9250"/>
         </scene>
         <!--Migrant ListVC - MigrantList-->
         <scene sceneID="mc3-fJ-mK9">
@@ -1133,7 +1134,7 @@ Monitoring System</string>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XM2-YS-4As" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4026" y="9468"/>
+            <point key="canvasLocation" x="3202" y="7372"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="y3g-8z-P8S">
@@ -1416,7 +1417,7 @@ Monitoring System</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r1t-kQ-5rr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="10052"/>
+            <point key="canvasLocation" x="359" y="9588"/>
         </scene>
         <!--Settings View Controller - Settings-->
         <scene sceneID="1v4-Lh-9Hz">
@@ -1689,6 +1690,43 @@ Monitoring System</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gak-bw-gq6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="828" y="8070"/>
+        </scene>
+        <!--Migrant ListVC - My Upload-->
+        <scene sceneID="Fop-qV-HKl">
+            <objects>
+                <collectionViewController clearsSelectionOnViewWillAppear="NO" id="Jco-3b-ueV" customClass="IMMigrantListVC" sceneMemberID="viewController">
+                    <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="GZy-7k-WKQ">
+                        <rect key="frame" x="0.0" y="64" width="768" height="911"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ccZ-eF-rzN">
+                            <size key="itemSize" width="50" height="50"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MigrantCell" id="og8-vb-2Zu" customClass="IMRegistrationCollectionViewCell">
+                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="Jco-3b-ueV" id="FaL-zm-Kdc"/>
+                            <outlet property="delegate" destination="Jco-3b-ueV" id="LgN-Oe-Z7U"/>
+                        </connections>
+                    </collectionView>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <tabBarItem key="tabBarItem" title="My Upload" image="icon-complete" id="Ja7-6M-sig"/>
+                    <navigationItem key="navigationItem" id="o2i-ZL-Lnw"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UG7-0F-1Db" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3330" y="8732"/>
         </scene>
     </scenes>
     <resources>

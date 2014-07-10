@@ -21,9 +21,10 @@
 
 
 
-@interface IMRegistrationListVC () <MBProgressHUDDelegate,DataProviderDelegate> {
-	MBProgressHUD *HUD;
-}
+@interface IMRegistrationListVC () <MBProgressHUDDelegate,DataProviderDelegate>
+
+@property (nonatomic,strong) MBProgressHUD *HUD;
+
 
 @end
 
@@ -40,12 +41,7 @@
         _dataProvider.shouldLoadAutomatically = YES;
         _dataProvider.automaticPreloadMargin = FluentPagingCollectionViewPreloadMargin;
         
-        dispatch_async(dispatch_get_main_queue(), ^
-                       {
-                           if ([self isViewLoaded]) {
-                               [self.collectionView reloadData];
-                           }
-                       });
+        [self.collectionView reloadData];
         
     }
 }
@@ -53,61 +49,71 @@
 
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
-    
-    _basePredicate = basePredicate;
-    // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-    if (!HUD) {
-        HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    }
-    // Add HUD to screen
-    [self.navigationController.view addSubview:HUD];
-    
-    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    HUD.delegate = self;
-    
-    
-    
-    HUD.labelText = @"Reloading Data";
-    
-    // Show the HUD while the provided method executes in a new thread
-    [HUD showWhileExecuting:@selector(reloadData) onTarget:self withObject:nil animated:YES];
+    @synchronized(self){
+        if ( self.reloadingData || [_basePredicate isEqual:basePredicate]) {
+            //            /do not do anything until data complete reload
+            return;
+        }
+        
+        _basePredicate = basePredicate;
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        if (!_HUD) {
+            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+            // Regisete for HUD callbacks so we can remove it from the window at the right time
+            _HUD.delegate = self;
+        }
+        // Back to indeterminate mode
+        _HUD.mode = MBProgressHUDModeIndeterminate;
+        
+        // Add HUD to screen
+        [self.navigationController.view addSubview:_HUD];
+        
+        _HUD.labelText = @"Reloading Data";
+        
+        // Show the HUD while the provided method executes in a new thread
+        [_HUD showWhileExecuting:@selector(reloadData) onTarget:self withObject:nil animated:YES];
+        
+    };
     
 }
 
 - (void)reloadData
 {
     
-    if(!self.reloadingData){
-        self.reloadingData = YES;
-        
-        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
-        if (self.basePredicate) {
-            request.predicate = self.basePredicate;
-        }else {
-            //default
-            self.basePredicate = request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+    @synchronized(self)
+    {
+        if(!self.reloadingData){
+            self.reloadingData = YES;
+            
+            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
+            if (self.basePredicate) {
+                request.predicate = self.basePredicate;
+            }else {
+                //default
+                self.basePredicate = request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+            }
+            
+            request.returnsObjectsAsFaults = YES;
+            
+            NSError *error;
+            
+            NSUInteger total = [context countForFetchRequest:request error:&error];
+            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:(self.basePredicate != Nil)? self.basePredicate:Nil];
+            self.dataProvider = Nil;
+            [self setDataProvider:dataProvider];
+            
+            self.reloadingData = NO;
+            
         }
-        
-        request.returnsObjectsAsFaults = YES;
-        
-        NSError *error;
-        
-        NSUInteger total = [context countForFetchRequest:request error:&error];
-        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:(self.basePredicate != Nil)? self.basePredicate:Nil];
-        self.dataProvider = Nil;
-        [self setDataProvider:dataProvider];
-        
-        self.reloadingData = NO;
-        
-    }
-    
+    };
     
 }
 
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    [self hideLoadingView];
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.collectionView reloadData];
     
@@ -331,6 +337,11 @@
 {
     [super viewDidLoad];
     
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    }
+    
     [self.collectionView registerNib:[UINib nibWithNibName:@"IMRegistrationCollectionViewCell"
                                                     bundle:[NSBundle mainBundle]]
           forCellWithReuseIdentifier:@"IMRegistrationCollectionViewCell"];
@@ -409,9 +420,14 @@
 #pragma mark MBProgressHUDDelegate methods
 
 - (void)hudWasHidden {
-    // Remove HUD from screen when the HUD was hidded
-    [HUD removeFromSuperview];
-    //    [HUD release];
+    @try {
+        // Remove HUD from screen when the HUD was hidded
+        if (_HUD) {
+            [_HUD removeFromSuperview];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"Error on hudWasHidden with message: %@",[exception description]);
+    }
 }
 
 @end

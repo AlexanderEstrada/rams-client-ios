@@ -53,7 +53,7 @@
                     [context rollback];
                     NSLog(@"Fail to copy Migrant to Registration : %@",[error description]);
                 }
-//                 [context reset];
+                 [context reset];
                 self.progress++;
                 if (self.progress == self.total) {
                     [self postFinished];

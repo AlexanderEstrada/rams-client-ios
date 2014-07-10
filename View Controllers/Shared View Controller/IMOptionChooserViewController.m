@@ -48,6 +48,10 @@
     return cell;
 }
 
+- (NSIndexPath *) getSelectedIndexPath
+{
+    return self.selectedIndexPath;
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.selectedIndexPath && ![self.selectedIndexPath isEqual:indexPath]) {
@@ -98,7 +102,7 @@
     _selectedValue = selectedValue;
     
     if (self.selectedValue && self.options) {
-        int row = [self.options indexOfObject:selectedValue];
+        NSUInteger row = [self.options indexOfObject:selectedValue];
         self.selectedIndexPath = [NSIndexPath indexPathForRow:row inSection:0];
     }
 }

@@ -43,6 +43,19 @@ typedef enum : NSUInteger {
 @implementation IMSyncViewController
 
 
+
+- (synchState)sharedSynchState
+{
+    static dispatch_once_t once;
+    static synchState singleton;
+    
+    dispatch_once(&once, ^{
+        singleton = state_start;
+    });
+    
+    return singleton;
+}
+
 - (void)startSynchronization
 {
     if (self.updating) return;
@@ -144,6 +157,8 @@ typedef enum : NSUInteger {
         self.labelTitle.text = @"Updates Finished";
     }];
     self.currentState = state_finish;
+    //delete pointer
+    self.currentFetcher = Nil;
 }
 
 - (void)execute:(IMDataFetcher *)fetcher
@@ -262,7 +277,7 @@ typedef enum : NSUInteger {
     [self.buttonStart addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
      [self.buttonTryLater addTarget:self action:@selector(tryLater) forControlEvents:UIControlEventTouchUpInside];
     self.try_counter =0;
-    self.currentState = state_start;
+    self.currentState = [self sharedSynchState];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -297,6 +312,9 @@ typedef enum : NSUInteger {
 {
     
     if (alertView.tag == IMAlertStartWithoutSynch_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        //delete pointer
+        self.currentFetcher = Nil;
+        
      //start apps without synch
          [self.sideMenuDelegate showContent];
     }

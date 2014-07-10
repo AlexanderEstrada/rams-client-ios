@@ -118,6 +118,10 @@
             tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.activePredicate]];
         }
     }
+    
+//    if (self.basePredicate) {
+//        tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.basePredicate]];
+//    }
     //send to caller
     self.onSelected(tmp);    
 }
@@ -514,9 +518,12 @@
     self.country = Nil;
     self.detentionLocation =Nil;
     self.gender = self.name = Nil;
-    //set predicate
-    self.activePredicate = Nil;
-    self.activeMigrant = TRUE;
+    if (!self.activePredicate) {
+        //set predicate
+        self.activePredicate = [NSPredicate predicateWithFormat:@"active = YES"];
+        self.activeMigrant = TRUE;
+    }
+  
     //    self.totalPredicate =0;
     self.disableViewOverlay = [[UIView alloc]
                                initWithFrame:CGRectMake(0, 88, 320, 416)];
@@ -561,7 +568,7 @@
 
 - (void)resetValue
 {
-    self.activePredicate = self.ageMinPredicate = self.ageMaxPredicate = self.nationalityPredicate = self.genderPredicate = self.namePredicate = self.detentionLocationPredicate = Nil;
+    self.ageMinPredicate = self.ageMaxPredicate = self.nationalityPredicate = self.genderPredicate = self.namePredicate = self.detentionLocationPredicate = Nil;
     
     self.country = Nil;
     self.detentionLocation =Nil;
@@ -569,6 +576,8 @@
     self.age_min = 0;
     self.age_max = 0;
     self.activeMigrant = TRUE;
+    //set predicate
+    self.activePredicate = [NSPredicate predicateWithFormat:@"active = YES"];
     
     //hide button
     self.applyCell.hidden = self.resetCell.hidden = TRUE;

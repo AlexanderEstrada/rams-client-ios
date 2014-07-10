@@ -33,7 +33,7 @@
 @property (nonatomic) BOOL loadingPhotos;
 @property (nonatomic) BOOL loadingData;
 
-@property (nonatomic) MBProgressHUD *HUD;
+@property (nonatomic,strong) MBProgressHUD *HUD;
 
 @end
 

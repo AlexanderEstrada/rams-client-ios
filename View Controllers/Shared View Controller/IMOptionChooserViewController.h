@@ -23,9 +23,11 @@
 @property (nonatomic) BOOL firstRowIsSpecial;
 @property (nonatomic, strong) id selectedValue;
 
+
 + (UINavigationController *)navigatedChooserWithOptions:(NSArray *)options delegate:(id<IMOptionChooserDelegate>)delegate;
 - (id)initWithOptions:(NSArray *)options delegate:(id<IMOptionChooserDelegate>)delegate;
 - (id)initWithOptions:(NSArray *)options onOptionSelected:(void (^)(id selectedValue))onOptionSelected;
 - (id)initWithConstantsKey:(NSString *)constantsKey delegate:(id<IMOptionChooserDelegate>)delegate;
+- (NSIndexPath *) getSelectedIndexPath;
 
 @end

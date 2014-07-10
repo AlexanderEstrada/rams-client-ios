@@ -11,6 +11,10 @@
 #import "NSDate+Relativity.h"
 #import "Child+Extended.h"
 #import "Interception.h"
+#import "Registration.h"
+#import "RegistrationBioData.h"
+#import "RegistrationBiometric.h"
+#import "RegistrationInterception.h"
 
 
 @implementation Migrant (Extended)
@@ -26,6 +30,9 @@
             migrant.registrationNumber = migrantId;
         }
         
+        //uploader and last uploader
+        migrant.uploader = CORE_DATA_OBJECT([dictionary objectForKey:@"uploader"]);
+        migrant.lastUploader = CORE_DATA_OBJECT([dictionary objectForKey:@"lastUploader"]);
         
         //detention location
         migrant.detentionLocation = CORE_DATA_OBJECT([dictionary objectForKey:@"detentionLocation"]);
@@ -200,7 +207,8 @@
             
         }else migrant.selfReporting = FALSE;
         
-        
+        //set flag complete to 1 for default
+        migrant.complete = @(TRUE);
         return migrant;
     }
     @catch (NSException *exception) {
@@ -237,11 +245,116 @@
     return migrant;
 }
 
++ (Migrant *)saveMigrantInContext:(NSManagedObjectContext *)context withId:(NSString*)Id andRegistrationData:(Registration *)reg
+{
+ 
+    
+    @try {
+        NSError *error;
+        
+        
+     Migrant * migrant = [self migrantWithId:Id inContext:context];
+    
+        if (!migrant) {
+            return Nil;
+        }
+        //general information
+        migrant.underIOMCare = reg.underIOMCare;
+        migrant.selfReporting = reg.selfReporting;
+        migrant.unhcrDocument = reg.unhcrDocument;
+        migrant.unhcrNumber = reg.unhcrNumber;
+        migrant.vulnerabilityStatus = reg.vulnerability;
+        migrant.registrationNumber =  reg.registrationId;
+        
+        migrant.dateCreated = reg.dateCreated;
+        
+        //biodata
+        migrant.bioData.firstName = reg.bioData.firstName;
+        migrant.bioData.familyName = reg.bioData.familyName;
+        
+        migrant.bioData.gender = reg.bioData.gender;
+        migrant.bioData.maritalStatus = reg.bioData.maritalStatus;
+        migrant.bioData.nationality = [Country countryWithCode:reg.bioData.nationality.code inManagedObjectContext:context];
+        migrant.bioData.countryOfBirth = [Country countryWithCode:reg.bioData.countryOfBirth.code inManagedObjectContext:context];
+        migrant.bioData.cityOfBirth = reg.bioData.placeOfBirth;
+        migrant.bioData.dateOfBirth = reg.bioData.dateOfBirth;
+        
+        //save detention location
+        migrant.detentionLocation = reg.detentionLocation;
+        
+        
+        if (reg.interceptionData && reg.interceptionData.interceptionLocation && reg.interceptionData.interceptionDate && reg.interceptionData.dateOfEntry) {
+            
+            Interception *interception = [Interception newInterceptionInContext:context];
+            
+            if (interception) {
+                interception.interceptionLocation = reg.interceptionData.interceptionLocation;
+                interception.interceptionDate = reg.interceptionData.interceptionDate;
+                interception.dateOfEntry = reg.interceptionData.dateOfEntry;
+                
+                [migrant addInterceptionsObject:interception];
+            }
+            
+            
+        }
+        //IOM data
+        if (reg.associatedOffice) {
+            //todo add object before save it
+            if (!migrant.iomData) {
+                IomData * iomData = [NSEntityDescription insertNewObjectForEntityForName:@"IomData" inManagedObjectContext:context];
+                migrant.iomData = iomData;
+                migrant.iomData.iomDataId = migrant.registrationNumber;
+            }
+            migrant.iomData.associatedOffice = [IomOffice officeWithName:reg.associatedOffice.name inManagedObjectContext:context];
+        }
+        
+        
+        //biometric
+        if (reg.biometric) {
+        
+            if (!migrant.biometric) {
+                migrant.biometric = [NSEntityDescription insertNewObjectForEntityForName:BIO_ENTITY_NAME inManagedObjectContext:context];
+                migrant.biometric.biometricId = reg.registrationId;
+            }
+            
+            //device
+
+            //photo
+            migrant.biometric.photograph = reg.biometric.photograph;
+            
+            //Biometric
+            migrant.biometric.leftIndexImage = reg.biometric.leftIndex;
+            migrant.biometric.leftThumbImage = reg.biometric.leftThumb;
+            migrant.biometric.rightIndexImage = reg.biometric.rightIndex;
+            migrant.biometric.rightThumbImage = reg.biometric.rightThumb;
+           
+        }else {
+            migrant.biometric = Nil;
+        }
+        
+        //save flag to complete
+        migrant.complete = @(FALSE);
+        
+        if (![context save:&error]) {
+            NSLog(@"Error : %@",[error description]);
+            return nil;
+        }
+        
+     
+        return migrant;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Throw exeption while saveRegistrationData: %@",[exception description]);
+        [context rollback];
+    }
+    return nil;
+}
+
 + (Migrant *)newMigrantInContext:(NSManagedObjectContext *)context withId:(NSString*)Id
 {
     Migrant *migrant = [NSEntityDescription insertNewObjectForEntityForName:@"Migrant" inManagedObjectContext:context];
     BioData *data = [NSEntityDescription insertNewObjectForEntityForName:@"BioData" inManagedObjectContext:context];
-    //    FamilyData *family = [NSEntityDescription insertNewObjectForEntityForName:@"FamilyData" inManagedObjectContext:context];
+    FamilyData *family = [NSEntityDescription insertNewObjectForEntityForName:@"FamilyData" inManagedObjectContext:context];
     //    IomData * iomData = [NSEntityDescription insertNewObjectForEntityForName:@"IomData" inManagedObjectContext:context];
     
     migrant.registrationNumber = Id;
@@ -249,7 +362,7 @@
     //    iomData.iomDataId = Id;
     
     migrant.bioData = data;
-    //    migrant.familyData = family;
+    migrant.familyData = family;
     //    migrant.iomData = iomData;
     
     

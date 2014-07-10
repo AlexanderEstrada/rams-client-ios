@@ -17,6 +17,7 @@
 #import "IMScanFingerprintViewController.h"
 #import "Migrant.h"
 #import <QuickLook/QuickLook.h>
+#import "Migrant+Extended.h"
 
 @interface IMEditRegistrationVC ()<UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIPopoverControllerDelegate,QLPreviewControllerDelegate,QLPreviewControllerDataSource>
 
@@ -203,9 +204,7 @@ typedef enum : NSUInteger {
 - (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index
 {
     controller.title = self.registration.fullname;
-//    if (self.registration.biometric.photograph) return [NSURL fileURLWithPath:self.registration.biometric.photograph];
-    
-    
+        
     return [NSURL fileURLWithPath:self.previewingPhotos[index]];
 }
 
@@ -276,12 +275,15 @@ typedef enum : NSUInteger {
     NSError *error;
     if (![self.context save:&error]) {
         NSLog(@"Error deleting registration: %@", [error description]);
+        
     }else {
         [[IMDBManager sharedManager] saveDatabase:^(BOOL success){
-            [self dismissViewControllerAnimated:YES completion:nil];
+//            [self dismissViewControllerAnimated:YES completion:nil];
         }];
     }
     //     [self.context reset];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     if (self.registrationCancel) {
         self.registrationCancel();
@@ -294,7 +296,7 @@ typedef enum : NSUInteger {
     
     NSNumber * lastStatus = self.registration.complete;
     BOOL needRemove = NO;
-    
+
     //checking the value
     if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
         //show alert
@@ -302,15 +304,28 @@ typedef enum : NSUInteger {
         [alert show];
         return;
     }
-    //set current date for date of entry
-    if (self.registration.interceptionData.dateOfEntry == Nil) {
-        self.registration.interceptionData.dateOfEntry =[NSDate date];
+    
+    //check interception date and date of entry
+    if ([self.registration.interceptionData.dateOfEntry compare:self.registration.interceptionData.interceptionDate] == NSOrderedDescending) {
+        //show alert
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Interception Data" message:@"Date Of Entry can not be more than interception date" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+
     }
+    
+//    //set current date for date of entry
+//    if (self.registration.interceptionData.dateOfEntry == Nil) {
+//        self.registration.interceptionData.dateOfEntry =[NSDate date];
+//    }
     
     [self.registration validateCompletion];
     needRemove = (lastStatus != self.registration.complete);
     
-    self.registration.dateCreated = [NSDate date];
+    if (!self.registration.dateCreated) {
+        self.registration.dateCreated = [NSDate date];
+    }
+    
     
     NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
     NSError *error;
@@ -325,12 +340,15 @@ typedef enum : NSUInteger {
     NSArray *data = [workingContext executeFetchRequest:request error:&error];
     if ([data count]) {
         int i = 1;
-        for (NSManagedObject *managedObject in data) {
-            [workingContext deleteObject:managedObject];
+        for (Migrant * migrant in data) {
+            migrant.complete = @(FALSE);
             NSLog(@"%i object deleted",i);
             needRemove = YES;
+            
+    
         }
-        
+        //deep copy new registration data to migrant
+        [Migrant saveMigrantInContext:workingContext withId:self.registration.registrationId andRegistrationData:self.registration];
     }
     
     if (![workingContext save:&error]) {
@@ -386,13 +404,13 @@ typedef enum : NSUInteger {
                                                           initWithTarget:self
                                                           action:@selector(showPhotoPreview)];
     [doubleTapGestureRecognizer setNumberOfTapsRequired:2];
-    [self.view addGestureRecognizer:doubleTapGestureRecognizer];
     UITapGestureRecognizer *singleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showPhotographOption:)];
     [singleTapGestureRecognizer setNumberOfTapsRequired:1];
     // Wait for failed doubleTapGestureRecognizer
     [singleTapGestureRecognizer requireGestureRecognizerToFail:doubleTapGestureRecognizer];
     self.imagePhotograph.userInteractionEnabled = YES;
     [self.imagePhotograph addGestureRecognizer:singleTapGestureRecognizer];
+    [self.imagePhotograph addGestureRecognizer:doubleTapGestureRecognizer];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)];

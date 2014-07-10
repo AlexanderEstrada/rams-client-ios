@@ -95,7 +95,6 @@ typedef enum
 extern NSString *const CONST_UNHCR_DOCUMENT;
 extern NSString *const CONST_UNHCR_STATUS;
 extern NSString *const CONST_GENDER;
-extern NSString *const CONST_DETENTION_LOCATION_TYPE;
 extern NSString *const CONST_MARITAL_STATUS;
 extern NSString *const CONST_MOVEMENT_TYPE;
 extern NSString *const CONST_TRAVEL_MODE;

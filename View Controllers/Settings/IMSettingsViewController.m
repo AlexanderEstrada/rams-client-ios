@@ -21,9 +21,7 @@
 
 @interface IMSettingsViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,MBProgressHUDDelegate>
 
-{
-	MBProgressHUD *HUD;
-}
+@property (nonatomic,strong) MBProgressHUD *HUD;
 
 @end
 
@@ -200,19 +198,19 @@
     if (alertView.tag == kResetDatabaseAlertTag && buttonIndex != [alertView cancelButtonIndex]) {
 //        [self resetDatabase];
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         
         // Add HUD to screen
-        [self.navigationController.view addSubview:HUD];
+        [self.navigationController.view addSubview:_HUD];
         
         // Regisete for HUD callbacks so we can remove it from the window at the right time
-        HUD.delegate = self;
+        _HUD.delegate = self;
         
-        HUD.labelText = @"Resetting Data";
-        HUD.detailsLabelText = @"Please wait a moment ...";
+        _HUD.labelText = @"Resetting Data";
+        _HUD.detailsLabelText = @"Please wait a moment ...";
         
         // Show the HUD while the provided method executes in a new thread
-        [HUD showWhileExecuting:@selector(resetDatabase) onTarget:self withObject:nil animated:YES];
+        [_HUD showWhileExecuting:@selector(resetDatabase) onTarget:self withObject:nil animated:YES];
         
     }else if (alertView.tag == kSyncAlertTag && buttonIndex != [alertView cancelButtonIndex]) {
         [self.sideMenuDelegate openSynchronizationDialog:nil];
@@ -227,7 +225,7 @@
 
 - (void)hudWasHidden {
     // Remove HUD from screen when the HUD was hidded
-    [HUD removeFromSuperview];
+    [_HUD removeFromSuperview];
     //    [HUD release];
 }
 

@@ -30,7 +30,7 @@
 @property (nonatomic) BOOL receive_warning;
 @property (nonatomic) float progress;
 @property (nonatomic) NSInteger total;
-@property (nonatomic) MBProgressHUD *HUD;
+@property (nonatomic,strong) MBProgressHUD *HUD;
 
 
 //Programmatic Data
@@ -164,7 +164,13 @@
 #pragma mark UITabBarControllerDelegate
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
-    [self updateBasePredicateForSelectedIndex];
+    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self updateBasePredicateForSelectedIndex];
+//        usleep(500);
+//    });
+
+    
 }
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
@@ -219,7 +225,7 @@
     self.navigationItem.rightBarButtonItems = @[itemCreate,itemFilter,self.itemUploadAll];
     self.receive_warning = FALSE;
     //reset top layout
-//    self.edgesForExtendedLayout=UIRectEdgeNone;
+    self.edgesForExtendedLayout=UIRectEdgeNone;
     //TODO : reload Data
 //    self.basePredicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
     

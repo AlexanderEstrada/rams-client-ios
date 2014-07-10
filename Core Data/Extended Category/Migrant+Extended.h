@@ -25,6 +25,7 @@
 + (Migrant *)migrantWithId:(NSString *)migrantId inContext:(NSManagedObjectContext *)context;
 + (Migrant *)newMigrantInContext:(NSManagedObjectContext *)context;
 + (Migrant *)newMigrantInContext:(NSManagedObjectContext *)context withId:(NSString*)Id;
++ (Migrant *)saveMigrantInContext:(NSManagedObjectContext *)contex withId:(NSString*)Id andRegistrationData:(Registration *)reg;
 - (NSString *)fullname;
 - (NSString *)bioDataSummary;
 - (NSString *)interceptionSummary;

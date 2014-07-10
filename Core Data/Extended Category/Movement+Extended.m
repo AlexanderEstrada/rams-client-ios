@@ -15,7 +15,97 @@
 
 @implementation Movement (Extended)
 
+NSString *const MOVEMENT_ENTITY_NAME                            = @"Movement";
+NSString *const MOVEMENT_ID                                     = @"movementId";
+NSString *const MOVEMENT_TYPE                                   = @"type";
+NSString *const MOVEMENT_DATE                                   = @"date";
+NSString *const MOVEMENT_DOCUMENT_NUMBER                        = @"documentNumber";
+NSString *const MOVEMENT_PROPOSED_DATE                          = @"proposedDate";
+NSString *const MOVEMENT_TRAVEL_MODE                            = @"travelMode";
+NSString *const MOVEMENT_REFERENCE_CODE                         = @"referenceCode";
+NSString *const MOVEMENT_DEPARTURE_PORT                         = @"departurePort";
+NSString *const MOVEMENT_ORIGINAL_LOCATION                      = @"origin";
+NSString *const MOVEMENT_TRANSFER_LOCATION                      = @"destination";
+NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationCountry";
 
+
+
+
+
+- (NSDictionary *)format
+{
+    @try {
+        NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
+        
+        
+        //save type
+        [formatted setObject:self.type forKey:MOVEMENT_TYPE];
+        //save date
+        [formatted setObject:[self.date toUTCString] forKey:MOVEMENT_DATE];
+        
+        //save movement id
+        if (self.movementId) {
+            [formatted setObject:self.movementId forKey:MOVEMENT_ID];
+        }
+        
+        
+        if (![self.type isEqual:@"Escape"]) {
+            //document number
+            if (self.documentNumber) {
+                [formatted setObject:self.documentNumber forKey:MOVEMENT_DOCUMENT_NUMBER];
+            }
+            
+            //proposed date
+            if (self.proposedDate) {
+                [formatted setObject:[self.proposedDate toUTCString]forKey:MOVEMENT_PROPOSED_DATE];
+            }
+            
+            //travel mode
+            if (self.travelMode) {
+                [formatted setObject:self.travelMode forKey:MOVEMENT_TRAVEL_MODE];
+            }
+            
+            //reference code
+            if (self.referenceCode) {
+                [formatted setObject:self.referenceCode forKey:MOVEMENT_REFERENCE_CODE];
+            }
+            
+            //departure port
+            if (self.departurePort.name) {
+                [formatted setObject:self.departurePort.name forKey:MOVEMENT_DEPARTURE_PORT];
+            }
+            
+            if ([self.type isEqual:@"Transfer"]) {
+                //origin
+                if (self.originLocation.accommodationId) {
+                    [formatted setObject:self.originLocation.accommodationId forKey:MOVEMENT_ORIGINAL_LOCATION];
+                }
+                
+                //destination
+                if (self.transferLocation.accommodationId) {
+                    [formatted setObject:self.transferLocation.accommodationId forKey:MOVEMENT_TRANSFER_LOCATION];
+                }
+                
+            }
+            
+            if ([self.type isEqual:@"AVR"] || [self.type isEqual:@"Deportation"] || [self.type isEqual:@"Resettlement"]) {
+                //destination country
+                if (self.destinationCountry.code) {
+                    [formatted setObject:self.destinationCountry.code forKey:MOVEMENT_DESTINATION_COUNTRY];
+                }
+                
+            }
+            
+        }
+        
+        return formatted;
+        
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception while creating formatted Movement data: %@", [exception description]);
+    }
+    return Nil;
+}
 + (Movement *)movementWithDictionary:(NSDictionary *)dictionary inContext:(NSManagedObjectContext *)context
 {
     @try {
@@ -80,10 +170,18 @@
 }
 + (Movement *)newMovementInContext:(NSManagedObjectContext *)context
 {
-    Movement *data = [NSEntityDescription insertNewObjectForEntityForName:@"Movement" inManagedObjectContext:context];
+    @try {
+        Movement *data = [NSEntityDescription insertNewObjectForEntityForName:@"Movement" inManagedObjectContext:context];
+        
+        
+        return data;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Error : %@",[exception description]);
+        return Nil;
+    }
     
     
-    return data;
 }
 
 @end

@@ -80,7 +80,7 @@
                     [context rollback];
                 [self postFailureWithError:error];
             }
-//             [context reset];
+             [context reset];
         }
         @catch (NSException *exception) {
             [context rollback];

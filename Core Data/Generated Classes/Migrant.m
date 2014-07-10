@@ -35,5 +35,8 @@
 @dynamic movements;
 @dynamic detentionLocation;
 @dynamic dateCreated;
+@dynamic complete;
+@dynamic uploader;
+@dynamic lastUploader;
 
 @end
