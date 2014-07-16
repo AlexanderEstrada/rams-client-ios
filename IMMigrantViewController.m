@@ -142,6 +142,12 @@
     };
     
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
+    vc.registrationSave = ^(BOOL remove)
+    {
+        //TODO : reload Data
+        [self updateBasePredicateForSelectedIndex];
+    };
+
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
     navCon.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;

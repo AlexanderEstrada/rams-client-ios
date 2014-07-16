@@ -154,6 +154,16 @@
     };
     
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
+    vc.registrationSave = ^(BOOL remove)
+    {
+        //TODO : reload Data
+        if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
+            //reload data
+            IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
+            [vc reloadData];
+        }
+    };
+    
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
     navCon.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;
@@ -164,13 +174,7 @@
 #pragma mark UITabBarControllerDelegate
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
-    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self updateBasePredicateForSelectedIndex];
-//        usleep(500);
-//    });
-
-    
 }
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
@@ -226,17 +230,11 @@
     self.receive_warning = FALSE;
     //reset top layout
     self.edgesForExtendedLayout=UIRectEdgeNone;
-    //TODO : reload Data
-//    self.basePredicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
-    
-    
 }
 
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    
-    
     if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
         if (!_HUD) {
@@ -320,7 +318,12 @@
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
                 [self dismissViewControllerAnimated:YES completion:nil];
-                [self updateBasePredicateForSelectedIndex];
+//                [self updateBasePredicateForSelectedIndex];
+                 if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
+                //reload data
+                 IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
+                [vc reloadData];
+                 }
                 if(self.progress < self.total ){
                     self.progress += 1;
                     _HUD.progress = self.progress/self.total;
@@ -370,7 +373,7 @@
                         
                     }
                     @catch (NSException *exception) {
-                        //                        NSLog(@"Error while uploading all pending Registration - Error message: %@", [exception description]);
+                        NSLog(@"Error while uploading all pending Registration - Error message: %@", [exception description]);
                         [_context rollback];
                     }
                 }
@@ -400,6 +403,10 @@
         //TODO : reload Data
         [self updateBasePredicateForSelectedIndex];
         
+        //synchronize data
+         _HUD.labelText = @"Synchronizing";
+        sleep(5);
+        
     }else{
         NSLog(@"There is no data to upload");
         
@@ -409,6 +416,8 @@
     }
     
 }
+
+
 
 
 - (void) uploadAll:(UIBarButtonItem *)sender

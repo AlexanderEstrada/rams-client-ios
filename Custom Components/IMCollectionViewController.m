@@ -11,6 +11,8 @@
 #import "UIImage+ImageUtils.h"
 
 
+#define RADIANS(degrees) ((degrees * M_PI) / 180.0)
+
 @interface IMCollectionViewController ()
 
 @property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;

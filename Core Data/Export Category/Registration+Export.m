@@ -145,7 +145,6 @@ NSString *const REG_MOVEMENT                 = @"movements";
 //            [formatted setObject:movements forKey:REG_MOVEMENT];
         }
         
-        NSLog(@"format : %@",[formatted description]);
         return formatted;
     }
     @catch (NSException *exception)
@@ -318,7 +317,6 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         //general information
         migrant.underIOMCare = [[dictionary objectForKey:REG_IOM_CARE] isEqualToString:@"true"] ? @(1):@(0);
-        migrant.selfReporting = [[dictionary objectForKey:REG_SELF_REPORT] isEqualToString:@"true"] ? @(1):@(0);
         migrant.unhcrDocument = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT]);
         migrant.unhcrNumber = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT_NUMBER]);
         migrant.vulnerabilityStatus = CORE_DATA_OBJECT([dictionary objectForKey:REG_VULNERABILITY]);
@@ -336,7 +334,13 @@ NSString *const REG_MOVEMENT                 = @"movements";
         migrant.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
         migrant.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
         
-        migrant.bioData.gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
+        NSString * gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
+        if ([gender length] == 1 || [gender length] == 2) {
+            gender = [gender isEqualToString:@"M"] ? @"Male" : @"Female";
+        }
+
+        migrant.bioData.gender = gender;
+        
         migrant.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
         migrant.bioData.nationality = [Country countryWithCode:[bioData objectForKey:REG_NATIONALITY] inManagedObjectContext:context];
         migrant.bioData.countryOfBirth = [Country countryWithCode:[bioData objectForKey:REG_COUNTRY_OF_BIRTH] inManagedObjectContext:context];
@@ -344,6 +348,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
         migrant.bioData.dateOfBirth = [NSDate dateFromUTCString:[bioData objectForKey:REG_DATE_OF_BIRTH] ];
         
         if (dictionary [REG_INTERCEPTION]) {
+            NSDictionary *interception = CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION]);
+            if (interception) {
+                //get value
+                 migrant.selfReporting = [[interception objectForKey:REG_SELF_REPORT] isEqualToString:@"true"] ? @(1):@(0);
+            }
             
             Interception *data = [Interception interceptionWithDictionary:CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION])withMigrantId:Id inContext:context];
             if (data) {
@@ -394,17 +403,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
             //photo
             [migrant.biometric updatePhotographFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_PHOTOGRAPH])];
             
-            //template
-            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_THUMB_TEMPLATE]) forFingerPosition:RightThumb];
-            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_INDEX_TEMPLATE]) forFingerPosition:RightIndex];
-            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_THUMB_TEMPLATE]) forFingerPosition:LeftThumb];
-            [migrant.biometric updateTemplateFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_INDEX_TEMPLATE]) forFingerPosition:LeftIndex];
-            
             //finger image
-            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_THUMB_IMAGE]) forFingerPosition:RightThumb];
-            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_INDEX_IMAGE]) forFingerPosition:RightIndex];
-            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_THUMB_IMAGE]) forFingerPosition:LeftThumb];
-            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_INDEX_IMAGE]) forFingerPosition:LeftIndex];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:REG_RIGHT_THUMB]) forFingerPosition:RightThumb];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:REG_RIGHT_INDEX]) forFingerPosition:RightIndex];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:REG_LEFT_THUMB]) forFingerPosition:LeftThumb];
+            [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:REG_LEFT_INDEX]) forFingerPosition:LeftIndex];
         }else {
             migrant.biometric = Nil;
         }

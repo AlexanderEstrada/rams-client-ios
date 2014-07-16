@@ -25,8 +25,6 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
         
         typeof(self) weakSelf = self;
         [self addExecutionBlock:^{
-            // Simulate fetching
-//            [NSThread sleepForTimeInterval:DataLoadingOperationDuration];
             
             NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
             NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];

@@ -234,12 +234,6 @@
     
     IMInterceptionDetailsVC *vc = [[IMInterceptionDetailsVC alloc] initWithInterceptionData:data delegate:self];
     vc.allowsEditing = YES;
-    vc.Cancel = ^(void)
-    {
-        if (self.listViewHidden) {
-            self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
-        }
-    };
     
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -299,12 +293,7 @@
     [super viewWillAppear:animated];
     [self.navigationController setToolbarHidden:NO];
     
-    if (!self.listViewHidden) {
-        [self.listVC reloadData];
-    }else {
-        self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
-    }
-}
+  }
 
 - (void)setupChildViewControllers
 {
@@ -329,16 +318,18 @@
         [self.listViewContainer addSubview:self.listVC.view];
         [self.listVC didMoveToParentViewController:self];
         
+        self.listViewContainer.hidden = YES;
+        
         self.listViewHidden = YES;
     });
 }
 
 - (void)setListViewHidden:(BOOL)listViewHidden
 {
-    _listViewHidden = listViewHidden;
+   self.listViewContainer.hidden = _listViewHidden = listViewHidden;
 
     if (!self.listViewHidden) [self.mapVC hidePopover];
-    self.listViewContainer.frame = [self listViewContainerFrame:!self.listViewHidden];
+      self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];
     
     [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
         self.listViewContainer.frame = [self listViewContainerFrame:self.listViewHidden];

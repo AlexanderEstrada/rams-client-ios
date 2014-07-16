@@ -17,6 +17,9 @@
 @property (nonatomic) BOOL reloadingData;
 @property (nonatomic) BOOL firstLaunch;
 @property (nonatomic, strong) NSOperationQueue *thumbnailQueue;
+@property (nonatomic) int currentIndex;
+
+- (void)reloadData;
 @end
 
 

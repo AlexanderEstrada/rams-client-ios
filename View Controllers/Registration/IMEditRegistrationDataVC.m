@@ -83,17 +83,17 @@ typedef enum : NSUInteger {
             
         }
         
-    }else{
-        if (!self.registration.registrationId) {
-            //set UUID as default registration ID
-            self.registration.registrationId = [[NSUUID UUID] UUIDString];
-        }
-        //create new migrant data
-        self.migrant = [Migrant newMigrantInContext:workingContext withId:self.registration.registrationId];
-        
-        //init movement data
-        self.movementData = [NSMutableArray array];
     }
+    if (error) {
+        //show error
+        NSLog(@"Error while Reload on IMEditRegistrationDataVC : %@", [error description]);
+    }
+    
+    //delete unused pointer
+    workingContext = Nil;
+    request = Nil;
+    results = Nil;
+    error = Nil;
     
     [self.tableView reloadData];
 }
@@ -104,17 +104,6 @@ typedef enum : NSUInteger {
     _underIOMCare = underIOMCare;
     
     self.registration.underIOMCare = @(self.underIOMCare);
-    
-//    if (self.underIOMCare) {
-//        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:(table_location + [self.migrant.movements count])] withRowAnimation:UITableViewRowAnimationFade];
-//        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:2] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-//    }else {
-//        self.registration.transferDate = nil;
-//        self.registration.transferDestination = nil;
-//        if ([self.tableView numberOfSections] == ((table_location + [self.migrant.movements count]) +1)) {
-//            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:(table_location + [self.migrant.movements count])] withRowAnimation:UITableViewRowAnimationFade];
-//        }
-//    }
 }
 
 - (NSArray *)vulnerabilityOptions
@@ -150,16 +139,13 @@ typedef enum : NSUInteger {
 - (NSInteger)numberOfSectionsInTableView
 {
     NSUInteger numberOfMovement = [self.migrant.movements count];
-//    return self.underIOMCare ? (TOTAL_SECTION+numberOfMovement) : ((TOTAL_SECTION -1)+numberOfMovement);
     return TOTAL_SECTION + numberOfMovement;
 }
 
 #pragma mark Table View Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    //    return self.underIOMCare ? 4 : 3;
     NSUInteger numberOfMovement = [self.migrant.movements count];
-//    return self.underIOMCare ? (TOTAL_SECTION+numberOfMovement) : ((TOTAL_SECTION -1)+numberOfMovement);
     return TOTAL_SECTION + numberOfMovement;
 }
 
@@ -254,12 +240,7 @@ typedef enum : NSUInteger {
         return 6;
     }else if (section == table_movements){
         return 1;
-    }
-//    else if (section == (table_location + [self.migrant.movements count])){
-//        return 2;
-//    }
-//    else if ((section >= table_location) && [self.migrant.movements count]) {
-       else if ((section > table_movements) && [self.migrant.movements count]) {
+    }else if ((section > table_movements) && [self.migrant.movements count]) {
         NSUInteger index = (section - table_location);
         Movement *movement = [self.movementData objectAtIndex:index];
         //get number of row
@@ -322,11 +303,7 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         
         [headerView.buttonAction addTarget:self action:@selector(addMoreMovement:) forControlEvents:UIControlEventTouchUpInside];
-    }
-//    else if (section == (table_location + [self.migrant.movements count])){
-//        headerView.labelTitle.text = @"Location";
-//    }
-    else if (section > table_movements){
+    }else if (section > table_movements){
         headerView.labelTitle.font = [UIFont boldFontWithSize:20];
         headerView.labelTitle.textAlignment = NSTextAlignmentLeft;
         headerView.labelTitle.text = [NSString stringWithFormat:@"Movement Detail # %i",(section - table_location)+1];
@@ -343,7 +320,48 @@ typedef enum : NSUInteger {
                                                           self.popover = nil;
                                                           
                                                           if (movement && !editing) {
+                                                              
+                                                              //get all movement from Migrant
+                                                              NSManagedObjectContext *workingContext = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+                                                              NSError *error;
+                                                              
+                                                              //get all movement
+                                                              NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
+                                                              request.predicate = [NSPredicate predicateWithFormat:@"registrationNumber = %@",self.registration.registrationId];
+                                                              request.returnsObjectsAsFaults = YES;
+                                                              
+                                                              NSArray *results = [workingContext executeFetchRequest:request error:&error];
+                                                              
+                                                              if (![results count]) {
+                                                                  //todo : add movement to migrant
+                                                                  if (!self.registration.registrationId) {
+                                                                      //set UUID as default registration ID
+                                                                      self.registration.registrationId = [[NSUUID UUID] UUIDString];
+                                                                  }
+                                                                  //create new migrant data
+                                                                  self.migrant = [Migrant newMigrantInContext:workingContext withId:self.registration.registrationId];
+                                                                  
+                                                                  //deep copy new registration data to migrant
+                                                                  [Migrant saveMigrantInContext:workingContext withId:self.registration.registrationId andRegistrationData:self.registration];
+                                                                  
+                                                                  //init movement data
+                                                                  self.movementData = [NSMutableArray array];
+                                                              }
+
+                                                              
                                                               [self.migrant addMovementsObject:movement];
+                                                              //save to database
+                                                              if (![workingContext save:&error]) {
+                                                                  NSLog(@"Error saving context: %@", [error description]);
+                                                                  [self showAlertWithTitle:@"Failed Adding Movements" message:@"Please fill Personal Information."];
+                                                                  [workingContext rollback];
+                                                              }
+                                                              
+                                                              //delete unused pointer
+                                                              workingContext = Nil;
+                                                              results = Nil;
+                                                              request = Nil;
+                                                              
                                                           }
                                                           [self reloadData];
                                                       }];
@@ -420,7 +438,7 @@ typedef enum : NSUInteger {
             cell.onTextValueReturn = ^(NSString *value){
                 if (!self.registration.unhcrDocument){
                     //show alert
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     alert.tag = IMAlertNOUNHCR_Tag;
                     [alert show];
                     self.registration.unhcrNumber = value = Nil;
@@ -467,23 +485,7 @@ typedef enum : NSUInteger {
             cell.switcher.on = self.registration.underIOMCare.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.underIOMCare = value; };
         }
-    }
-//    else if (indexPath.section == (table_location + [self.migrant.movements count])) {
-//        if (indexPath.row == 0) {
-//            cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-//            //            cell.labelTitle.text = @"Latest Accommodation";
-//            cell.labelTitle.text = @"Latest Location";
-//            cell.labelValue.text = self.registration.transferDestination.name;
-//        }else if (indexPath.row == 1) {
-//            cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-//            //            cell.labelTitle.text = @"Transfer Date to Latest Accommodation";
-//            cell.labelTitle.text = @"Transfer Date";
-//            cell.labelValue.text = [self.registration.transferDate mediumFormatted];
-//        }
-//        
-//    }
-//     else if (indexPath.section >= table_location && [self.migrant.movements count]) {
-    else if (indexPath.section > table_movements && [self.migrant.movements count]) {
+    }else if (indexPath.section > table_movements && [self.migrant.movements count]) {
         
             
             //get the index based on total movement, so we can add section header for every movement history
@@ -631,7 +633,7 @@ typedef enum : NSUInteger {
         }else if (indexPath.row == 1){
             if (!self.registration.unhcrDocument) {
                 //show alert
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document First" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 alert.tag = IMAlertNOUNHCR_Tag;
                 [alert show];
                 
@@ -679,24 +681,7 @@ typedef enum : NSUInteger {
             
         }
         
-    }
-//    else if (indexPath.section == (table_location + [self.migrant.movements count])) {
-//        if (indexPath.row == 0) {
-//            [self showAccommodation:indexPath];
-//        }else if (indexPath.row == 1) {
-//            IMDatePickerVC *datePicker = [[IMDatePickerVC alloc] initWithAction:^(NSDate *date){
-//                self.registration.transferDate = date;
-//                IMFormCell *cell = (IMFormCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-//                cell.labelValue.text = [self.registration.transferDate mediumFormatted];
-//            }];
-//            
-//            datePicker.maximumDate = [NSDate date];
-//            datePicker.date = self.registration.transferDate;
-//            [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:datePicker navigationController:NO];
-//        }
-//    }
-//    else if ((indexPath.section >= table_location) && [self.migrant.movements count]){
-         else if ((indexPath.section > table_movements) && [self.migrant.movements count]){
+    }else if ((indexPath.section > table_movements) && [self.migrant.movements count]){
         
         //get the index based on total movement, so we can add section header for every movement history
         NSUInteger index = ((indexPath.section - table_location));

@@ -22,4 +22,6 @@
 @property (nonatomic) BOOL firstLaunch;
 @property (nonatomic) int currentIndex;
 
+- (void)reloadData;
+
 @end

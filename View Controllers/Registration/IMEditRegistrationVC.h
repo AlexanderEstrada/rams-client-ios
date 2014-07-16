@@ -9,9 +9,8 @@
 #import "IMViewController.h"
 
 
-
 @class Registration;
-@interface IMEditRegistrationVC : IMViewController
+@interface IMEditRegistrationVC : IMViewController 
 
 @property (nonatomic, strong) Registration *registration;
 @property (nonatomic, strong) NSMutableArray *previewingPhotos;

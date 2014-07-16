@@ -145,6 +145,9 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self.tableView];
     [super viewWillDisappear:animated];
+    if (self.Cancel) {
+        self.Cancel();
+    }
 }
 
 - (void)reloadData

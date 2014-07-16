@@ -21,10 +21,7 @@
 
 
 
-@interface IMRegistrationListVC () <MBProgressHUDDelegate,DataProviderDelegate>
-
-@property (nonatomic,strong) MBProgressHUD *HUD;
-
+@interface IMRegistrationListVC () <DataProviderDelegate>
 
 @end
 
@@ -41,7 +38,9 @@
         _dataProvider.shouldLoadAutomatically = YES;
         _dataProvider.automaticPreloadMargin = FluentPagingCollectionViewPreloadMargin;
         
-        [self.collectionView reloadData];
+        if ([self isViewLoaded]) {
+            [self.collectionView reloadData];
+        }
         
     }
 }
@@ -49,32 +48,22 @@
 
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
-    @synchronized(self){
-        if ( self.reloadingData || [_basePredicate isEqual:basePredicate]) {
+    @synchronized(self)
+    {
+        if (self.reloadingData || basePredicate == _basePredicate) {
             //            /do not do anything until data complete reload
             return;
         }
         
         _basePredicate = basePredicate;
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        if (!_HUD) {
-            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-            // Regisete for HUD callbacks so we can remove it from the window at the right time
-            _HUD.delegate = self;
-        }
-        // Back to indeterminate mode
-        _HUD.mode = MBProgressHUDModeIndeterminate;
+
+        // Show progress window
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = @"Reloading Data...";
         
-        // Add HUD to screen
-        [self.navigationController.view addSubview:_HUD];
-        
-        _HUD.labelText = @"Reloading Data";
-        
-        // Show the HUD while the provided method executes in a new thread
-        [_HUD showWhileExecuting:@selector(reloadData) onTarget:self withObject:nil animated:YES];
-        
+        [self reloadData];
     };
-    
+
 }
 
 - (void)reloadData
@@ -91,23 +80,24 @@
                 request.predicate = self.basePredicate;
             }else {
                 //default
-                self.basePredicate = request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+               request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
             }
-            
             request.returnsObjectsAsFaults = YES;
             
             NSError *error;
             
             NSUInteger total = [context countForFetchRequest:request error:&error];
-            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:(self.basePredicate != Nil)? self.basePredicate:Nil];
+            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:request.predicate];
             self.dataProvider = Nil;
             [self setDataProvider:dataProvider];
-            
+    
+//            // Remove progress window
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             self.reloadingData = NO;
             
         }
     };
-    
+
 }
 
 #pragma mark UIAlertViewDelegate
@@ -130,6 +120,8 @@
     
     registration.successHandler = ^{
         
+        //sleep for synchcronize
+        sleep(5);
         [self hideLoadingView];
         [self showAlertWithTitle:@"Upload Success" message:nil];
         
@@ -208,6 +200,7 @@
 - (void)dataProvider:(DataProvider *)dataProvider willLoadDataAtIndexes:(NSIndexSet *)indexes {
     
 }
+
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
     
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
@@ -227,6 +220,10 @@
     
     if ([dataObject isKindOfClass:[Registration class]]) {
         Registration *registration = (Registration *) dataObject;
+        if (!registration) {
+            //do not show empty cell
+            return;
+        }
         cell.labelTitle.text = registration.fullname;
         cell.labelSubtitle.text = registration.registrationId;
         //        cell.labelDetail1.text = registration.bioData.nationality.name;
@@ -250,8 +247,6 @@
         }else {
             cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
         }
-        
-        [self circleImageView:cell.photoView];
         
         cell.buttonUpload.hidden = !registration.complete.boolValue;
         [cell.buttonUpload removeTarget:self action:@selector(upload:) forControlEvents:UIControlEventTouchUpInside];
@@ -282,11 +277,7 @@
     }
 }
 
-- (void)circleImageView:(UIImageView *)imageView
-{
-    imageView.layer.cornerRadius = imageView.frame.size.width / 2;
-    imageView.layer.masksToBounds = YES;
-}
+
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -294,9 +285,10 @@
     
     IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     editVC.registration = registration;
-    
+
     editVC.registrationSave = ^(BOOL remove)
     {
+        //TODO : reload Data
         if (remove) {
             //delete data on data source
             [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
@@ -336,11 +328,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    if (!_HUD) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    }
     
     [self.collectionView registerNib:[UINib nibWithNibName:@"IMRegistrationCollectionViewCell"
                                                     bundle:[NSBundle mainBundle]]
@@ -416,18 +403,25 @@
     return padding;
 }
 
-#pragma mark -
-#pragma mark MBProgressHUDDelegate methods
+-(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [self.collectionView setAlpha:0.0f];
+    [self.collectionView.collectionViewLayout invalidateLayout];
+    CGPoint currentOffset = [self.collectionView contentOffset];
+    self.currentIndex = currentOffset.x / self.collectionView.frame.size.width;
+}
 
-- (void)hudWasHidden {
-    @try {
-        // Remove HUD from screen when the HUD was hidded
-        if (_HUD) {
-            [_HUD removeFromSuperview];
-        }
-    }@catch (NSException *exception) {
-        NSLog(@"Error on hudWasHidden with message: %@",[exception description]);
-    }
+-(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    // Force realignment of cell being displayed
+    CGSize currentSize = self.collectionView.bounds.size;
+    float offset = self.currentIndex * currentSize.width;
+    [self.collectionView setContentOffset:CGPointMake(offset, 0)];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.currentIndex inSection:0];
+    
+    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+    
+    [UIView animateWithDuration:0.125f animations:^{
+        [self.collectionView setAlpha:1.0f];
+    }];
 }
 
 @end
