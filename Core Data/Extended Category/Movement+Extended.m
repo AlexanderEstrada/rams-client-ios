@@ -19,6 +19,7 @@ NSString *const MOVEMENT_ENTITY_NAME                            = @"Movement";
 NSString *const MOVEMENT_ID                                     = @"movementId";
 NSString *const MOVEMENT_TYPE                                   = @"type";
 NSString *const MOVEMENT_DATE                                   = @"date";
+NSString *const MOVEMENT_DATE_OLD                               = @"movementDate";
 NSString *const MOVEMENT_DOCUMENT_NUMBER                        = @"documentNumber";
 NSString *const MOVEMENT_PROPOSED_DATE                          = @"proposedDate";
 NSString *const MOVEMENT_TRAVEL_MODE                            = @"travelMode";
@@ -41,7 +42,7 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
         //save type
         [formatted setObject:self.type forKey:MOVEMENT_TYPE];
         //save date
-        [formatted setObject:[self.date toUTCString] forKey:MOVEMENT_DATE];
+        [formatted setObject:[self.date toUTCString] forKey:MOVEMENT_DATE_OLD];
         
         //save movement id
         if (self.movementId) {
@@ -115,8 +116,8 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
             data = [Movement newMovementInContext:context];
             data.movementId = Id;
         }
-        data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"interceptionDate"]];
         data.type = [dictionary objectForKey:@"type"];
+         data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"date"]];
         if (![data.type isEqual:@"Escape"]) {
             data.documentNumber = CORE_DATA_OBJECT([dictionary objectForKey:@"documentNumber"]);
             data.proposedDate = [NSDate dateFromUTCString:[dictionary objectForKey:@"proposedDate"]];
@@ -126,7 +127,6 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
             if ([data.type isEqual:@"Transfer"]) {
                 data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:@"origin"] inManagedObjectContext:context];
                 data.transferLocation = [Accommodation accommodationWithId:[dictionary objectForKey:@"destination"] inManagedObjectContext:context];
-                data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"date"]];
             }else{
                 data.originLocation = Nil;
                 data.transferLocation = Nil;

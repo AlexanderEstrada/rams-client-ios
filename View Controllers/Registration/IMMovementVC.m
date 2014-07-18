@@ -267,7 +267,7 @@
         if (indexPath.row == 0) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_MOVEMENT_TYPE delegate:self];
             vc.selectedValue = self.movement.type;
-            vc.firstRowIsSpecial = YES;
+            vc.firstRowIsSpecial = NO;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }else if (indexPath.row == 1) {
             IMDatePickerVC *datePicker = [[IMDatePickerVC alloc] initWithAction:^(NSDate *date){
@@ -290,7 +290,7 @@
         }else if (indexPath.row == 4){
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_TRAVEL_MODE delegate:self];
             vc.selectedValue = self.movement.travelMode;
-            vc.firstRowIsSpecial = YES;
+            vc.firstRowIsSpecial = NO;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }else if (indexPath.row == 6){
             [self showPort:indexPath];

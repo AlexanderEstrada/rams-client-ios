@@ -22,7 +22,9 @@
 
 
 
-@interface IMMigrantListVC () <DataProviderDelegate>
+@interface IMMigrantListVC () <DataProviderDelegate,MBProgressHUDDelegate>
+
+@property (nonatomic,strong) MBProgressHUD *HUD;
 
 @end
 
@@ -55,18 +57,12 @@
         
         _basePredicate = basePredicate;
         
-        // Show progress window
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.labelText = @"Reloading Data...";
-        
         [self reloadData];
     };
 }
 
-- (void)reloadData
+- (void)executing
 {
-    
-    
     @synchronized(self)
     {
         if(!self.reloadingData){
@@ -87,13 +83,36 @@
             
             self.dataProvider = Nil;
             [self setDataProvider:dataProvider];
-            
-            // Remove progress window
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
+    
+            [_HUD hideUsingAnimation:YES];
             self.reloadingData = NO;
             
         }
     };
+}
+
+- (void)reloadData
+{
+    // Show progress window
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    
+    
+    
+    // Add HUD to screen
+    [self.view addSubview:_HUD];
+    
+    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    _HUD.delegate = self;
+    
+    _HUD.labelText = @"Reloading Data...";
+    
+    // Show the HUD while the provided method executes in a new thread
+    [_HUD showUsingAnimation:YES];
+    
+     [self executing];
     
 }
 
@@ -374,6 +393,14 @@
     [UIView animateWithDuration:0.125f animations:^{
         [self.collectionView setAlpha:1.0f];
     }];
+}
+
+#pragma mark -
+#pragma mark MBProgressHUDDelegate methods
+
+- (void)hudWasHidden {
+    // Remove HUD from screen when the HUD was hidded
+    [_HUD removeFromSuperview];
 }
 
 @end

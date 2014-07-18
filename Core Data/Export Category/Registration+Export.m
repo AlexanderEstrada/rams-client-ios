@@ -112,11 +112,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
         [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
-//        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
-//            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
-//                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
-//            [formatted setObject:transfer forKey:REG_TRANSFER];
-//        }
+        //        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
+        //            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+        //                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+        //            [formatted setObject:transfer forKey:REG_TRANSFER];
+        //        }
         
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
@@ -131,19 +131,30 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //check if There is movement to upload
         Migrant * migrant = [Migrant migrantWithId:self.registrationId inContext:self.managedObjectContext];
         
-        if (migrant) {
+        if (migrant && [migrant.movements count]) {
+            /* using new format*/
             //only proccess if there is movement history to upload
-//            NSMutableDictionary *movements = [NSMutableDictionary dictionary];
-            int counter =0;
-            NSString *key = [NSString string];
+            //            NSMutableDictionary *movements = [NSMutableDictionary dictionary];
+            //            int counter =0;
+            //            NSString *key = [NSString string];
+            //            for (Movement * movement in migrant.movements) {
+            //                key =[NSString stringWithFormat:@"%@[%i]",REG_MOVEMENT,counter++];
+            //                //parse movement history
+            //                [formatted setObject:[movement format] forKey:key];
+            //            }
+            //end new format
+            
+            /* using old format*/
+            NSMutableArray * data = [NSMutableArray array];
             for (Movement * movement in migrant.movements) {
-                key =[NSString stringWithFormat:@"%@[%i]",REG_MOVEMENT,counter++];
                 //parse movement history
-                [formatted setObject:[movement format] forKey:key];
+                [data addObject:[movement format]];
             }
-           
-//            [formatted setObject:movements forKey:REG_MOVEMENT];
+            [formatted setObject:data forKey:REG_MOVEMENT];
+            //end old format
+            
         }
+        NSLog(@"format : %@",[formatted description]);
         
         return formatted;
     }
@@ -338,7 +349,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         if ([gender length] == 1 || [gender length] == 2) {
             gender = [gender isEqualToString:@"M"] ? @"Male" : @"Female";
         }
-
+        
         migrant.bioData.gender = gender;
         
         migrant.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
@@ -351,7 +362,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
             NSDictionary *interception = CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION]);
             if (interception) {
                 //get value
-                 migrant.selfReporting = [[interception objectForKey:REG_SELF_REPORT] isEqualToString:@"true"] ? @(1):@(0);
+                migrant.selfReporting = [[interception objectForKey:REG_SELF_REPORT] isEqualToString:@"true"] ? @(1):@(0);
             }
             
             Interception *data = [Interception interceptionWithDictionary:CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION])withMigrantId:Id inContext:context];
@@ -425,7 +436,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         if (![context save:&error]) {
             NSLog(@"Error : %@",[error description]);
         }
-
+        
         
         return YES;
     }
@@ -455,12 +466,12 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 NSLog(@"Fail to save to database : %@",[error description]);
             }else data.complete =@TRUE;
             
-//            [context reset];
+            //            [context reset];
             return value;
         }
         NSLog(@"Error saving registration data - Error: %@",  [error description]);
         [context rollback];
-//        [context reset];
+        //        [context reset];
     }
     @catch (NSException *exception) {
         NSLog(@"Throw exeption : %@",[exception description]);
@@ -532,7 +543,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
     stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length];
     
     if (self.unhcrDocument) stat &= self.unhcrDocument && [self.unhcrNumber length];
-//    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
+    //    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
     self.complete = @(stat);
 }
 
@@ -595,7 +606,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //deep copy
         data.associatedOffice = [IomOffice officeWithName:migrant.iomData.associatedOffice.name inManagedObjectContext:context];
         
-     
+        
         
         //Biodata
         data.bioData.firstName = migrant.bioData.firstName;
@@ -741,20 +752,20 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 [migrant.movements sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES]]];
             }
             
-             NSArray *myArray = [migrant.movements allObjects];
+            NSArray *myArray = [migrant.movements allObjects];
             if ([myArray count]) {
                 for (Movement *movement in myArray){
-                       //get newest movement data && have same location with detention location
+                    //get newest movement data && have same location with detention location
                     if ([movement.transferLocation.accommodationId isEqualToString:migrant.detentionLocation]) {
                         //Accommodation
                         data.transferDestination = movement.transferLocation;
                         data.transferDate = movement.date;
                     }
                 }
-            
-         
-//            Movement *movement = [myArray firstObject];
-           
+                
+                
+                //            Movement *movement = [myArray firstObject];
+                
             }else{
                 data.transferDate =Nil;
                 data.transferDestination = Nil;

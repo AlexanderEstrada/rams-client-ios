@@ -621,14 +621,14 @@ typedef enum : NSUInteger {
         }else if (indexPath.row == 8) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithOptions:[self vulnerabilityOptions] delegate:self];
             vc.selectedValue = self.registration.vulnerability;
-            vc.firstRowIsSpecial = YES;
+            vc.firstRowIsSpecial = NO;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }
     }else if (indexPath.section == table_unhcr_data){
         if (indexPath.row == 0) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_UNHCR_DOCUMENT delegate:self];
             vc.selectedValue = self.registration.unhcrDocument;
-            vc.firstRowIsSpecial = YES;
+            vc.firstRowIsSpecial = NO;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }else if (indexPath.row == 1){
             if (!self.registration.unhcrDocument) {
@@ -690,7 +690,7 @@ typedef enum : NSUInteger {
         if (indexPath.row == 0) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_MOVEMENT_TYPE delegate:self];
             vc.selectedValue = movement.type;
-            vc.firstRowIsSpecial = YES;
+            vc.firstRowIsSpecial = NO;
             vc.onOptionSelected = ^ (id selectedValue){
                 movement.type = selectedValue;
                 [self.popover dismissPopoverAnimated:YES];
@@ -723,7 +723,7 @@ typedef enum : NSUInteger {
         }else if (indexPath.row == 4){
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_TRAVEL_MODE delegate:self];
             vc.selectedValue = movement.travelMode;
-            vc.firstRowIsSpecial = YES;
+            vc.firstRowIsSpecial = NO;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
         }else if (indexPath.row == 6){
             [self showPort:indexPath];
