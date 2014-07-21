@@ -18,5 +18,6 @@
 @dynamic leftThumb;
 @dynamic photograph;
 @dynamic registration;
+@dynamic photographThumbnail;
 
 @end

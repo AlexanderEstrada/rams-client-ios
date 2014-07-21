@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13E28" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Accommodation" representedClassName="Accommodation" syncable="YES">
         <attribute name="accommodationId" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="active" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
@@ -45,6 +45,7 @@
         <attribute name="leftThumbImage" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="leftThumbTemplate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photograph" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photographThumbnail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rightIndexImage" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rightIndexTemplate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rightThumbImage" optional="YES" attributeType="String" syncable="YES"/>
@@ -247,6 +248,7 @@
         <attribute name="leftIndex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="leftThumb" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photograph" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photographThumbnail" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rightIndex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rightThumb" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="registration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Registration" inverseName="biometric" inverseEntity="Registration" syncable="YES"/>
@@ -275,7 +277,7 @@
         <element name="Accommodation" positionX="162" positionY="41" width="128" height="298"/>
         <element name="Allowance" positionX="25" positionY="-369" width="128" height="118"/>
         <element name="BioData" positionX="-144" positionY="-157" width="128" height="193"/>
-        <element name="Biometric" positionX="-576" positionY="-499" width="128" height="208"/>
+        <element name="Biometric" positionX="-576" positionY="-499" width="128" height="223"/>
         <element name="Child" positionX="-756" positionY="-216" width="128" height="73"/>
         <element name="Country" positionX="205" positionY="-135" width="128" height="165"/>
         <element name="FamilyData" positionX="-576" positionY="-220" width="128" height="118"/>
@@ -295,7 +297,7 @@
         <element name="Port" positionX="-441" positionY="113" width="128" height="103"/>
         <element name="Registration" positionX="207" positionY="-676" width="128" height="298"/>
         <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="178"/>
-        <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="133"/>
+        <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="150"/>
         <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>
         <element name="RegistrationProfile" positionX="576" positionY="-532" width="128" height="208"/>
     </elements>

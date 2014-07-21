@@ -243,7 +243,9 @@ typedef enum : NSUInteger {
         image = [image scaledToHeight:1800];
         NSData *imageData = UIImageJPEGRepresentation(image, 1);
         [self.registration.biometric updatePhotographData:imageData];
-        self.imagePhotograph.image = [self.registration.biometric.photographImage scaledToWidthInPoint:100];
+//        self.imagePhotograph.image = [self.registration.biometric.photographImage scaledToWidthInPoint:100];
+        self.imagePhotograph.image = self.registration.biometric.photographImageThumbnail;
+        
     }
     
     if (self.popover) {
@@ -485,6 +487,7 @@ typedef enum : NSUInteger {
     
     if (self.registration.biometric.rightIndex) {
         self.imageRightIndex.image = [[self.registration.biometric fingerImageForPosition:RightIndex] scaledToWidthInPoint:100];
+     
     }else {
         self.imageRightIndex.image = defaultImage;
     }
@@ -508,7 +511,26 @@ typedef enum : NSUInteger {
     }
     
     if (self.registration.biometric.photograph) {
-        self.imagePhotograph.image = [[self.registration.biometric photographImage] scaledToWidthInPoint:100];
+        //show thumbnail
+        if (!self.registration.biometric.photographThumbnail) {
+            //save as thumbnail 
+            self.imagePhotograph.image = [[self.registration.biometric photographImage] scaledToWidthInPoint:100];
+            
+            
+            NSData *imgData= UIImageJPEGRepresentation(self.imagePhotograph.image,0.0);
+            
+            [self.registration.biometric updatePhotographThumbnail:imgData];
+            
+            //save to database
+            NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
+            NSError *error;
+            if (![workingContext save:&error]) {
+                NSLog(@"Error saving context: %@", [error description]);
+                [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
+            }
+        }
+
+         self.imagePhotograph.image = [self.registration.biometric photographImageThumbnail];        
     }else {
         self.imagePhotograph.image = [UIImage imageNamed:@"icon-avatar-large"];
     }

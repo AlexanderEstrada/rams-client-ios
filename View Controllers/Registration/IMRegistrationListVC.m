@@ -61,7 +61,7 @@
         
         [self reloadData];
     };
-
+    
 }
 
 - (void)executing
@@ -103,9 +103,9 @@
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
         _HUD = [[MBProgressHUD alloc] initWithView:self.view];
     }
-
     
-
+    
+    
     // Add HUD to screen
     [self.view addSubview:_HUD];
     
@@ -120,7 +120,7 @@
     [self executing];
     
     
-
+    
 }
 
 #pragma mark UIAlertViewDelegate
@@ -135,35 +135,55 @@
 - (void)upload:(UIButton *)sender
 {
     //TODO: upload individual registration here
+    
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    
+    // Back to indeterminate mode
+    _HUD.mode = MBProgressHUDModeIndeterminate;
+    
+    // Add HUD to screen
+    [self.view addSubview:_HUD];
+    
+    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    _HUD.delegate = self;
+
+    
+    _HUD.labelText = @"Just a moment please...";
+    [_HUD showUsingAnimation:YES];
+    
     Registration * registration = self.dataProvider.dataObjects[sender.tag];
     //implement success and failure handler
-    registration.onProgress = ^{
-        [self showLoadingViewWithTitle:@"Just a moment please..."];
-    };
     
     registration.successHandler = ^{
         
-        //sleep for synchcronize
-        sleep(5);
-        [self hideLoadingView];
-        [self showAlertWithTitle:@"Upload Success" message:nil];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
         [self dismissViewControllerAnimated:YES completion:nil];
+        
         //TODO : reload Data
-        dispatch_async(dispatch_get_main_queue(), ^
-                       {
-                           //delete data on data source
-                           [self.dataProvider.dataObjects removeObjectAtIndex:sender.tag];
-                           [self.collectionView reloadData];
-                           
-                       });
+        
+        //delete data on data source
+        [self.dataProvider.dataObjects removeObjectAtIndex:sender.tag];
+        [self.collectionView reloadData];
+        
+        //sleep for synchcronize
+        sleep(5);
+//        [self hideLoadingView];
+        [_HUD hideUsingAnimation:YES];
+        [self showAlertWithTitle:@"Upload Success" message:nil];
+        
     };
     
     registration.failureHandler = ^(NSError *error){
-        [self hideLoadingView];
-        [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
         [self dismissViewControllerAnimated:YES completion:nil];
+//        [self hideLoadingView];
+         [_HUD hideUsingAnimation:YES];
+        NSLog(@"error : %@",[error description]);
+        [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
+   
     };
     
     //TODO : package data to json and send to server
@@ -233,7 +253,7 @@
         if ([self.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
             
             IMRegistrationCollectionViewCell *cell = (IMRegistrationCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [self _configureCell:cell forDataObject:dataProvider.dataObjects[index] animated:YES];
+            [self _configureCell:cell forDataObject:dataProvider.dataObjects[index] animated:NO];
         }
     }];
 }
@@ -264,11 +284,13 @@
         }
         cell.labelDetail5.text = Nil;
         
-        UIImage *image = registration.biometric.photographImage;
+        UIImage *image = registration.biometric.photographImageThumbnail;
         if (image) {
-            cell.photoView.image = [image scaledToWidthInPoint:100];
+            
+            cell.photoView.image = image;
+            
         }else {
-            cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
+         cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
         }
         
         cell.buttonUpload.hidden = !registration.complete.boolValue;
@@ -308,7 +330,7 @@
     
     IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     editVC.registration = registration;
-
+    
     editVC.registrationSave = ^(BOOL remove)
     {
         //TODO : reload Data

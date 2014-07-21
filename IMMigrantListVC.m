@@ -48,8 +48,8 @@
 
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
-    @synchronized(self)
-    {
+//    @synchronized(self)
+//    {
         if (self.reloadingData || basePredicate == _basePredicate) {
             //            /do not do anything until data complete reload
             return;
@@ -58,13 +58,13 @@
         _basePredicate = basePredicate;
         
         [self reloadData];
-    };
+//    };
 }
 
 - (void)executing
 {
-    @synchronized(self)
-    {
+//    @synchronized(self)
+//    {
         if(!self.reloadingData){
             self.reloadingData = YES;
             
@@ -88,7 +88,7 @@
             self.reloadingData = NO;
             
         }
-    };
+//    };
 }
 
 - (void)reloadData
@@ -167,7 +167,7 @@
 }
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
-    
+
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
@@ -175,7 +175,7 @@
         if ([self.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
             
             IMRegistrationCollectionViewCell *cell = (IMRegistrationCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [self _configureCell:cell forDataObject:dataProvider.dataObjects[index] animated:YES];
+            [self _configureCell:cell forDataObject:dataProvider.dataObjects[index] animated:NO];
         }
     }];
 }
@@ -186,7 +186,7 @@
     if ([dataObject isKindOfClass:[Migrant class]]) {
         Migrant *migrant = (Migrant *) dataObject;
         
-        if (!migrant) {
+        if (!migrant || !migrant.fullname || !migrant.registrationNumber || !migrant.bioDataSummary) {
             //do not show empty cell
             return;
         }
@@ -205,12 +205,16 @@
         cell.labelDetail5.text = Nil;
         
         
-        
-        UIImage *image = migrant.biometric.photographImage;
+
+        UIImage *image = migrant.biometric.photographImageThumbnail;
         if (image) {
-            cell.photoView.image = [image scaledToWidthInPoint:100];
+            
+           cell.photoView.image = image;
+            
         }else {
+            
             cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
+            
         }
         
         cell.buttonUpload.hidden = TRUE;

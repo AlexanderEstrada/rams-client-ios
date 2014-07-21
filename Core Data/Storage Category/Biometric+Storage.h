@@ -13,6 +13,7 @@
 @interface Biometric (Storage)
 
 + (NSString *)photograpDir;
++ (NSString *)photograpThumbnailDir;
 + (NSString *)leftIndexTemplateDir;
 + (NSString *)rightIndexTemplateDir;
 + (NSString *)leftThumbTemplateDir;
@@ -24,9 +25,11 @@
 
 - (NSData *)photographData;
 - (UIImage *)photographImage;
+- (UIImage *)photographImageThumbnail;
 - (UIImage *)fingerImageForPosition:(FingerPosition)position;
 
 - (void)updatePhotographData:(NSData *)photographData;
+- (void)updatePhotographThumbnailData:(NSData *)photographData;
 - (void)updatePhotographFromBase64String:(NSString *)base64PhotographString;
 
 - (void)updateTemplateFromBase64String:(NSString *)base64String forFingerPosition:(FingerPosition)position;

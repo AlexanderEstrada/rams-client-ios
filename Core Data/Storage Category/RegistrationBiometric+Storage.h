@@ -12,6 +12,7 @@
 @interface RegistrationBiometric (Storage)
 
 + (NSString *)photograpDir;
++ (NSString *)photograpThumbnailDir;
 + (NSString *)leftIndexImageDir;
 + (NSString *)rightIndexImageDir;
 + (NSString *)leftThumbImageDir;
@@ -19,12 +20,14 @@
 
 - (NSData *)photographData;
 - (UIImage *)photographImage;
+- (UIImage *)photographImageThumbnail;
 - (UIImage *)fingerImageForPosition:(FingerPosition)position;
 
 - (NSString *)base64Photograph;
 - (NSString *)base64FingerImageWithPosition:(FingerPosition)position;
 
 - (void)updatePhotographData:(NSData *)photographData;
+- (void)updatePhotographThumbnail:(NSData *)photographData;
 - (void)updateFingerImageWithData:(NSData *)imageData forFingerPosition:(FingerPosition)position;
 - (void)deleteBiometricData;
 - (void)deleteBiometricData:(FingerPosition)position;

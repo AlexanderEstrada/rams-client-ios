@@ -8,6 +8,7 @@
 
 #import "RegistrationBiometric+Storage.h"
 #import "Registration.h"
+#import "UIImage+ImageUtils.h"
 
 
 
@@ -25,6 +26,21 @@
     
     return dir;
 }
+
++ (NSString *)photograpThumbnailDir
+{
+    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    NSString *cachesPath = [cachesURL path];
+    NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"PhotographThumbnail"];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dir]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    return dir;
+}
+
+
 
 + (NSString *)leftIndexImageDir
 {
@@ -88,6 +104,11 @@
     return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
 }
 
+- (UIImage *)photographImageThumbnail
+{
+    return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
+}
+
 - (UIImage *)fingerImageForPosition:(FingerPosition)position
 {
     NSString *file;
@@ -134,6 +155,7 @@
     NSFileManager *manager = [NSFileManager defaultManager];
     @try {
         [manager removeItemAtPath:self.photograph error:nil];
+         [manager removeItemAtPath:self.photographThumbnail error:nil];
         [manager removeItemAtPath:self.leftThumb error:nil];
         [manager removeItemAtPath:self.leftIndex error:nil];
         [manager removeItemAtPath:self.rightThumb error:nil];
@@ -187,7 +209,26 @@
     NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
     NSString *dir = [RegistrationBiometric photograpDir];
     self.photograph = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]]];
+    
+    //save to thumbnail
+    UIImage *image = [[self photographImage] scaledToWidthInPoint:100];
+    NSData *imgData= UIImageJPEGRepresentation(image,0.0);
+    [self updatePhotographThumbnail:imgData];
 }
+
+- (void)updatePhotographThumbnail:(NSData *)photographData
+{
+    if (!self.registration.dateCreated) {
+        NSException *exception = [NSException exceptionWithName:@"NullPointerException" reason:@"Field dateCreated on Registration cannot be nil." userInfo:nil];
+        @throw exception;
+        return;
+    }
+    
+    NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
+    NSString *dir = [RegistrationBiometric photograpThumbnailDir];
+    self.photographThumbnail = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]]];
+}
+
 
 - (void)updateFingerImageWithData:(NSData *)imageData forFingerPosition:(FingerPosition)position
 {

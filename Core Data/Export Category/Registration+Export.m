@@ -154,7 +154,6 @@ NSString *const REG_MOVEMENT                 = @"movements";
             //end old format
             
         }
-        NSLog(@"format : %@",[formatted description]);
         
         return formatted;
     }
@@ -727,6 +726,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         data.biometric.rightIndex = migrant.biometric.rightIndexImage;
         data.biometric.rightThumb = migrant.biometric.rightThumbImage;
         data.biometric.photograph = migrant.biometric.photograph;
+        data.biometric.photographThumbnail = migrant.biometric.photographThumbnail;
         
         
         //interception

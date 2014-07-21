@@ -7,6 +7,7 @@
 //
 
 #import "Biometric+Storage.h"
+#import "UIImage+ImageUtils.h"
 
 @implementation Biometric (Storage)
 
@@ -22,6 +23,20 @@
     
     return dir;
 }
+
++ (NSString *)photograpThumbnailDir
+{
+    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    NSString *cachesPath = [cachesURL path];
+    NSString *dir = [cachesPath stringByAppendingPathComponent:@"PhotographThumbnail"];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dir]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    return dir;
+}
+
 
 + (NSString *)leftIndexTemplateDir
 {
@@ -131,7 +146,20 @@
 {
     NSString *dir = [Biometric photograpDir];
     self.photograph = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]]];
+    
+    //create thumbnail
+    UIImage *image = [[self photographImage] scaledToWidthInPoint:125];
+      NSData *imgData= UIImagePNGRepresentation(image);
+    
+    [self updatePhotographThumbnailData:imgData];
 }
+
+- (void)updatePhotographThumbnailData:(NSData *)photographData
+{
+    NSString *dir = [Biometric photograpThumbnailDir];
+    self.photographThumbnail = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", self.biometricId]]];
+}
+
 
 - (void)updatePhotographFromBase64String:(NSString *)base64PhotographString
 {
@@ -288,6 +316,11 @@
     return self.photograph ? [[NSData alloc] initWithContentsOfFile:self.photograph] : nil;
 }
 
+- (UIImage *)photographImageThumbnail
+{
+    return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
+}
+
 - (UIImage *)photographImage
 {
     return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
@@ -316,6 +349,7 @@
     NSFileManager *manager = [NSFileManager defaultManager];
     @try {
         [manager removeItemAtPath:self.photograph error:nil];
+        [manager removeItemAtPath:self.photographThumbnail error:nil];
         [manager removeItemAtPath:self.leftThumbImage error:nil];
         [manager removeItemAtPath:self.leftIndexImage error:nil];
         [manager removeItemAtPath:self.rightThumbImage error:nil];

@@ -25,6 +25,7 @@
 @dynamic rightIndexTemplate;
 @dynamic rightThumbTemplate;
 @dynamic leftThumbTemplate;
+@dynamic photographThumbnail;
 @dynamic migrant;
 
 @end

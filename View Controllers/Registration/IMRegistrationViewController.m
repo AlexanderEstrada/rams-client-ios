@@ -404,7 +404,7 @@
         [self updateBasePredicateForSelectedIndex];
         
         //synchronize data
-         _HUD.labelText = @"Synchronizing";
+         _HUD.labelText = @"Synchronizing...";
         sleep(5);
         
     }else{

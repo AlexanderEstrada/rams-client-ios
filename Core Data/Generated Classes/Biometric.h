@@ -20,6 +20,7 @@
 @property (nonatomic, retain) NSString * leftIndexImage;
 @property (nonatomic, retain) NSString * leftThumbImage;
 @property (nonatomic, retain) NSString * photograph;
+@property (nonatomic, retain) NSString * photographThumbnail;
 @property (nonatomic, retain) NSString * rightIndexImage;
 @property (nonatomic, retain) NSString * rightThumbImage;
 @property (nonatomic, retain) NSString * leftIndexTemplate;

@@ -18,6 +18,7 @@
 @property (nonatomic, retain) NSString * rightThumb;
 @property (nonatomic, retain) NSString * leftThumb;
 @property (nonatomic, retain) NSString * photograph;
+@property (nonatomic, retain) NSString * photographThumbnail;
 @property (nonatomic, retain) Registration *registration;
 
 @end
