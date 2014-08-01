@@ -166,6 +166,7 @@
         <attribute name="dateCreated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="deceased" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="detentionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="detentionLocationName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUploader" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="registrationNumber" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -220,6 +221,7 @@
         <attribute name="complete" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="detentionLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="detentionLocationName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="registrationId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="transferDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -290,12 +292,12 @@
         <element name="IomData" positionX="-173" positionY="-403" width="128" height="103"/>
         <element name="IomOffice" positionX="25" positionY="-568" width="128" height="163"/>
         <element name="IomOfficer" positionX="756" positionY="50" width="128" height="103"/>
-        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="358"/>
+        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="373"/>
         <element name="Movement" positionX="-236" positionY="68" width="128" height="223"/>
         <element name="Photo" positionX="358" positionY="524" width="128" height="103"/>
         <element name="PoliceOfficer" positionX="754" positionY="320" width="128" height="103"/>
         <element name="Port" positionX="-441" positionY="113" width="128" height="103"/>
-        <element name="Registration" positionX="207" positionY="-676" width="128" height="298"/>
+        <element name="Registration" positionX="207" positionY="-676" width="128" height="313"/>
         <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="178"/>
         <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="150"/>
         <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>

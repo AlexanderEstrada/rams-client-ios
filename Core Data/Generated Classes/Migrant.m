@@ -38,5 +38,6 @@
 @dynamic complete;
 @dynamic uploader;
 @dynamic lastUploader;
+@dynamic detentionLocationName;
 
 @end

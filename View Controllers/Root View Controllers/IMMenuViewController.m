@@ -40,7 +40,7 @@ NSString *const MENU_VC_ID          = @"vc-id";
 //    [common addObject:[self menuWithTitle:@"Accommodation" identifier:@"Accommodation"]];
 //TODO : 
     [common addObject:[self menuWithTitle:@"Migrant Data" identifier:@"Migrant"]];
-//    [common addObject:[self menuWithTitle:@"Statistic" identifier:@"Statistic"]];
+    [common addObject:[self menuWithTitle:@"Family Data" identifier:@"Family"]];
     [self.menu addObject:common];
 
     if ([IMAuthManager sharedManager].activeUser && ([IMAuthManager sharedManager].activeUser.roleOperation || [IMAuthManager sharedManager].activeUser.roleICC))
@@ -49,7 +49,7 @@ NSString *const MENU_VC_ID          = @"vc-id";
         [special addObject:[self menuWithTitle:@"Registration" identifier:@"Registration"]];
 //        [special addObject:[self menuWithTitle:@"Allowance" identifier:@"Allowance"]];
 //        [special addObject:[self menuWithTitle:@"Transfer Request" identifier:@"Transfer"]];
-//        [special addObject:[self menuWithTitle:@"Update Movement" identifier:@"Movement"]];
+        [special addObject:[self menuWithTitle:@"Update Movement" identifier:@"Movement"]];
         [self.menu addObject:special];
     }
     

@@ -217,13 +217,18 @@
 		ACE694ED17F198830095F90C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EC17F198830095F90C /* AVFoundation.framework */; };
 		ACE694EF17F199770095F90C /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EE17F199770095F90C /* GoogleMaps.framework */; };
 		ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = ACE694F017F199AE0095F90C /* GoogleMaps.bundle */; };
+		F21278011988B63B006679AB /* IMMovementsReviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278001988B63B006679AB /* IMMovementsReviewVC.m */; };
+		F21278491989F7C6006679AB /* IMFamilyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278481989F7C6006679AB /* IMFamilyViewController.m */; };
+		F212784C198A0158006679AB /* IMSSCheckMark.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784B198A0158006679AB /* IMSSCheckMark.m */; };
+		F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784E198A3B8B006679AB /* IMFamilyListVC.m */; };
+		F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */; };
 		F2AD1DBA194B089700B05D0D /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F2AD1DB9194B089700B05D0D /* MBProgressHUD.m */; };
 		F2B09A21194EA05B00289E8F /* AWPagedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A20194EA05B00289E8F /* AWPagedArray.m */; };
 		F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A23194EA07F00289E8F /* DataLoadingOperation.m */; };
 		F2B09A28194EA07F00289E8F /* DataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A25194EA07F00289E8F /* DataProvider.m */; };
 		F2B2A7C3193C2A1B00991614 /* IMMigrantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */; };
 		F2B2A7C6193C31C700991614 /* IMMigrantFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C5193C31C700991614 /* IMMigrantFilterDataVC.m */; };
-		F2B30F241962761600B643C4 /* IMMovementVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B30F231962761600B643C4 /* IMMovementVC.m */; };
+		F2B30F241962761600B643C4 /* IMMovementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B30F231962761600B643C4 /* IMMovementViewController.m */; };
 		F2BA6C04195D596B00E26B31 /* IMPortChooserVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */; };
 		F2C139F519487CA8006F8EDD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F419487CA8006F8EDD /* Main.storyboard */; };
 		F2C139F719487D04006F8EDD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F619487D04006F8EDD /* InfoPlist.strings */; };
@@ -653,6 +658,16 @@
 		ACE694EC17F198830095F90C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		ACE694EE17F199770095F90C /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Libraries/GoogleMaps.framework; sourceTree = "<group>"; };
 		ACE694F017F199AE0095F90C /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = Libraries/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
+		F21277FF1988B63B006679AB /* IMMovementsReviewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementsReviewVC.h; sourceTree = "<group>"; };
+		F21278001988B63B006679AB /* IMMovementsReviewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementsReviewVC.m; sourceTree = "<group>"; };
+		F21278471989F7C6006679AB /* IMFamilyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyViewController.h; sourceTree = "<group>"; };
+		F21278481989F7C6006679AB /* IMFamilyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyViewController.m; sourceTree = "<group>"; };
+		F212784A198A0158006679AB /* IMSSCheckMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMSSCheckMark.h; sourceTree = "<group>"; };
+		F212784B198A0158006679AB /* IMSSCheckMark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSSCheckMark.m; sourceTree = "<group>"; };
+		F212784D198A3B8A006679AB /* IMFamilyListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyListVC.h; sourceTree = "<group>"; };
+		F212784E198A3B8B006679AB /* IMFamilyListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyListVC.m; sourceTree = "<group>"; };
+		F23DA50B19812D0100DDF0C1 /* IMMovementListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementListVC.h; sourceTree = "<group>"; };
+		F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementListVC.m; sourceTree = "<group>"; };
 		F2AD1DB8194B089700B05D0D /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		F2AD1DB9194B089700B05D0D /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		F2B09A1F194EA05B00289E8F /* AWPagedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWPagedArray.h; sourceTree = "<group>"; };
@@ -666,8 +681,8 @@
 		F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantListVC.m; sourceTree = SOURCE_ROOT; };
 		F2B2A7C4193C31C700991614 /* IMMigrantFilterDataVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantFilterDataVC.h; sourceTree = SOURCE_ROOT; };
 		F2B2A7C5193C31C700991614 /* IMMigrantFilterDataVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantFilterDataVC.m; sourceTree = SOURCE_ROOT; };
-		F2B30F221962761600B643C4 /* IMMovementVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementVC.h; sourceTree = "<group>"; };
-		F2B30F231962761600B643C4 /* IMMovementVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementVC.m; sourceTree = "<group>"; };
+		F2B30F221962761600B643C4 /* IMMovementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMMovementViewController.h; path = Registration/IMMovementViewController.h; sourceTree = "<group>"; };
+		F2B30F231962761600B643C4 /* IMMovementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IMMovementViewController.m; path = Registration/IMMovementViewController.m; sourceTree = "<group>"; };
 		F2BA6C02195D596B00E26B31 /* IMPortChooserVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMPortChooserVC.h; sourceTree = "<group>"; };
 		F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMPortChooserVC.m; sourceTree = "<group>"; };
 		F2C139F419487CA8006F8EDD /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -941,8 +956,6 @@
 				AC14E0A0181F6F4400EB356B /* IMEditRegistrationVC.m */,
 				AC14E0A5181FD98B00EB356B /* IMEditRegistrationDataVC.h */,
 				AC14E0A6181FD98B00EB356B /* IMEditRegistrationDataVC.m */,
-				F2B30F221962761600B643C4 /* IMMovementVC.h */,
-				F2B30F231962761600B643C4 /* IMMovementVC.m */,
 			);
 			name = "Edit Registration Data";
 			sourceTree = "<group>";
@@ -1306,6 +1319,8 @@
 				ACE694DF17F190340095F90C /* UIButton+IMMS.m */,
 				AC4EFA4617F2EE0500369A82 /* UIFont+IMMS.h */,
 				AC4EFA4717F2EE0500369A82 /* UIFont+IMMS.m */,
+				F212784A198A0158006679AB /* IMSSCheckMark.h */,
+				F212784B198A0158006679AB /* IMSSCheckMark.m */,
 			);
 			path = "Custom Components";
 			sourceTree = "<group>";
@@ -1403,6 +1418,8 @@
 		ACE693F817F159E80095F90C /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				F21278461989E953006679AB /* FamilyData */,
+				F23DA50419810B9800DDF0C1 /* Movement */,
 				ACCBD268181E406400CC3EDE /* Registration */,
 				ACCBD267181E406400CC3EDE /* Irregular Migrant Data */,
 				ACE693F917F159E80095F90C /* Accommodation */,
@@ -1582,6 +1599,30 @@
 			path = Statistic;
 			sourceTree = "<group>";
 		};
+		F21278461989E953006679AB /* FamilyData */ = {
+			isa = PBXGroup;
+			children = (
+				F21278471989F7C6006679AB /* IMFamilyViewController.h */,
+				F21278481989F7C6006679AB /* IMFamilyViewController.m */,
+				F212784D198A3B8A006679AB /* IMFamilyListVC.h */,
+				F212784E198A3B8B006679AB /* IMFamilyListVC.m */,
+			);
+			name = FamilyData;
+			sourceTree = "<group>";
+		};
+		F23DA50419810B9800DDF0C1 /* Movement */ = {
+			isa = PBXGroup;
+			children = (
+				F2B30F221962761600B643C4 /* IMMovementViewController.h */,
+				F2B30F231962761600B643C4 /* IMMovementViewController.m */,
+				F23DA50B19812D0100DDF0C1 /* IMMovementListVC.h */,
+				F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */,
+				F21277FF1988B63B006679AB /* IMMovementsReviewVC.h */,
+				F21278001988B63B006679AB /* IMMovementsReviewVC.m */,
+			);
+			name = Movement;
+			sourceTree = "<group>";
+		};
 		F2B09A1E194E9FCE00289E8F /* 3rdparty */ = {
 			isa = PBXGroup;
 			children = (
@@ -1695,11 +1736,11 @@
 				ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */,
 				ACE6934417F159BA0095F90C /* IMPhotoViewer.xib in Resources */,
 				AC8A6B6B1820B693005A1C3C /* IMRegistrationCollectionViewCell.xib in Resources */,
-				F2C139F519487CA8006F8EDD /* Main.storyboard in Resources */,
 				ACE6934217F159BA0095F90C /* IMPhotoCell.xib in Resources */,
 				ACB2900518221375000322B4 /* an2k.h.src in Resources */,
 				ACCBD281181E503700CC3EDE /* IMMigrantTableViewCell.xib in Resources */,
 				AC807D3E17F14F58000988D0 /* InfoPlist.strings in Resources */,
+				F2C139F519487CA8006F8EDD /* Main.storyboard in Resources */,
 				AC807D4917F14F58000988D0 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1752,8 +1793,9 @@
 				F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */,
 				ACCBD251181E27DB00CC3EDE /* RegistrationBioData.m in Sources */,
 				ACE693BE17F159E20095F90C /* UIImageView+AFNetworking.m in Sources */,
-				F2B30F241962761600B643C4 /* IMMovementVC.m in Sources */,
+				F2B30F241962761600B643C4 /* IMMovementViewController.m in Sources */,
 				ACE693CD17F159E20095F90C /* NSDate+Relativity.m in Sources */,
+				F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */,
 				ACE6930517F159AC0095F90C /* RegistrationProfile+Extended.m in Sources */,
 				AC3BA08017FA6A930043235A /* IMinterceptionInfoVC.m in Sources */,
 				ACE6946817F159E80095F90C /* IMOptionChooserViewController.m in Sources */,
@@ -1765,6 +1807,7 @@
 				ACE692F617F159AC0095F90C /* Accommodation+Extended.m in Sources */,
 				AC6D728B18068C1100E5F845 /* Child.m in Sources */,
 				F2BA6C04195D596B00E26B31 /* IMPortChooserVC.m in Sources */,
+				F21278491989F7C6006679AB /* IMFamilyViewController.m in Sources */,
 				ACE692F717F159AC0095F90C /* Allowance+Extended.m in Sources */,
 				ACE6933C17F159BA0095F90C /* IMCollectionHeaderView.m in Sources */,
 				F2B2A7C6193C31C700991614 /* IMMigrantFilterDataVC.m in Sources */,
@@ -1790,6 +1833,7 @@
 				F2B09A21194EA05B00289E8F /* AWPagedArray.m in Sources */,
 				AC8A6B6E1820F646005A1C3C /* IMRegistrationViewController.m in Sources */,
 				ACE6931117F159AC0095F90C /* InterceptionLocation.m in Sources */,
+				F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */,
 				ACE6931B17F159AC0095F90C /* Registration.m in Sources */,
 				ACE692FA17F159AC0095F90C /* ImmigrationOfficer+Extended.m in Sources */,
 				ACE6929617F1599A0095F90C /* IMDataUpdater.m in Sources */,
@@ -1803,6 +1847,7 @@
 				F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */,
 				ACE6929D17F1599A0095F90C /* IMLocationManager.m in Sources */,
 				ACE6944E17F159E80095F90C /* IMInterceptionViewController.m in Sources */,
+				F21278011988B63B006679AB /* IMMovementsReviewVC.m in Sources */,
 				ACE6945D17F159E80095F90C /* IMPoliceOfficerVC.m in Sources */,
 				ACE693D017F159E20095F90C /* PDKeychainBindings.m in Sources */,
 				AC4FE84A181524D90043111B /* Photo+Storage.m in Sources */,
@@ -1823,6 +1868,7 @@
 				ACE692FC17F159AC0095F90C /* InterceptionGroup+Extended.m in Sources */,
 				AC4467091803B6FF00534428 /* IMAccommodationFilterVC.m in Sources */,
 				ACCBD28A181E58DA00CC3EDE /* Registration+Export.m in Sources */,
+				F212784C198A0158006679AB /* IMSSCheckMark.m in Sources */,
 				ACE6945017F159E80095F90C /* IMInterceptionDetailsVC.m in Sources */,
 				ACE6930A17F159AC0095F90C /* Country.m in Sources */,
 				AC8672E21807A6E50052491F /* IMAccommodationUpdater.m in Sources */,
@@ -1945,7 +1991,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Dwi Elfianto (C59V5LZ7A7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1968,7 +2014,7 @@
 					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -1990,7 +2036,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Dwi Elfianto (C59V5LZ7A7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = "/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/";
@@ -2007,10 +2053,10 @@
 					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "7559D1E8-D631-4721-8565-4B887E5C6B8E";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
-				VALIDATE_PRODUCT = YES;
+				VALIDATE_PRODUCT = NO;
 			};
 			name = Release;
 		};
@@ -2045,7 +2091,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries",

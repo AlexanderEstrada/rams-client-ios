@@ -32,82 +32,122 @@
 #pragma mark Core Data Methods
 - (void)setupFetchRequestWithPredicate:(NSPredicate *)predicate
 {
-    NSFetchRequest *request = Nil;
-     NSManagedObjectContext *moc = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-    if (self.entity) {
-        request = [NSFetchRequest fetchRequestWithEntityName:self.entity];
-        request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"bioData.nationality.name" ascending:YES], nil];
-        request.returnsDistinctResults = YES;
-    }else {
-        request = [NSFetchRequest fetchRequestWithEntityName:@"Country"];
-        request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES], nil];
-    }
-    
-    [request setReturnsObjectsAsFaults:YES];
-    
-    if (self.basePredicate) {
-        if (predicate) {
-            request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, self.basePredicate, nil]];
-        }else{
-            request.predicate = self.basePredicate;
-        }
-    }else if (predicate && !self.fromSearchBar){
-        request.predicate = predicate;
-    }
-    
-    NSError *error;
-    NSArray *results = [moc executeFetchRequest:request error:&error];
-    
-    if (error) {
-        NSLog(@"Fail to Query : %@",[error description]);
-        return;
-    }
+    @try {
+        NSFetchRequest *request = Nil;
 
-    NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-    NSMutableArray * indexArray = [NSMutableArray array];
-    
-    //sort first
-    if (self.sortDescriptorWithKey) {
-        if ([self.entity isEqualToString:@"Registration"]) {
-            for (Registration * data in results) {
-                if (data) {
-                    //check if search flag is set, case TRUE, then show only Country that equal from searchBar
-                    if (self.fromSearchBar) {
-                        if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
-                    }
-                    
-                    NSString *indexTitle = [data.bioData.nationality.name substringToIndex:1];
-                    
-                    //add index (first char)
-                    if (![indexArray containsObject:indexTitle]) {
-                        [indexArray addObject:indexTitle];
-                    }
-                    
-                    //add the country data to section data
-                    NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
-                    if (!sectionData) {
-                        sectionData = [NSMutableArray array];
-                    }
-                    
-                    if (![sectionData containsObject:data.bioData.nationality]) {
-                        [sectionData addObject:data.bioData.nationality];
-                        [dict setObject:sectionData forKey:indexTitle];
-                    }
-                    
-                }
-            }
-
+        NSManagedObjectContext *moc = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        if (self.entity) {
+            request = [NSFetchRequest fetchRequestWithEntityName:self.entity];
+            request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"bioData.nationality.name" ascending:YES], nil];
+            request.returnsDistinctResults = YES;
         }else {
-     
+            request = [NSFetchRequest fetchRequestWithEntityName:@"Country"];
+            request.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES], nil];
+        }
         
-        for (Migrant * data in results) {
-            if (data) {
-                //check if search flag is set, case TRUE, then show only Country that equal from searchBar
-                if (self.fromSearchBar) {
-                    if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
+        [request setReturnsObjectsAsFaults:YES];
+        
+        if (self.basePredicate) {
+            if (predicate) {
+                request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate, self.basePredicate, nil]];
+            }else{
+                request.predicate = self.basePredicate;
+            }
+        }else if (predicate && !self.fromSearchBar){
+            request.predicate = predicate;
+        }
+        
+        NSError *error;
+        NSMutableArray *results = [[moc executeFetchRequest:request error:&error] mutableCopy];
+        
+        if (error) {
+            NSLog(@"Fail to Query : %@",[error description]);
+            return;
+        }
+        
+        NSMutableDictionary * dict = [NSMutableDictionary dictionary];
+        NSMutableArray * indexArray = [NSMutableArray array];
+        
+        //sort first
+        if (self.sortDescriptorWithKey) {
+            if ([self.entity isEqualToString:@"Registration"]) {
+                for (Registration * data in results) {
+                    if (data) {
+                        //check if search flag is set, case TRUE, then show only Country that equal from searchBar
+                        if (self.fromSearchBar) {
+                            if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
+                        }
+                        
+                        NSString *indexTitle = [data.bioData.nationality.name substringToIndex:1];
+                        
+                        //add index (first char)
+                        if (![indexArray containsObject:indexTitle]) {
+                            [indexArray addObject:indexTitle];
+                        }
+                        
+                        //add the country data to section data
+                        NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
+                        if (!sectionData) {
+                            sectionData = [NSMutableArray array];
+                        }
+                        
+                        if (![sectionData containsObject:data.bioData.nationality]) {
+                            [sectionData addObject:data.bioData.nationality];
+                            [dict setObject:sectionData forKey:indexTitle];
+                        }
+                        
+                    }
                 }
                 
-                NSString *indexTitle = [data.bioData.nationality.name substringToIndex:1];
+            }else {
+                
+                
+                for (Migrant * data in results) {
+                    if (data) {
+                        //check if search flag is set, case TRUE, then show only Country that equal from searchBar
+                        if (self.fromSearchBar) {
+                            if (![predicate evaluateWithObject:data.bioData.nationality]) continue;
+                        }
+                        
+                        NSString *indexTitle = [data.bioData.nationality.name substringToIndex:1];
+                        
+                        //add index (first char)
+                        if (![indexArray containsObject:indexTitle]) {
+                            [indexArray addObject:indexTitle];
+                        }
+                        
+                        //add the country data to section data
+                        NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
+                        if (!sectionData) {
+                            sectionData = [NSMutableArray array];
+                        }
+                        
+                        if (![sectionData containsObject:data.bioData.nationality]) {
+                            [sectionData addObject:data.bioData.nationality];
+                            [dict setObject:sectionData forKey:indexTitle];
+                        }
+                        
+                    }
+                }
+            }
+            //cleanup data
+            //        nationID = Nil;
+            //        cleanedArray = Nil;
+            
+            
+        }else
+        {
+            
+          
+            for (Country *country in results) {
+                NSLog(@"country.name : %@",country.name);
+                //check if search flag is set, case TRUE, then show only Country that equal from searchBar
+                if (self.fromSearchBar) {
+                    if (![predicate evaluateWithObject:country]) continue;
+                }
+                NSLog(@"country.name : %@",country.name);
+                NSString *indexTitle = [country.name substringToIndex:1];
+    
                 
                 //add index (first char)
                 if (![indexArray containsObject:indexTitle]) {
@@ -120,50 +160,21 @@
                     sectionData = [NSMutableArray array];
                 }
                 
-                if (![sectionData containsObject:data.bioData.nationality]) {
-                    [sectionData addObject:data.bioData.nationality];
-                    [dict setObject:sectionData forKey:indexTitle];
-                }
-                
+                [sectionData addObject:country];
+                [dict setObject:sectionData forKey:indexTitle];
             }
         }
-        }
-        //cleanup data
-//        nationID = Nil;
-//        cleanedArray = Nil;
-        
-        
-    }else
-    {
-        for (int i=0; i<[results count]; i++) {
-            Country *country = results[i];
-            //check if search flag is set, case TRUE, then show only Country that equal from searchBar
-            if (self.fromSearchBar) {
-                if (![predicate evaluateWithObject:country]) continue;
-            }
-            NSString *indexTitle = [country.name substringToIndex:1];
-            
-            //add index (first char)
-            if (![indexArray containsObject:indexTitle]) {
-                [indexArray addObject:indexTitle];
-            }
-            
-            //add the country data to section data
-            NSMutableArray *sectionData = [[dict objectForKey:indexTitle] mutableCopy];
-            if (!sectionData) {
-                sectionData = [NSMutableArray array];
-            }
-            
-            [sectionData addObject:country];
-            [dict setObject:sectionData forKey:indexTitle];
-        }
+        //reset flag
+        self.fromSearchBar = NO;
+        self.countries = dict;
+        self.indexTitles = indexArray;
+        [self.tableView reloadData];
     }
-    //reset flag
-     self.fromSearchBar = NO;
-    results = nil;
-    self.countries = dict;
-    self.indexTitles = indexArray;
-    [self.tableView reloadData];
+    @catch (NSException *exception) {
+        NSLog(@"Error on setupFetchRequestWithPredicate : %@",[exception description]);
+    }
+    
+    
 }
 
 

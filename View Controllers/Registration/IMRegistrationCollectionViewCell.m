@@ -9,6 +9,7 @@
 #import "IMRegistrationCollectionViewCell.h"
 #import <QuartzCore/QuartzCore.h>
 #import "UIColor+IMMS.h"
+#import "IMSSCheckMark.h"
 
 
 @implementation IMRegistrationCollectionViewCell
@@ -25,10 +26,42 @@
     self.contentView.layer.cornerRadius = 12;
     self.contentView.layer.masksToBounds = YES;
     
-    self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.frame];
-    self.selectedBackgroundView.layer.cornerRadius = 12;
-    self.selectedBackgroundView.layer.masksToBounds = YES;
-    self.selectedBackgroundView.backgroundColor = [UIColor IMTurquoise];
+//    if (self.allowMultipleSelect) {
+//        self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.frame];
+//        self.selectedBackgroundView.layer.cornerRadius = 12;
+//        self.selectedBackgroundView.layer.masksToBounds = YES;
+//        self.selectedBackgroundView.backgroundColor = [UIColor IMTurquoise];
+//    }else{
+//    
+        CGRect rect = CGRectMake(290, 120, 30, 30);
+        IMSSCheckMark * checkmark = [[IMSSCheckMark alloc] initWithFrame:rect];
+        checkmark.checked = TRUE;
+        checkmark.checkMarkStyle = SSCheckMarkStyleOpenCircle;
+        self.selectedBackgroundView = checkmark;
+        self.selectedBackgroundView.frame = rect;
+        self.selectedBackgroundView.backgroundColor = [UIColor clearColor];
+//    }
+    
+    
+    
+}
+
+- (void) changeBackgroundView:(BOOL) isMultipleSelect
+{
+    if (isMultipleSelect) {
+        CGRect rect = CGRectMake(290, 120, 30, 30);
+        IMSSCheckMark * checkmark = [[IMSSCheckMark alloc] initWithFrame:rect];
+        checkmark.checked = TRUE;
+        checkmark.checkMarkStyle = SSCheckMarkStyleOpenCircle;
+        self.selectedBackgroundView = checkmark;
+        self.selectedBackgroundView.frame = rect;
+        self.selectedBackgroundView.backgroundColor = [UIColor clearColor];
+    }else{
+        self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.frame];
+        self.selectedBackgroundView.layer.cornerRadius = 12;
+        self.selectedBackgroundView.layer.masksToBounds = YES;
+        self.selectedBackgroundView.backgroundColor = [UIColor IMTurquoise];
+    }
 }
 
 @end

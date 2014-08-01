@@ -34,5 +34,6 @@
 @dynamic biometric;
 @dynamic transferDestination;
 @dynamic detentionLocation;
+@dynamic detentionLocationName;
 
 @end

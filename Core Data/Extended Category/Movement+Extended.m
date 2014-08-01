@@ -172,7 +172,15 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
 {
     @try {
         Movement *data = [NSEntityDescription insertNewObjectForEntityForName:@"Movement" inManagedObjectContext:context];
-        
+        Port *port = [NSEntityDescription insertNewObjectForEntityForName:@"Port" inManagedObjectContext:context];
+        Country * country = [NSEntityDescription insertNewObjectForEntityForName:@"Country" inManagedObjectContext:context];
+        Accommodation * origin= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];
+        Accommodation * transfer= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];
+        //save data
+        data.departurePort = port;
+        data.destinationCountry = country;
+        data.originLocation = origin;
+        data.transferLocation = transfer;
         
         return data;
     }

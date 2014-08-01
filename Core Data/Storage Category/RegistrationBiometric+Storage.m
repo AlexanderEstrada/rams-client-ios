@@ -211,8 +211,8 @@
     self.photograph = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]]];
     
     //save to thumbnail
-    UIImage *image = [[self photographImage] scaledToWidthInPoint:100];
-    NSData *imgData= UIImageJPEGRepresentation(image,0.0);
+    UIImage *image = [[self photographImage] scaledToWidthInPoint:125];
+    NSData *imgData= UIImagePNGRepresentation(image);
     [self updatePhotographThumbnail:imgData];
 }
 
@@ -226,7 +226,7 @@
     
     NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
     NSString *dir = [RegistrationBiometric photograpThumbnailDir];
-    self.photographThumbnail = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]]];
+    self.photographThumbnail = [self writeData:photographData toPath:[dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", identifier]]];
 }
 
 

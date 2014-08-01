@@ -37,6 +37,13 @@
         //detention location
         migrant.detentionLocation = CORE_DATA_OBJECT([dictionary objectForKey:@"detentionLocation"]);
         
+        //save the detention location name
+        if (migrant.detentionLocation) {
+             Accommodation * place = [Accommodation accommodationWithId:migrant.detentionLocation inManagedObjectContext:context];
+            //save detention location name
+            migrant.detentionLocationName = place.name;
+        }
+        
         //save date created
         migrant.dateCreated =[NSDate dateFromUTCString:[dictionary objectForKey:@"dateCreated"]];
         if (dictionary[@"biometric"]) {
@@ -281,6 +288,17 @@
         
         //save detention location
         migrant.detentionLocation = reg.detentionLocation;
+        migrant.detentionLocationName = reg.detentionLocationName;
+        
+        //check if detention location name is empty and detention location code is exist
+        if (!migrant.detentionLocationName && migrant.detentionLocation) {
+            //case empty then get from detention location code
+            
+            Accommodation * place = [Accommodation accommodationWithId:migrant.detentionLocation inManagedObjectContext:context];
+            
+            //save detention location name
+            migrant.detentionLocationName = place.name;
+        }
         
         
         if (reg.interceptionData && reg.interceptionData.interceptionLocation && reg.interceptionData.interceptionDate && reg.interceptionData.dateOfEntry) {

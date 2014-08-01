@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *labelDetail5;
 @property (weak, nonatomic) IBOutlet UIImageView *photoView;
 @property (weak, nonatomic) IBOutlet UIButton *buttonUpload;
-
+//@property(nonatomic) BOOL allowMultipleSelect;
+- (void) changeBackgroundView:(BOOL) isMultipleSelect;
 
 @end

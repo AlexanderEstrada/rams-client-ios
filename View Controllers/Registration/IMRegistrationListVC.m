@@ -149,7 +149,7 @@
     
     // Regisete for HUD callbacks so we can remove it from the window at the right time
     _HUD.delegate = self;
-
+    
     
     _HUD.labelText = @"Just a moment please...";
     [_HUD showUsingAnimation:YES];
@@ -171,7 +171,7 @@
         
         //sleep for synchcronize
         sleep(5);
-//        [self hideLoadingView];
+        //        [self hideLoadingView];
         [_HUD hideUsingAnimation:YES];
         [self showAlertWithTitle:@"Upload Success" message:nil];
         
@@ -179,11 +179,11 @@
     
     registration.failureHandler = ^(NSError *error){
         [self dismissViewControllerAnimated:YES completion:nil];
-//        [self hideLoadingView];
-         [_HUD hideUsingAnimation:YES];
+        //        [self hideLoadingView];
+        [_HUD hideUsingAnimation:YES];
         NSLog(@"error : %@",[error description]);
         [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
-   
+        
     };
     
     //TODO : package data to json and send to server
@@ -274,11 +274,22 @@
         cell.labelDetail2.text = registration.unhcrSummary;
         cell.labelDetail3.text = registration.interceptionSummary;
         
-        if (registration.detentionLocation) {
-            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-            
-            Accommodation * place = [Accommodation accommodationWithId:registration.detentionLocation inManagedObjectContext:context];
+        NSManagedObjectContext *workingContext = registration.managedObjectContext;
+        NSError *error;
+        
+        if (registration.detentionLocationName) {
+            cell.labelDetail4.text = registration.detentionLocationName;
+        }else if (registration.detentionLocation) {
+            Accommodation * place = [Accommodation accommodationWithId:registration.detentionLocation inManagedObjectContext:workingContext];
             cell.labelDetail4.text = place.name;
+            //save detention location name
+            registration.detentionLocationName = place.name;
+            
+            //save to database
+            if (![workingContext save:&error]) {
+                NSLog(@"Error saving context: %@", [error description]);
+            }
+            
         }else {
             cell.labelDetail4.text = Nil;
         }
@@ -290,7 +301,21 @@
             cell.photoView.image = image;
             
         }else {
-         cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
+            //check if there is photo, case exist then create thumbnail and show it
+            image = registration.biometric.photographImage;
+            if (image) {
+                //create thumbnail
+                cell.photoView.image = [image scaledToWidthInPoint:125];
+                NSData *imgData= UIImagePNGRepresentation(cell.photoView.image);
+                
+                [registration.biometric updatePhotographThumbnail:imgData];
+                
+                //save to database
+                if (![workingContext save:&error]) {
+                    NSLog(@"Error saving context: %@", [error description]);
+                }
+                
+            }else cell.photoView.image = [UIImage imageNamed:@"icon-avatar"];
         }
         
         cell.buttonUpload.hidden = !registration.complete.boolValue;

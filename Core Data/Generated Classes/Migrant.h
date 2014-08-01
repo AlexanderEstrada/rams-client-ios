@@ -33,6 +33,7 @@
 @property (nonatomic, retain) IomData *iomData;
 @property (nonatomic, retain) NSSet *movements;
 @property (nonatomic, retain) NSString *detentionLocation;
+@property (nonatomic, retain) NSString *detentionLocationName;
 @property (nonatomic, retain) NSNumber * complete;
 @end
 

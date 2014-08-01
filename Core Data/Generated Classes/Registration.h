@@ -37,6 +37,7 @@ typedef void (^IMRegistrationUploadOnProgress)(void);
 @property (nonatomic, retain) RegistrationBiometric *biometric;
 @property (nonatomic, retain) Accommodation *transferDestination;
 @property (nonatomic, retain) NSString *detentionLocation;
+@property (nonatomic, retain) NSString *detentionLocationName;
 
 @property (nonatomic, copy) IMRegistrationUploadSuccessHandler successHandler;
 @property (nonatomic, copy) IMRegistrationUploadFailureHandler failureHandler;

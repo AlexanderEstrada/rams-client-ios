@@ -13,5 +13,7 @@
 + (FamilyData *)familyWithDictionary:(NSDictionary *)dictionary inContext:(NSManagedObjectContext *)context;
 + (FamilyData *)familyWithFatherId:(NSString *)fatherId inContext:(NSManagedObjectContext *)context;
 
+- (NSDictionary *)format;
+
 
 @end

@@ -16,7 +16,7 @@
 {
     @try {
         
-    FamilyData *family = [self familyWithFatherId:[dictionary objectForKey:@"father"] inContext:context];
+        FamilyData *family = [self familyWithFatherId:[dictionary objectForKey:@"father"] inContext:context];
         if (!family) {
             //create new family data
             family = [NSEntityDescription insertNewObjectForEntityForName:@"FamilyData" inManagedObjectContext:context];
@@ -48,6 +48,7 @@
     
     
 }
+
 + (FamilyData *)familyWithFatherId:(NSString *)fatherId inContext:(NSManagedObjectContext *)context
 {
     @try {
@@ -63,5 +64,27 @@
     }
 }
 
+- (NSDictionary *)format
+{
+    @try {
+        NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
+        //family data
+        [formatted setObject:self.father forKey:@"father"];
+        [formatted setObject:self.mother forKey:@"mother"];
+        [formatted setObject:self.spouse forKey:@"spouse"];
+        
+        //childs
+        if ([self.childs count]) {
+            [formatted setObject:[self.childs allObjects] forKey:@"childs"];
+        }
+        
+        return formatted;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception while creating formatted Family data: %@", [exception description]);
+    }
+    
+    return Nil;
+}
 
 @end

@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Mario Yohanes. All rights reserved.
 //
 
-#import "IMMovementVC.h"
+//#import "IMMovementVC.h"
+#import "IMMovementViewController.h"
 #import "IMFormCell.h"
 #import "IMDatePickerVC.h"
 #import "IMCountryListVC.h"
@@ -18,7 +19,9 @@
 #import "Port+Extended.h"
 #import "Movement+Extended.h"
 
-@interface IMMovementVC ()<UIPopoverControllerDelegate, IMOptionChooserDelegate,UITableViewDataSource, UITableViewDelegate>
+#import "IMMovementListVC.h"
+
+@interface IMMovementViewController ()<UIPopoverControllerDelegate, IMOptionChooserDelegate,UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic) BOOL creating;
 @property (nonatomic, strong) UIPopoverController *popover;
@@ -26,7 +29,7 @@
 
 @end
 
-@implementation IMMovementVC
+@implementation IMMovementViewController
 
 - (void)setMigrant:(Migrant *)migrant
 {
@@ -40,10 +43,15 @@
 {
     if (![self validateInput]) {
         [self showAlertWithTitle:@"Invalid Input" message:@"Please evaluate your inputs before saving."];
+        self.navButton.enabled = FALSE;
         return;
     }
     
     if (self.onSave) self.onSave(self.movement, !self.creating);
+    
+    //set segue to next page
+    self.navButton.enabled = TRUE;
+
 }
 
 - (void)cancel
@@ -299,8 +307,9 @@
             switch ([self movementSectionFormula:Nil]) {
                 case 8:{
                     IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES];
+                    
                     vc.onSelected = ^(Country *country){
-                        self.movement.destinationCountry = [Country countryWithCode:country.code inManagedObjectContext:self.context];
+                        self.movement.destinationCountry = [Country countryWithCode:country.code inManagedObjectContext:self.movement.managedObjectContext];
                         [self.popover dismissPopoverAnimated:YES];
                         self.popover = nil;
                         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -335,6 +344,12 @@
         //reload table
         [self.tableView reloadData];
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+        //set to disable to avoid user error while input
+        if (self.navButton.enabled && ![self validateInput]) {
+            self.navButton.enabled = FALSE;
+        }
+        
 
     }else if (optionChooser.constantsKey == CONST_TRAVEL_MODE){
         self.movement.travelMode = value;
@@ -376,10 +391,10 @@
     vc.onSelected = ^(Accommodation *accommodation){
         switch (indexPath.row) {
             case 7:
-                self.movement.originLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.context];
+                self.movement.originLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.movement.managedObjectContext];
                 break;
             case 8:
-                self.movement.transferLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.context];
+                self.movement.transferLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.movement.managedObjectContext];
                 break;
             default:
                 break;
@@ -396,7 +411,7 @@
 {
     IMPortChooserVC *vc = [[IMPortChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
     vc.onSelected = ^(Port *port){
-        self.movement.departurePort = [Port portWithName:port.name inManagedObjectContext:self.context];
+        self.movement.departurePort = [Port portWithName:port.name inManagedObjectContext:self.movement.managedObjectContext];
         [self.popover dismissPopoverAnimated:YES];
         self.popover = nil;
         [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -419,11 +434,21 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    
     if (!self.movement) {
          NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
         self.movement = [Movement newMovementInContext:context];
     }
     self.creating = YES;
+    
+    self.navigationController.navigationBar.tintColor = [UIColor IMMagenta];
+    self.view.tintColor = [UIColor IMMagenta];
+    
+    self.navButton.enabled = FALSE;
+    //setup navigation bar items
+    UIBarButtonItem *itemSave = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
+                                                                                target:self action:@selector(save)];
+    self.navigationItem.rightBarButtonItems = @[self.navButton,itemSave];
 }
 
 - (void)didReceiveMemoryWarning
@@ -447,9 +472,10 @@
     self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     self.tableView.backgroundColor = [UIColor whiteColor];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
-    self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
+
+
     
  
     return self;
@@ -458,7 +484,10 @@
 -(void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
-    [self.tableView reloadData];
+//    [self.tableView reloadData];
+    if (!self.context) {
+            self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+    }
 }
 
 - (void) updateRow:(NSString *)lastMovementType and:(NSString *)currentMovementType
@@ -486,6 +515,15 @@
     }
     
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([[segue identifier] isEqualToString:@"ShowMigrantList"]) {
+        [[segue destinationViewController] setDelegate:self];
+        [[segue destinationViewController] setMovement:self.movement];
+    }
+}
+
 // - (void)viewDidLoad
 // {
 // [super viewDidLoad];

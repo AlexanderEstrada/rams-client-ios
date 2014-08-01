@@ -112,11 +112,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
         [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
-        //        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
-        //            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
-        //                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
-        //            [formatted setObject:transfer forKey:REG_TRANSFER];
-        //        }
+        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
+            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+            [formatted setObject:transfer forKey:REG_TRANSFER];
+        }
         
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
@@ -126,35 +126,36 @@ NSString *const REG_MOVEMENT                 = @"movements";
         if (self.biometric.leftIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftIndex] forKey:REG_LEFT_INDEX];
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
         
-        //Movement
-        
-        //check if There is movement to upload
-        Migrant * migrant = [Migrant migrantWithId:self.registrationId inContext:self.managedObjectContext];
-        
-        if (migrant && [migrant.movements count]) {
-            /* using new format*/
-            //only proccess if there is movement history to upload
-            //            NSMutableDictionary *movements = [NSMutableDictionary dictionary];
-            //            int counter =0;
-            //            NSString *key = [NSString string];
-            //            for (Movement * movement in migrant.movements) {
-            //                key =[NSString stringWithFormat:@"%@[%i]",REG_MOVEMENT,counter++];
-            //                //parse movement history
-            //                [formatted setObject:[movement format] forKey:key];
-            //            }
-            //end new format
-            
-            /* using old format*/
-            NSMutableArray * data = [NSMutableArray array];
-            for (Movement * movement in migrant.movements) {
-                //parse movement history
-                [data addObject:[movement format]];
-            }
-            [formatted setObject:data forKey:REG_MOVEMENT];
-            //end old format
-            
-        }
-        
+        /*
+         //Movement
+         
+         //check if There is movement to upload
+         Migrant * migrant = [Migrant migrantWithId:self.registrationId inContext:self.managedObjectContext];
+         
+         if (migrant && [migrant.movements count]) {
+         // using new format
+         //only proccess if there is movement history to upload
+         //            NSMutableDictionary *movements = [NSMutableDictionary dictionary];
+         //            int counter =0;
+         //            NSString *key = [NSString string];
+         //            for (Movement * movement in migrant.movements) {
+         //                key =[NSString stringWithFormat:@"%@[%i]",REG_MOVEMENT,counter++];
+         //                //parse movement history
+         //                [formatted setObject:[movement format] forKey:key];
+         //            }
+         //end new format
+         
+         // using old format
+         NSMutableArray * data = [NSMutableArray array];
+         for (Movement * movement in migrant.movements) {
+         //parse movement history
+         [data addObject:[movement format]];
+         }
+         [formatted setObject:data forKey:REG_MOVEMENT];
+         //end old format
+         
+         }
+         */
         return formatted;
     }
     @catch (NSException *exception)
@@ -542,7 +543,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
     stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length];
     
     if (self.unhcrDocument) stat &= self.unhcrDocument && [self.unhcrNumber length];
-    //    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
+    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
     self.complete = @(stat);
 }
 

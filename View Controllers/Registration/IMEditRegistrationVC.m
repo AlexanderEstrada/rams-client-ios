@@ -174,8 +174,12 @@ typedef enum : NSUInteger {
 
 - (void)showPhotoPreview
 {
-    
+    if(!self.previewingPhotos){
     self.previewingPhotos = [NSMutableArray array];
+    }
+    
+    NSLog(@"self.registration.biometric.photograph : %@",self.registration.biometric.photograph);
+    
     //add all photo
     if (self.registration.biometric.photograph)[self.previewingPhotos addObject:self.registration.biometric.photograph];
     if (self.registration.biometric.leftIndex)[self.previewingPhotos addObject:self.registration.biometric.leftIndex];
@@ -243,7 +247,7 @@ typedef enum : NSUInteger {
         image = [image scaledToHeight:1800];
         NSData *imageData = UIImageJPEGRepresentation(image, 1);
         [self.registration.biometric updatePhotographData:imageData];
-//        self.imagePhotograph.image = [self.registration.biometric.photographImage scaledToWidthInPoint:100];
+        //        self.imagePhotograph.image = [self.registration.biometric.photographImage scaledToWidthInPoint:100];
         self.imagePhotograph.image = self.registration.biometric.photographImageThumbnail;
         
     }
@@ -380,11 +384,11 @@ typedef enum : NSUInteger {
             //new registration
             needRemove = TRUE;
         }
-
+        
         if (self.registrationSave) {
             self.registrationSave(needRemove);
         }
-
+        
         [self dismissViewControllerAnimated:YES completion:nil];
     }
     
@@ -487,7 +491,7 @@ typedef enum : NSUInteger {
     
     if (self.registration.biometric.rightIndex) {
         self.imageRightIndex.image = [[self.registration.biometric fingerImageForPosition:RightIndex] scaledToWidthInPoint:100];
-     
+        
     }else {
         self.imageRightIndex.image = defaultImage;
     }
@@ -513,11 +517,11 @@ typedef enum : NSUInteger {
     if (self.registration.biometric.photograph) {
         //show thumbnail
         if (!self.registration.biometric.photographThumbnail) {
-            //save as thumbnail 
-            self.imagePhotograph.image = [[self.registration.biometric photographImage] scaledToWidthInPoint:100];
+            //save as thumbnail
+            self.imagePhotograph.image = [[self.registration.biometric photographImage] scaledToWidthInPoint:125];
             
             
-            NSData *imgData= UIImageJPEGRepresentation(self.imagePhotograph.image,0.0);
+            NSData *imgData= UIImagePNGRepresentation(self.imagePhotograph.image);
             
             [self.registration.biometric updatePhotographThumbnail:imgData];
             
@@ -529,8 +533,8 @@ typedef enum : NSUInteger {
                 [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
             }
         }
-
-         self.imagePhotograph.image = [self.registration.biometric photographImageThumbnail];        
+        
+        self.imagePhotograph.image = [self.registration.biometric photographImageThumbnail];
     }else {
         self.imagePhotograph.image = [UIImage imageNamed:@"icon-avatar-large"];
     }
