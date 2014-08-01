@@ -137,17 +137,18 @@
             
         }else
         {
-            
-          
             for (Country *country in results) {
-                NSLog(@"country.name : %@",country.name);
+
                 //check if search flag is set, case TRUE, then show only Country that equal from searchBar
                 if (self.fromSearchBar) {
                     if (![predicate evaluateWithObject:country]) continue;
                 }
-                NSLog(@"country.name : %@",country.name);
+
                 NSString *indexTitle = [country.name substringToIndex:1];
     
+                //avoid empty country name
+                if(!indexTitle) continue;
+                    
                 
                 //add index (first char)
                 if (![indexArray containsObject:indexTitle]) {
