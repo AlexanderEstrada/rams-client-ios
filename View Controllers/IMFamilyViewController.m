@@ -30,6 +30,8 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) NSMutableArray *previewingPhotos;
 @property (nonatomic) int tapCount;
 @property (nonatomic,strong) MBProgressHUD *hud;
+@property (nonatomic,strong) UIBarButtonItem *itemUploadAll;
+@property (nonatomic) BOOL next;
 
 @end
 
@@ -60,6 +62,8 @@ typedef enum : NSUInteger {
     
     self.childData = [[self.migrant.familyData.childs allObjects] mutableCopy];
     
+    
+    
     self.navigationController.navigationBar.tintColor = [UIColor IMLightBlue];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
@@ -69,7 +73,11 @@ typedef enum : NSUInteger {
     self.save =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(onSave)];
     
 //    UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(onCancel)];
-    self.navigationItem.rightBarButtonItems = @[self.save];
+    //add upload icon
+    self.itemUploadAll= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon-upload-small"] style:UIBarButtonItemStylePlain target:self action:@selector(uploadAll:)];
+    self.itemUploadAll.enabled = FALSE;
+    
+    self.navigationItem.rightBarButtonItems = @[self.itemUploadAll,self.save];
 //    self.navigationItem.leftBarButtonItems = @[cancelBtn];
     
     //set to no until user add migrant
@@ -86,7 +94,101 @@ typedef enum : NSUInteger {
     
 }
 
+- (void) uploadAll:(UIBarButtonItem *)sender
+{
+    //show confirmation
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Upload all Family Data"
+                                                    message:@"All your Family Data will be uploaded and you need internet connection to do this.\nContinue upload all Family Data?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"Yes", nil];
+    alert.tag = IMAlertUpload_Tag;
+    [alert show];
+    
+}
 
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        //start uploading
+        if (!_hud) {
+            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+            _hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        }
+        
+        // Back to indeterminate mode
+        _hud.mode = MBProgressHUDModeIndeterminate;
+        
+        // Add HUD to screen
+        [self.navigationController.view addSubview:_hud];
+        
+        
+        
+        // Regisete for HUD callbacks so we can remove it from the window at the right time
+        _hud.delegate = self;
+        
+        _hud.labelText = @"Uploading Data";
+        
+        
+        // Show the HUD while the provided method executes in a new thread
+        [_hud showWhileExecuting:@selector(uploading) onTarget:self withObject:nil animated:YES];
+    }
+    
+    //         finish blocking
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    [self.sideMenuDelegate disableMenu:NO];
+    
+    //reset flag
+    self.next = TRUE;
+    
+}
+
+- (void) uploading
+{
+    NSLog(@"Uploading Family Data");
+    
+     @try {
+         self.next = FALSE;
+         //disable Menu
+         [self.sideMenuDelegate disableMenu:YES];
+         //show data loading view until upload is finish
+         //start blocking
+         [UIApplication sharedApplication].idleTimerDisabled = YES;
+    //formating data
+    NSDictionary * dict = [self.migrant format];
+         
+         //send formatted data to server
+         [self sendFamilyData:dict];
+         while(self.next ==FALSE){
+             usleep(5000);
+         }
+
+     }
+    @catch (NSException *exception) {
+        NSLog(@"%@",[exception description]);
+    }
+
+}
+
+
+- (void) sendFamilyData:(NSDictionary *)params
+{
+    
+    NSLog(@"params : %@",[params description]);
+    
+    IMHTTPClient *client = [IMHTTPClient sharedClient];
+    [client postJSONWithPath:@"family/save"
+                  parameters:params
+                     success:^(NSDictionary *jsonData, int statusCode){
+                         [self showAlertWithTitle:@"Upload Success" message:nil];
+                         NSLog(@"Upload Success");
+                     }
+                     failure:^(NSDictionary *jsonData, NSError *error, int statusCode){
+                         [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
+                         NSLog(@"Upload Fail : %@",[error description]);
+                     }];
+}
 
 -(void)viewDidAppear:(BOOL)animated {
     
@@ -588,11 +690,13 @@ typedef enum : NSUInteger {
 }
 
 - (void)doubleTap:(NSIndexPath *)indexPath {
-    if (indexPath.row ==1){
+    NSLog(@"indexPath.row : %i",indexPath.row);
+    
+//    if (indexPath.row ==1){
         [self performSelector:@selector(showPhotoPreview:) withObject: indexPath];
-    }else {
-        [self singleTap:indexPath];
-    }
+//    }else {
+//        [self singleTap:indexPath];
+//    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -631,6 +735,9 @@ typedef enum : NSUInteger {
         
         // sleep for synch
         sleep(5);
+        
+        //set upload button enable
+        self.itemUploadAll.enabled = TRUE;
     }
     
 }

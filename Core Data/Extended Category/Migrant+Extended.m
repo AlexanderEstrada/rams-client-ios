@@ -19,10 +19,58 @@
 
 @implementation Migrant (Extended)
 
+- (NSDictionary *)format
+{
+    @try {
+        NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
+        
+        //familyData
+        
+        [formatted setObject:self.registrationNumber forKey:@"migrant"];
+        
+        NSMutableDictionary *familyData = [NSMutableDictionary dictionary];
+//        NSMutableDictionary *child = [NSMutableDictionary dictionary];
+        if (self.familyData.father) {
+            [familyData setObject:self.familyData.father forKey:@"father"];
+        }
+        if (self.familyData.mother) {
+            [familyData setObject:self.familyData.mother forKey:@"mother"];
+        }
+        if (self.familyData.spouse) {
+            [familyData setObject:self.familyData.spouse forKey:@"spouse"];
+        }
+        
+        if ([self.familyData.childs count]) {
+            // using old format
+            NSMutableArray * data = [NSMutableArray array];
+            for (Child * child in self.familyData.childs) {
+                //parse movement history
+                [data addObject:[child format]];
+            }
+            [formatted setObject:data forKey:@"childs"];
+            //end old format
+            
+        }
+        
+        
+        [formatted setObject:familyData forKey:@"familyData"];
+
+        return formatted;
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating formatted Migrant data: %@", [exception description]);
+    }
+    
+    
+    return nil;
+}
+
 
 + (Migrant *)migrantWithDictionary:(NSDictionary *)dictionary inContext:(NSManagedObjectContext *)context
 {
     @try {
+       
         NSString *migrantId = [dictionary objectForKey:@"id"];
         Migrant *migrant = [Migrant migrantWithId:migrantId inContext:context];
         if (!migrant) {

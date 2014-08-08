@@ -11,5 +11,6 @@
 @interface Child (Extended)
 
 + (Child *)childWithId:(NSString *)registrationId inContext:(NSManagedObjectContext *)context;
+- (NSDictionary *)format;
 
 @end

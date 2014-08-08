@@ -14,18 +14,30 @@
 #import "Registration+Export.h"
 #import "IMEditRegistrationVC.h"
 #import "Movement+Extended.h"
+#import "MBProgressHUD.h"
 
 
-@interface IMMovementsReviewVC ()
+@interface IMMovementsReviewVC () <MBProgressHUDDelegate>
 @property (nonatomic, strong) NSOperationQueue *thumbnailQueue;
 @property (nonatomic, strong) NSMutableArray *migrants;
 @property (nonatomic, strong) Movement *movement;
 @property (nonatomic) int currentIndex;
+@property (nonatomic,strong) MBProgressHUD *HUD;
+@property (nonatomic) BOOL next;
+
 @end
 
 @implementation IMMovementsReviewVC
 
 @synthesize delegate;
+
+#pragma mark -
+#pragma mark MBProgressHUDDelegate methods
+
+- (void)hudWasHidden {
+    //    // Remove HUD from screen when the HUD was hidded
+    [_HUD removeFromSuperview];
+}
 
 - (void)setMigrantData:(NSMutableDictionary *)migrantData{
     if (migrantData) {
@@ -33,11 +45,20 @@
         
         //get migrant data form dictionary
         if (self.migrantData[@"Migrant"]) {
+            if (!self.migrants) {
+                self.migrants = [NSMutableArray array];
+            }
+
             self.migrants = self.migrantData[@"Migrant"];
+            NSLog(@"self.migrants = %i",[self.migrants count]);
         }
         
         if (self.migrantData[@"Movement"]) {
             //get movement from dictionary
+            if (!self.movement) {
+                NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+                self.movement = [Movement newMovementInContext:context];
+            }
             self.movement = self.migrantData[@"Movement"];
         }
         
@@ -87,33 +108,88 @@
 - (void)uploadAll
 {
     
-    //formating data
-    NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-    NSMutableArray *migrantIDs = [NSMutableArray array];
     
+    //show confirmation
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Upload all Movement Data"
+                                                    message:@"All your Movement Data will be uploaded and you need internet connection to do this.\nContinue upload all Movement?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"Yes", nil];
+    alert.tag = IMAlertUpload_Tag;
+    [alert show];
+}
+
+- (void) uploading
+{
+   
+   
+
     @try {
-        //formating movement
-        if (self.movement) {
-            [dict setObject:[self.movement format] forKey:@"movement"];
-            
-        }
         
+        //formating data
+        NSMutableDictionary * dict = [NSMutableDictionary dictionary];
+
+        NSMutableArray * formatted = [NSMutableArray array];
+        NSMutableDictionary * readyToSend = [NSMutableDictionary dictionary];
+        
+        //disable Menu
+        [self.sideMenuDelegate disableMenu:YES];
+        //show data loading view until upload is finish
+        //start blocking
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
+        //formating movement
+//        if (self.movement) {
+////            [dict setObject:[self.movement format] forKey:@"movement"];
+//            [data addObject:[self.movement format]];
+//            
+//        }
+        
+         NSLog(@"uploading == self.migrants = %i",[self.migrants count]);
         
         //formating migrants data
         for (Migrant * migrant in self.migrants) {
-            NSString *Id = migrant.registrationNumber;
-            [migrantIDs addObject:Id];
+             [dict setObject:migrant.registrationNumber forKey:@"migrant"];
+            
+          
+//            NSString *Id = migrant.registrationNumber;
+//            [migrantIDs addObject:Id];
+//             [dict setObject:migrantIDs forKey:@"migrant"];
+            
+             NSMutableArray * data = [NSMutableArray array];
+            //get from migrants
+            if ([migrant.movements count]) {
+                NSLog(@"[migrant.movements count] : %i",[migrant.movements count]);
+                for (Movement * movement in migrant.movements) {
+                    //parse movement history
+                    [data addObject:[movement format]];
+                }
+                
+            }
+            
+            //add latest movement
+             [data addObject:[self.movement format]];
+            
+            //wrap data
+            [dict setObject:data forKey:@"movements"];
+            
+            //add formatted data
+            [formatted addObject:dict];
+        }
+
+      [readyToSend setObject:formatted forKey:@"movement"];
+        
+        NSLog(@"format : %@",[readyToSend description]);
+        //send formatted data to server
+        [self sendMovement:readyToSend];
+        self.next = FALSE;
+        while(self.next ==FALSE){
+            usleep(5000);
         }
         
-        [dict setObject:migrantIDs forKey:@"migrants"];
-        
-        NSLog(@"format : %@",[dict description]);
-        //send formatted data to server
-        [self sendMovement:dict];
     }
     @catch (NSException *exception) {
         NSLog(@"%@",[exception description]);
-    }   
+    }
     
 }
 
@@ -136,6 +212,39 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        //start uploading
+        if (!_HUD) {
+            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        }
+        
+        // Back to indeterminate mode
+        _HUD.mode = MBProgressHUDModeIndeterminate;
+        
+        // Add HUD to screen
+        [self.navigationController.view addSubview:_HUD];
+        
+        
+        
+        // Regisete for HUD callbacks so we can remove it from the window at the right time
+        _HUD.delegate = self;
+        
+        _HUD.labelText = @"Uploading Data";
+        
+        
+        // Show the HUD while the provided method executes in a new thread
+        [_HUD showWhileExecuting:@selector(uploading) onTarget:self withObject:nil animated:YES];
+        
+        
+    }
+    
+    //         finish blocking
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    [self.sideMenuDelegate disableMenu:NO];
+    
+    //reset flag
+    self.next = TRUE;
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.collectionView reloadData];
     

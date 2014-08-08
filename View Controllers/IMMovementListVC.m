@@ -81,6 +81,20 @@
     @try {
         if (movement) {
             _movement = movement;
+            
+            
+            
+            //some algorithm
+//            For TRANSFER: the destination location must not be same with the origin location, only migrants with current location matching the origin location can be moved to the destination location.
+//            For AVR / Deportation: the migrants nationality must match with the destination country.
+            if ([_movement.type isEqual:@"Transfer"]) {
+                //do the stuff
+                self.basePredicate = [NSPredicate predicateWithFormat:@"detentionLocation != %@", _movement.transferLocation.accommodationId];
+                
+            }else if([_movement.type isEqual:@"AVR"]){
+                //do the stuff
+                self.basePredicate = [NSPredicate predicateWithFormat:@"bioData.nationality.code = %@ || bioData.nationality.name = %@", _movement.destinationCountry.code,_movement.destinationCountry.name];
+            }
         }
         
     }
@@ -429,7 +443,10 @@
     
     if (!self.filterChooser) {
         //remove active predicate, we use active predicate from filter chooser
-        self.basePredicate = [NSPredicate predicateWithFormat:@"complete = YES"];
+        if (!self.basePredicate) {
+            self.basePredicate = [NSPredicate predicateWithFormat:@"complete = YES"];
+        }
+        
         self.filterChooser = [[IMMigrantFilterDataVC alloc] initWithAction:^(NSPredicate *basePredicate)
                               {
                                   [self.popover dismissPopoverAnimated:YES];
@@ -437,7 +454,8 @@
                                   if (basePredicate) {
                                       
                                       self.basePredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate]];
-                                  }else self.basePredicate = Nil;
+                                      }
+//                                  else self.basePredicate = Nil;
                               } andBasePredicate:self.basePredicate
                               ];
         
@@ -453,7 +471,8 @@
     self.filterChooser.doneCompletionBlock = ^(NSMutableDictionary * value)
     {
         //TODO : reload Data
-        weakSelf.basePredicate = Nil;
+//        weakSelf.basePredicate = Nil;
+        [weakSelf reloadData];
     };
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.filterChooser];
@@ -502,20 +521,25 @@
         self.collectionView.allowsMultipleSelection = YES;
         //change title to Cancel
         self.itemSelected.title = @"Cancel";
-        
-        //reload data
-        if ([self isViewLoaded]) {
-            [self.collectionView reloadData];
-        }
-        
     }else {
         //change title to Select
         self.itemSelected.title = @"Select";
         self.collectionView.allowsMultipleSelection = NO;
         
+        //clear all selected item
+        self.migrants = Nil;
         
-        
-    }    
+        //set Yes, cause user already add the migrant data
+        if (self.navNext.enabled) {
+            self.navNext.enabled = NO;
+        }
+    }
+    
+    //reload data
+    if ([self isViewLoaded]) {
+        [self.collectionView reloadData];
+    }
+
 }
 
 - (void)didReceiveMemoryWarning

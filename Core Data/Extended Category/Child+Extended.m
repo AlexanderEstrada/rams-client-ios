@@ -27,4 +27,23 @@
         return nil;
     }
 }
+- (NSDictionary *)format
+{
+    @try {
+        NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
+        
+        if (self.registrationNumber) {
+            [formatted setObject:self.registrationNumber forKey:@"registrationNumber"];
+        }
+        
+        return formatted;
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while creating formatted Migrant data: %@", [exception description]);
+    }
+    
+    
+    return nil;
+}
 @end

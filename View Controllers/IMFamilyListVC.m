@@ -542,17 +542,27 @@
         //change title to Cancel
         self.itemSelected.title = @"Cancel";
         
-        //reload data
-        if ([self isViewLoaded]) {
-            [self.collectionView reloadData];
-        }
         
     }else {
         //change title to Select
         self.itemSelected.title = @"Select";
-        self.collectionView.allowsMultipleSelection = NO;  
+        self.collectionView.allowsMultipleSelection = NO;
         
+        //clear all selected item
+        self.migrants = Nil;
+        
+        //set Yes, cause user already add the migrant data
+        if (self.save.enabled) {
+            self.save.enabled = NO;
+        }
+
     }
+    
+    //reload data
+    if ([self isViewLoaded]) {
+        [self.collectionView reloadData];
+    }
+
 }
 
 

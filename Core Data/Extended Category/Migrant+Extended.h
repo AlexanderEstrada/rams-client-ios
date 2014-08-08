@@ -31,4 +31,6 @@
 - (NSString *)interceptionSummary;
 - (NSString *)unhcrSummary;
 
+- (NSDictionary *)format;
+
 @end
