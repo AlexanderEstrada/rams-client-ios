@@ -22,6 +22,8 @@
 #import <UIKit/UITableViewCell.h>
 #import <Foundation/Foundation.h>
 #import "IMSSCheckMark.h"
+#import "Country+Extended.h"
+#import "Port+Extended.h"
 
 
 @interface IMMovementListVC () <DataProviderDelegate,MBProgressHUDDelegate,UIPopoverControllerDelegate>
@@ -30,7 +32,8 @@
 @property (nonatomic,strong) NSMutableArray *migrants;
 @property (nonatomic, strong) IMMigrantFilterDataVC * filterChooser;
 @property (nonatomic, strong) UIPopoverController *popover;
-@property (nonatomic,strong)  UIBarButtonItem *itemSelected;
+@property (nonatomic, strong) NSManagedObjectContext *context;
+//@property (nonatomic,strong)  UIBarButtonItem *itemSelected;
 
 @end
 
@@ -80,20 +83,70 @@
 {
     @try {
         if (movement) {
+            if (!self.context) {
+                self.context =[IMDBManager sharedManager].localDatabase.managedObjectContext;
+            }
+           
+
+            
+            if (!_movement) {
+                
+                _movement = [Movement newMovementInContext:_context];
+            }
+            
             _movement = movement;
             
-            
+            //deep copy
+            if (movement.date) {
+                _movement.date = movement.date;
+            }else{
+                _movement.date = [NSDate date];
+            }
+            if (movement.documentNumber) {
+                _movement.documentNumber = movement.documentNumber;
+            }
+            if (movement.movementId) {
+                _movement.movementId = movement.movementId;
+            }
+            if (movement.proposedDate) {
+                _movement.proposedDate = movement.proposedDate;
+            }
+            if (movement.travelMode) {
+                _movement.travelMode = movement.travelMode;
+            }
+            if (movement.referenceCode) {
+                _movement.referenceCode = movement.referenceCode;
+            }
+            if (movement.type) {
+                _movement.type = movement.type;
+            }
+            if (movement.departurePort) {
+                _movement.departurePort = [Port portWithName:movement.departurePort.name inManagedObjectContext:_context];
+            }
+            if (movement.destinationCountry) {
+                _movement.destinationCountry = [Country countryWithCode:movement.destinationCountry.code inManagedObjectContext:_context];
+            }
+            if (movement.originLocation) {
+                _movement.originLocation = [Accommodation accommodationWithId:movement.originLocation.accommodationId inManagedObjectContext:_context];
+            }
+            if (movement.transferLocation) {
+                _movement.transferLocation = [Accommodation accommodationWithId:movement.transferLocation.accommodationId inManagedObjectContext:_context];
+            }
+
             
             //some algorithm
 //            For TRANSFER: the destination location must not be same with the origin location, only migrants with current location matching the origin location can be moved to the destination location.
 //            For AVR / Deportation: the migrants nationality must match with the destination country.
             if ([_movement.type isEqual:@"Transfer"]) {
                 //do the stuff
-                self.basePredicate = [NSPredicate predicateWithFormat:@"detentionLocation != %@", _movement.transferLocation.accommodationId];
+                self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES AND complete = YES AND detentionLocation != %@ AND detentionLocation = %@", _movement.transferLocation.accommodationId,_movement.originLocation.accommodationId];
                 
-            }else if([_movement.type isEqual:@"AVR"]){
+            }else if([_movement.type isEqual:@"AVR"] || [self.movement.type isEqual:@"Deportation"]){
                 //do the stuff
-                self.basePredicate = [NSPredicate predicateWithFormat:@"bioData.nationality.code = %@ || bioData.nationality.name = %@", _movement.destinationCountry.code,_movement.destinationCountry.name];
+                self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES AND complete = YES AND bioData.nationality.code = %@ || bioData.nationality.name = %@", _movement.destinationCountry.code,_movement.destinationCountry.name];
+            }else if ([self.movement.type isEqual:@"Escape"] || [self.movement.type isEqual:@"Released"]){
+                //do the stuff
+                self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES AND complete = YES AND detentionLocation = %@",_movement.originLocation.accommodationId];
             }
         }
         
@@ -111,8 +164,10 @@
     //    {
     if(!self.reloadingData){
         self.reloadingData = YES;
+        if (!self.context) {
+            self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        }
         
-        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
         if (self.basePredicate) {
             request.predicate = self.basePredicate;
@@ -122,7 +177,7 @@
         }
         request.returnsObjectsAsFaults = YES;
         NSError *error;
-        NSUInteger total = [context countForFetchRequest:request error:&error];
+        NSUInteger total = [_context countForFetchRequest:request error:&error];
         DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:request.predicate];
         
         self.dataProvider = Nil;
@@ -371,10 +426,13 @@
     }else {
         Migrant *migrant = self.dataProvider.dataObjects[indexPath.row];
         
-        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        if (!self.context) {
+            self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        }
+        
         
         //save to registration
-        Registration * registration = [Registration registrationFromMigrant:migrant inManagedObjectContext:context];
+        Registration * registration = [Registration registrationFromMigrant:migrant inManagedObjectContext:_context];
         
         
         IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
@@ -444,7 +502,7 @@
     if (!self.filterChooser) {
         //remove active predicate, we use active predicate from filter chooser
         if (!self.basePredicate) {
-            self.basePredicate = [NSPredicate predicateWithFormat:@"complete = YES"];
+            self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
         }
         
         self.filterChooser = [[IMMigrantFilterDataVC alloc] initWithAction:^(NSPredicate *basePredicate)
@@ -504,43 +562,46 @@
     
     UIBarButtonItem *itemFilter = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                                 target:self action:@selector(showFilterOptions:)];
-    self.itemSelected = [[UIBarButtonItem alloc] initWithTitle:@"Select" style:UIBarButtonItemStyleBordered target:self action:@selector(setMultipleSelection)];
+//    self.itemSelected = [[UIBarButtonItem alloc] initWithTitle:@"Select" style:UIBarButtonItemStyleBordered target:self action:@selector(setMultipleSelection)];
     
     
-    self.navigationItem.rightBarButtonItems = @[self.navNext,itemFilter,self.itemSelected];
-    
+//    self.navigationItem.rightBarButtonItems = @[self.navNext,itemFilter,self.itemSelected];
+      self.navigationItem.rightBarButtonItems = @[self.navNext,itemFilter];
    
     //set to no until user add migrant
     self.navNext.enabled = NO;
     
-}
-
-- (void)setMultipleSelection
-{
-    if ([self.itemSelected.title isEqualToString:@"Select"]) {
-        self.collectionView.allowsMultipleSelection = YES;
-        //change title to Cancel
-        self.itemSelected.title = @"Cancel";
-    }else {
-        //change title to Select
-        self.itemSelected.title = @"Select";
-        self.collectionView.allowsMultipleSelection = NO;
-        
-        //clear all selected item
-        self.migrants = Nil;
-        
-        //set Yes, cause user already add the migrant data
-        if (self.navNext.enabled) {
-            self.navNext.enabled = NO;
-        }
-    }
+    //set multiple selection as default
+            self.collectionView.allowsMultipleSelection = YES;
     
-    //reload data
-    if ([self isViewLoaded]) {
-        [self.collectionView reloadData];
-    }
-
 }
+
+//- (void)setMultipleSelection
+//{
+//    if ([self.itemSelected.title isEqualToString:@"Select"]) {
+//        self.collectionView.allowsMultipleSelection = YES;
+//        //change title to Cancel
+//        self.itemSelected.title = @"Cancel";
+//    }else {
+//        //change title to Select
+//        self.itemSelected.title = @"Select";
+//        self.collectionView.allowsMultipleSelection = NO;
+//        
+//        //clear all selected item
+//        self.migrants = Nil;
+//        
+//        //set Yes, cause user already add the migrant data
+//        if (self.navNext.enabled) {
+//            self.navNext.enabled = NO;
+//        }
+//    }
+//    
+//    //reload data
+//    if ([self isViewLoaded]) {
+//        [self.collectionView reloadData];
+//    }
+//
+//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -646,18 +707,12 @@
 {
     if ([[segue identifier] isEqualToString:@"SubmitData"]) {
         [[segue destinationViewController] setDelegate:self];
-        NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-        //only set if there is data
         if (self.movement) {
-            [dict setObject:self.movement forKey:@"Movement"];
+            [[segue destinationViewController] setMovement:self.movement];
         }
         if ([self.migrants count]) {
-            [dict setObject:self.migrants forKey:@"Migrant"];
+            [[segue destinationViewController] setMigrants:self.migrants];
         }
-        
-        
-        //prepare data and set it
-        [[segue destinationViewController] setMigrantData:dict];
     }
 }
 

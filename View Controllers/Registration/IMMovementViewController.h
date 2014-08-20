@@ -10,9 +10,9 @@
 #import "Migrant+Extended.h"
 #import "Movement+Extended.h"
 #import "IMMovementListVC.h"
+#import "IMMovementReviewTableVC.h"
 
-@interface IMMovementViewController : IMTableViewController<IMMovementListVCDelegate>
-
+@interface IMMovementViewController : IMTableViewController<IMMovementListVCDelegate,IMMovementReviewTableVCDelegate>
 
 @property (nonatomic, assign) id<IMSideMenuDelegate> sideMenuDelegate;
 @property (nonatomic, strong) Migrant *migrant;
@@ -25,3 +25,4 @@
 
 
 @end
+

@@ -16,6 +16,7 @@
 #import "IMConstants.h"
 #import "IMDBManager.h"
 #import "IMMigrantFetcher.h"
+#import "IMFamilyDataFetcher.h"
 
 
 @interface IMBackgroundFetcher()
@@ -101,6 +102,15 @@
 {
     NSLog(@"Downloading Photos...");
     IMDataFetcher *fetcher = [[IMPhotoFetcher alloc] init];
+//    fetcher.onFinished = ^{ [self fetchFamilys]; };
+        fetcher.onFinished = ^{ [self finished]; };
+    [self execute:fetcher];
+}
+
+- (void)fetchFamilys
+{
+    NSLog(@"Updating Family Data");
+    IMDataFetcher *fetcher = [[IMFamilyDataFetcher alloc] init];
     fetcher.onFinished = ^{ [self finished]; };
     [self execute:fetcher];
 }

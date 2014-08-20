@@ -9,12 +9,12 @@
 #import "IMCollectionViewController.h"
 #import "DataReceiver.h"
 #import "Movement.h"
-#import "IMMovementsReviewVC.h"
+#import "IMMovementReviewTableVC.h"
 
 @protocol IMMovementListVCDelegate;
 
 
-@interface IMMovementListVC : IMCollectionViewController <DataReceiver,IMMovementsReviewVCDelegate>
+@interface IMMovementListVC : IMCollectionViewController <DataReceiver>
 
 @property (weak, atomic) id<IMMovementListVCDelegate> delegate;
 @property (nonatomic, strong) NSPredicate *basePredicate;

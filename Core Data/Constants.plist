@@ -2,8 +2,54 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FamilyType</key>
+	<array>
+		<string>HEAD_OF_FAMILY</string>
+		<string>GRAND_FATHER</string>
+		<string>GRAND_MOTHER</string>
+		<string>GUARDIAN</string>
+		<string>SPOUSE</string>
+		<string>CHILD</string>
+		<string>OTHER_EXTENDED_MEMBER</string>
+	</array>
 	<key>IMConstantKeys</key>
 	<dict>
+		<key>IMSleepDefault</key>
+		<integer>36000</integer>
+		<key>IMReferences</key>
+		<string>references</string>
+		<key>IMMigrantShow</key>
+		<string>migrant/show</string>
+		<key>IMFamilyGet</key>
+		<string>family/get</string>
+		<key>IMUpdateApp</key>
+		<string>update/app</string>
+		<key>IMMigrantUpdate</key>
+		<string>migrant/update</string>
+		<key>IMInterceptionUpdateMovement</key>
+		<string>interception/updateMovement</string>
+		<key>IMMigrantList</key>
+		<string>migrant/list</string>
+		<key>IMInterceptionLocationList</key>
+		<string>interceptionLocation/list</string>
+		<key>IMInterceptionList</key>
+		<string>interception/list</string>
+		<key>IMFamilyList</key>
+		<string>family/list</string>
+		<key>IMAccomodationList</key>
+		<string>accomodation/list</string>
+		<key>IMMigrantSave</key>
+		<string>migrant/save</string>
+		<key>IMMovementSave</key>
+		<string>movement/save</string>
+		<key>IMInterceptionLocationSave</key>
+		<string>interceptionLocation/save</string>
+		<key>IMInterceptionSave</key>
+		<string>interception/save</string>
+		<key>IMAccomodationSave</key>
+		<string>accomodation/save</string>
+		<key>IMFamilySave</key>
+		<string>familyRegister/save</string>
 		<key>IMAPISecret</key>
 		<string>7cb0533b94446f4c49f1eadcffe5f19a31b25d5d</string>
 		<key>IMAPIKey</key>
@@ -21,6 +67,7 @@
 		<string>Temporary Protection Certificate</string>
 		<string>Refugee Certificate</string>
 		<string>Refugee Card</string>
+		<string></string>
 		<string>Rejection Certificate</string>
 	</array>
 	<key>UNHCRStatus</key>

@@ -20,7 +20,28 @@ NSString *const CONST_VULNERABILITY             = @"Vulnerability";
 NSString *const CONST_ROOT                      = @"Root";
 NSString *const CONST_IMConstantKeys            = @"IMConstantKeys";
 NSString *const CONST_LOCATION                  = @"DetentionLocationType";
+NSString *const CONST_FAMILY_TYPE               = @"FamilyType";
 NSInteger const Default_Page_Size = 10;
+
+//value for path address
+NSString *const CONST_IMReferences                      = @"IMReferences";
+NSString *const CONST_IMMigrantShow                     = @"IMMigrantShow";
+NSString *const CONST_IMFamilyGet                       = @"IMFamilyGet";
+NSString *const CONST_IMUpdateApp                       = @"IMUpdateApp";
+NSString *const CONST_IMMigrantUpdate                   = @"IMMigrantUpdate";
+NSString *const CONST_IMInterceptionUpdateMovement      = @"IMInterceptionUpdateMovement";
+NSString *const CONST_IMMigrantList                     = @"IMMigrantList";
+NSString *const CONST_IMInterceptionLocationList        = @"IMInterceptionLocationList";
+NSString *const CONST_IMInterceptionList                = @"IMInterceptionList";
+NSString *const CONST_IMFamilyList                      = @"IMFamilyList";
+NSString *const CONST_IMAccomodationList                = @"IMAccomodationList";
+NSString *const CONST_IMMigrantSave                     = @"IMMigrantSave";
+NSString *const CONST_IMMovementSave                    = @"IMMovementSave";
+NSString *const CONST_IMInterceptionLocationSave        = @"IMInterceptionLocationSave";
+NSString *const CONST_IMInterceptionSave                = @"IMInterceptionSave";
+NSString *const CONST_IMAccomodationSave                = @"IMAccomodationSave";
+NSString *const CONST_IMFamilySave                      = @"IMFamilySave";
+NSString *const CONST_IMSleepDefault                    = @"IMSleepDefault";
 
 
 //NSString  * _UrlName = @"http://172.25.137.149:8080/";
@@ -64,6 +85,23 @@ NSString  * _UrlName = @"https://im.iom.or.id/api";
 	}
 }
 
++ (NSString *) getIMConstantKey:(NSString *)key
+{
+    if (self == [IMConstants class]) {
+        NSDictionary *dictionary = [[self constantsForKey:CONST_IMConstantKeys] mutableCopy];
+        if (dictionary[key])return [dictionary objectForKey:key];
+	}
+    return Nil;
+}
+
++ (NSNumber *) getIMConstantKeyNumber:(NSString *)key
+{
+    if (self == [IMConstants class]) {
+        NSDictionary *dictionary = [[self constantsForKey:CONST_IMConstantKeys] mutableCopy];
+        if (dictionary[key])return [dictionary objectForKey:key];
+	}
+    return Nil;
+}
 
 + (NSString *) constantStringForKey:(NSString *)key
 {

@@ -88,8 +88,11 @@
         //save the detention location name
         if (migrant.detentionLocation) {
              Accommodation * place = [Accommodation accommodationWithId:migrant.detentionLocation inManagedObjectContext:context];
-            //save detention location name
-            migrant.detentionLocationName = place.name;
+            if (place) {
+                //save detention location name
+                migrant.detentionLocationName = place.name;
+            }
+           
         }
         
         //save date created
@@ -164,11 +167,9 @@
         migrant.active = CORE_DATA_OBJECT([dictionary objectForKey:@"active"]);
         migrant.underIOMCare = CORE_DATA_OBJECT([dictionary  objectForKey:@"underIomCare"]);
         
-        
-        
-        
         //Under IOM care
         if (migrant.underIOMCare.boolValue && dictionary [@"movements"]) {
+            
             //add movement
             NSArray *movements = CORE_DATA_OBJECT(dictionary [@"movements"]);
             for (NSDictionary *movement in movements) {
@@ -264,6 +265,7 @@
         
         //set flag complete to 1 for default
         migrant.complete = @(TRUE);
+        
         return migrant;
     }
     @catch (NSException *exception) {

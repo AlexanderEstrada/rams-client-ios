@@ -24,6 +24,7 @@
 @interface IMMovementViewController ()<UIPopoverControllerDelegate, IMOptionChooserDelegate,UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic) BOOL creating;
+@property (nonatomic) BOOL show;
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic, strong) NSManagedObjectContext *context;
 
@@ -42,7 +43,7 @@
 - (void)save
 {
     if (![self validateInput]) {
-        [self showAlertWithTitle:@"Invalid Input" message:@"Please evaluate your inputs before saving."];
+        [self showAlertWithTitle:@"Invalid Input" message:@"Please evaluate your inputs before continue."];
         self.navButton.enabled = FALSE;
         return;
     }
@@ -70,7 +71,7 @@
     BOOL stat = TRUE;
     
     
-    if (![self.movement.type isEqual:@"Escape"]) {
+    if (![self.movement.type isEqual:@"Escape"] && ![self.movement.type isEqual:@"Released"]) {
         stat &= self.movement.date?TRUE:FALSE;
         stat &= self.movement.documentNumber?TRUE:FALSE;
         stat &= self.movement.proposedDate?TRUE:FALSE;
@@ -90,6 +91,7 @@
     }else {
         stat &= self.movement.date?TRUE:FALSE;
         stat &= self.movement.type?TRUE:FALSE;
+        stat &= self.movement.originLocation?TRUE:FALSE;
     }
     
     return stat;
@@ -113,8 +115,11 @@
     NSArray *items = [IMConstants constantsForKey:CONST_MOVEMENT_TYPE];
     NSUInteger item = [items indexOfObject:movementType?movementType:self.movement.type];
     switch (item) {
+        case 5:
+            //Released
         case 0:
             // Escape
+            totalSection += 1;
             break;
         case 1:
             // Transfer
@@ -128,8 +133,7 @@
             //Deportation
             totalSection +=6;
             break;
-        case 5:
-            //Released
+       
         case 6:
             //Decesead
             totalSection +=5;
@@ -181,16 +185,24 @@
             cell.labelTitle.text = @"Movement Date";
             cell.labelValue.text = [self.movement.date mediumFormatted];
         }else if (indexPath.row == 2) {
+            if ([self.movement.type isEqualToString:@"Escape"] || [self.movement.type isEqualToString:@"Released"]) {
+                cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
+                cell.labelTitle.text = @"Origin Location";
+                cell.labelValue.text = self.movement.originLocation.name;
+            }else{
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = @"Document Number";
             cell.textValue.placeholder = @"e.g LSD-09C02429";
             cell.textValue.text = self.movement.documentNumber;
             cell.onTextValueReturn = ^(NSString *value){ self.movement.documentNumber = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
+            }
         }else if (indexPath.row == 3) {
+            
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = @"Proposed Date";
             cell.labelValue.text = [self.movement.proposedDate mediumFormatted];
+            
         }else if (indexPath.row == 4) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = @"Travel Mode";
@@ -295,6 +307,7 @@
             datePicker.maximumDate = [NSDate date];
             datePicker.date = self.movement.proposedDate;
             [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:datePicker navigationController:NO];
+            
         }else if (indexPath.row == 4){
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_TRAVEL_MODE delegate:self];
             vc.selectedValue = self.movement.travelMode;
@@ -306,7 +319,8 @@
             
             switch ([self movementSectionFormula:Nil]) {
                 case 8:{
-                    IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES];
+//                    IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES];
+                     IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:Nil presentAsModal:NO popover:YES withEntity:@"Migrant" sortDescriptorWithKey:@"bioData.nationality.name"];
                     
                     vc.onSelected = ^(Country *country){
                         self.movement.destinationCountry = [Country countryWithCode:country.code inManagedObjectContext:self.movement.managedObjectContext];
@@ -325,6 +339,8 @@
             }
         }else if (indexPath.row == 8) {
             [self showAccommodation:indexPath];
+        }else if (indexPath.row == 2 && ([self.movement.type isEqualToString:@"Escape"] || [self.movement.type isEqualToString:@"Released"])){
+             [self showAccommodation:indexPath];
         }
     }
     
@@ -345,10 +361,10 @@
         [self.tableView reloadData];
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
         
-        //set to disable to avoid user error while input
-        if (self.navButton.enabled && ![self validateInput]) {
-            self.navButton.enabled = FALSE;
-        }
+//        //set to disable to avoid user error while input
+//        if (self.navButton.enabled && ![self validateInput]) {
+//            self.navButton.enabled = FALSE;
+//        }
         
 
     }else if (optionChooser.constantsKey == CONST_TRAVEL_MODE){
@@ -387,9 +403,18 @@
 
 - (void)showAccommodation:(NSIndexPath *)indexPath
 {
-    IMAccommodationChooserVC *vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
+    IMAccommodationChooserVC *vc = Nil;
+    if (indexPath.row == 7) {
+        //only show detention location based on migrant detention location
+         vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:Nil presentAsModal:NO withEntity:@"Migrant" sortDescriptorWithKey:@"detentionLocation"];
+
+    }else{
+        vc = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
+    }
+   
     vc.onSelected = ^(Accommodation *accommodation){
         switch (indexPath.row) {
+            case 2:
             case 7:
                 self.movement.originLocation = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.movement.managedObjectContext];
                 break;
@@ -434,23 +459,46 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    
+    if (!self.context) {
+        self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+    }
     if (!self.movement) {
-         NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        self.movement = [Movement newMovementInContext:context];
+        self.movement = [Movement newMovementInContext:self.context];
     }
     self.creating = YES;
-    
+    self.show = NO;
     self.navigationController.navigationBar.tintColor = [UIColor IMMagenta];
     self.view.tintColor = [UIColor IMMagenta];
     
-    self.navButton.enabled = FALSE;
+    self.navButton.enabled = YES;
+    [self showMigrantList:Nil shouldShowMigrantList:NO];
     //setup navigation bar items
-    UIBarButtonItem *itemSave = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
-                                                                                target:self action:@selector(save)];
-    self.navigationItem.rightBarButtonItems = @[self.navButton,itemSave];
+//    UIBarButtonItem *itemSave = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
+//                                                                                target:self action:@selector(save)];
+//    self.navigationItem.rightBarButtonItems = @[self.navButton,itemSave];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ShowListMigrant) name:IMShowMigrantListNotification object:nil];
+    
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelNotification) name:IMCancelNotification object:nil];
 }
 
+- (void)ShowListMigrant{
+    if (!self.show) {
+        self.show = YES;
+    }
+    
+}
+
+- (void)onCancelNotification{
+    if (self.movement) {
+        self.movement = Nil;
+    }
+}
+-(void)showMigrantList:(IMMovementReviewTableVC *)view shouldShowMigrantList:(BOOL)bShowMigrantList{
+    
+    if (bShowMigrantList) {
+        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
+    }
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -484,9 +532,15 @@
 -(void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
-//    [self.tableView reloadData];
+    [self.tableView reloadData];
     if (!self.context) {
             self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+    }
+    if (!self.movement) {
+        self.movement = [Movement newMovementInContext:self.context];
+    }
+    if (self.show) {
+        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
     }
 }
 
@@ -516,6 +570,20 @@
     
 }
 
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"ShowMigrantList"]) {
+        if (![self validateInput])  {
+             [self showAlertWithTitle:@"Invalid Input" message:@"Please evaluate your inputs before saving."];
+            return NO;
+        }
+    }
+    
+    if (self.onSave) self.onSave(self.movement, !self.creating);
+    
+    return YES;
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"ShowMigrantList"]) {
@@ -523,6 +591,7 @@
         [[segue destinationViewController] setMovement:self.movement];
     }
 }
+
 
 // - (void)viewDidLoad
 // {

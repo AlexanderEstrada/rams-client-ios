@@ -30,7 +30,7 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
             NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
             
             
-            request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:sort ascending:YES]];
+            if(sort) request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:sort ascending:YES]];
             request.returnsObjectsAsFaults = YES;
             request.fetchOffset = [indexes firstIndex];
             request.fetchLimit = Default_Page_Size;

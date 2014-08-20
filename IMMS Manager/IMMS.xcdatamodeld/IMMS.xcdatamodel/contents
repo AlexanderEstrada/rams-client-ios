@@ -73,6 +73,20 @@
         <relationship name="childs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Child" inverseName="familyData" inverseEntity="Child" syncable="YES"/>
         <relationship name="migrant" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="familyData" inverseEntity="Migrant" syncable="YES"/>
     </entity>
+    <entity name="FamilyRegister" representedClassName="FamilyRegister" syncable="YES">
+        <attribute name="familyID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headOfFamilyId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headOfFamilyName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photograph" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photographThumbnail" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="familyEntryID" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FamilyRegisterEntry" inverseName="familyID" inverseEntity="FamilyRegisterEntry" syncable="YES"/>
+    </entity>
+    <entity name="FamilyRegisterEntry" representedClassName="FamilyRegisterEntry" syncable="YES">
+        <attribute name="migrantId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="registerEntryId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="familyID" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FamilyRegister" inverseName="familyEntryID" inverseEntity="FamilyRegister" syncable="YES"/>
+    </entity>
     <entity name="ImmigrationOfficer" representedClassName="ImmigrationOfficer" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="officerId" optional="YES" attributeType="Integer 16" syncable="YES"/>
@@ -190,7 +204,7 @@
         <attribute name="proposedDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="referenceCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="travelMode" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="departurePort" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Port" inverseName="movements" inverseEntity="Port" syncable="YES"/>
         <relationship name="destinationCountry" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="movements" inverseEntity="Country" syncable="YES"/>
         <relationship name="migrant" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Migrant" inverseName="movements" inverseEntity="Migrant" syncable="YES"/>
@@ -302,5 +316,7 @@
         <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="150"/>
         <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>
         <element name="RegistrationProfile" positionX="576" positionY="-532" width="128" height="208"/>
+        <element name="FamilyRegister" positionX="-504" positionY="-666" width="128" height="133"/>
+        <element name="FamilyRegisterEntry" positionX="-270" positionY="-621" width="128" height="103"/>
     </elements>
 </model>

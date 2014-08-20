@@ -379,9 +379,19 @@
                 }
                 
             });
+            //3 minutes before force close
+            NSNumber * defaultValue = [IMConstants getIMConstantKeyNumber:CONST_IMSleepDefault];
             
+            if (defaultValue.intValue < 0) {
+                defaultValue = @(36000);
+            }
+            int counter = 0;
             while(self.next ==FALSE){
                 usleep(5000);
+                if (counter == defaultValue.intValue) {
+                    break;
+                }
+                counter++;
             }
             NSError * error;
             [_context save:&error];

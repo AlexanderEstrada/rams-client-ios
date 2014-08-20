@@ -226,6 +226,13 @@
 		F2B09A21194EA05B00289E8F /* AWPagedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A20194EA05B00289E8F /* AWPagedArray.m */; };
 		F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A23194EA07F00289E8F /* DataLoadingOperation.m */; };
 		F2B09A28194EA07F00289E8F /* DataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A25194EA07F00289E8F /* DataProvider.m */; };
+		F2B1B2CC19A1D7B100209FCD /* IMFamilyDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2CB19A1D7B100209FCD /* IMFamilyDataViewController.m */; };
+		F2B1B2CF19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2CE19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m */; };
+		F2B1B2D819A1F05600209FCD /* FamilyRegister+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2D719A1F05600209FCD /* FamilyRegister+Extended.m */; };
+		F2B1B2ED19A1F68300209FCD /* FamilyRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2EC19A1F68300209FCD /* FamilyRegister.m */; };
+		F2B1B2F019A1F68300209FCD /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2EF19A1F68300209FCD /* FamilyRegisterEntry.m */; };
+		F2B1B2F319A20BB200209FCD /* IMFamilyDataFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2F219A20BB200209FCD /* IMFamilyDataFetcher.m */; };
+		F2B1B2F619A37BF000209FCD /* IMMovementReviewTableVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2F519A37BF000209FCD /* IMMovementReviewTableVC.m */; };
 		F2B2A7C3193C2A1B00991614 /* IMMigrantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */; };
 		F2B2A7C6193C31C700991614 /* IMMigrantFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C5193C31C700991614 /* IMMigrantFilterDataVC.m */; };
 		F2B30F241962761600B643C4 /* IMMovementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B30F231962761600B643C4 /* IMMovementViewController.m */; };
@@ -677,6 +684,20 @@
 		F2B09A24194EA07F00289E8F /* DataProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataProvider.h; sourceTree = "<group>"; };
 		F2B09A25194EA07F00289E8F /* DataProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataProvider.m; sourceTree = "<group>"; };
 		F2B09A26194EA07F00289E8F /* DataReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReceiver.h; sourceTree = "<group>"; };
+		F2B1B2CA19A1D7B100209FCD /* IMFamilyDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyDataViewController.h; sourceTree = "<group>"; };
+		F2B1B2CB19A1D7B100209FCD /* IMFamilyDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyDataViewController.m; sourceTree = "<group>"; };
+		F2B1B2CD19A1EB8600209FCD /* FamilyRegisterEntry+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FamilyRegisterEntry+Extended.h"; sourceTree = "<group>"; };
+		F2B1B2CE19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FamilyRegisterEntry+Extended.m"; sourceTree = "<group>"; };
+		F2B1B2D619A1F05600209FCD /* FamilyRegister+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FamilyRegister+Extended.h"; sourceTree = "<group>"; };
+		F2B1B2D719A1F05600209FCD /* FamilyRegister+Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FamilyRegister+Extended.m"; sourceTree = "<group>"; };
+		F2B1B2EB19A1F68300209FCD /* FamilyRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegister.h; sourceTree = "<group>"; };
+		F2B1B2EC19A1F68300209FCD /* FamilyRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegister.m; sourceTree = "<group>"; };
+		F2B1B2EE19A1F68300209FCD /* FamilyRegisterEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegisterEntry.h; sourceTree = "<group>"; };
+		F2B1B2EF19A1F68300209FCD /* FamilyRegisterEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegisterEntry.m; sourceTree = "<group>"; };
+		F2B1B2F119A20BB200209FCD /* IMFamilyDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyDataFetcher.h; sourceTree = "<group>"; };
+		F2B1B2F219A20BB200209FCD /* IMFamilyDataFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyDataFetcher.m; sourceTree = "<group>"; };
+		F2B1B2F419A37BF000209FCD /* IMMovementReviewTableVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementReviewTableVC.h; sourceTree = "<group>"; };
+		F2B1B2F519A37BF000209FCD /* IMMovementReviewTableVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementReviewTableVC.m; sourceTree = "<group>"; };
 		F2B2A7C1193C2A1B00991614 /* IMMigrantListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantListVC.h; sourceTree = SOURCE_ROOT; };
 		F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantListVC.m; sourceTree = SOURCE_ROOT; };
 		F2B2A7C4193C31C700991614 /* IMMigrantFilterDataVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantFilterDataVC.h; sourceTree = SOURCE_ROOT; };
@@ -1124,6 +1145,8 @@
 				ACE6927417F1599A0095F90C /* IMReferencesFetcher.m */,
 				AC6D727D1806636500E5F845 /* IMMigrantFetcher.h */,
 				AC6D727E1806636500E5F845 /* IMMigrantFetcher.m */,
+				F2B1B2F119A20BB200209FCD /* IMFamilyDataFetcher.h */,
+				F2B1B2F219A20BB200209FCD /* IMFamilyDataFetcher.m */,
 			);
 			path = "Data Fetcher";
 			sourceTree = "<group>";
@@ -1219,6 +1242,10 @@
 				ACA7C64B182162C100C560FD /* Interception+Extended.m */,
 				F926697818EEA73600A95E94 /* Child+Extended.h */,
 				F926697918EEA73600A95E94 /* Child+Extended.m */,
+				F2B1B2CD19A1EB8600209FCD /* FamilyRegisterEntry+Extended.h */,
+				F2B1B2CE19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m */,
+				F2B1B2D619A1F05600209FCD /* FamilyRegister+Extended.h */,
+				F2B1B2D719A1F05600209FCD /* FamilyRegister+Extended.m */,
 			);
 			path = "Extended Category";
 			sourceTree = "<group>";
@@ -1226,6 +1253,10 @@
 		ACE692C317F159AC0095F90C /* Generated Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F2B1B2EE19A1F68300209FCD /* FamilyRegisterEntry.h */,
+				F2B1B2EF19A1F68300209FCD /* FamilyRegisterEntry.m */,
+				F2B1B2EB19A1F68300209FCD /* FamilyRegister.h */,
+				F2B1B2EC19A1F68300209FCD /* FamilyRegister.m */,
 				ACCBD25E181E27DC00CC3EDE /* RegistrationBiometric.h */,
 				ACCBD25F181E27DC00CC3EDE /* RegistrationBiometric.m */,
 				ACCBD24F181E27DB00CC3EDE /* RegistrationBioData.h */,
@@ -1606,6 +1637,8 @@
 				F21278481989F7C6006679AB /* IMFamilyViewController.m */,
 				F212784D198A3B8A006679AB /* IMFamilyListVC.h */,
 				F212784E198A3B8B006679AB /* IMFamilyListVC.m */,
+				F2B1B2CA19A1D7B100209FCD /* IMFamilyDataViewController.h */,
+				F2B1B2CB19A1D7B100209FCD /* IMFamilyDataViewController.m */,
 			);
 			name = FamilyData;
 			sourceTree = "<group>";
@@ -1619,6 +1652,8 @@
 				F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */,
 				F21277FF1988B63B006679AB /* IMMovementsReviewVC.h */,
 				F21278001988B63B006679AB /* IMMovementsReviewVC.m */,
+				F2B1B2F419A37BF000209FCD /* IMMovementReviewTableVC.h */,
+				F2B1B2F519A37BF000209FCD /* IMMovementReviewTableVC.m */,
 			);
 			name = Movement;
 			sourceTree = "<group>";
@@ -1817,6 +1852,7 @@
 				F9C6042818E6D05000D9A450 /* IMRegistrationFetcher.m in Sources */,
 				ACE6931917F159AC0095F90C /* PoliceOfficer.m in Sources */,
 				ACE6931617F159AC0095F90C /* Migrant.m in Sources */,
+				F2B1B2ED19A1F68300209FCD /* FamilyRegister.m in Sources */,
 				ACE6933D17F159BA0095F90C /* IMCollectionViewController.m in Sources */,
 				ACE6930117F159AC0095F90C /* IomOfficer+Extended.m in Sources */,
 				ACB28FC2182211D9000322B4 /* IMBiometricEngine.m in Sources */,
@@ -1841,11 +1877,13 @@
 				ACE6931817F159AC0095F90C /* Photo.m in Sources */,
 				ACE6946A17F159E80095F90C /* IMStatisticViewController.m in Sources */,
 				ACE6930B17F159AC0095F90C /* DetentionLocation.m in Sources */,
+				F2B1B2F619A37BF000209FCD /* IMMovementReviewTableVC.m in Sources */,
 				ACE6934817F159BA0095F90C /* IMTextField.m in Sources */,
 				AC6D728E18068C1200E5F845 /* FamilyData.m in Sources */,
 				ACE6929317F1599A0095F90C /* IMInterceptionLocationFetcher.m in Sources */,
 				F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */,
 				ACE6929D17F1599A0095F90C /* IMLocationManager.m in Sources */,
+				F2B1B2CF19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m in Sources */,
 				ACE6944E17F159E80095F90C /* IMInterceptionViewController.m in Sources */,
 				F21278011988B63B006679AB /* IMMovementsReviewVC.m in Sources */,
 				ACE6945D17F159E80095F90C /* IMPoliceOfficerVC.m in Sources */,
@@ -1898,9 +1936,11 @@
 				F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */,
 				ACE6945917F159E80095F90C /* IMInterceptionMapVC.m in Sources */,
 				ACE6946117F159E80095F90C /* IMRootViewController.m in Sources */,
+				F2B1B2F019A1F68300209FCD /* FamilyRegisterEntry.m in Sources */,
 				ACE6929E17F1599A0095F90C /* IMGPlace.m in Sources */,
 				ACE6930017F159AC0095F90C /* IomOffice+Extended.m in Sources */,
 				ACE6930E17F159AC0095F90C /* Interception.m in Sources */,
+				F2B1B2CC19A1D7B100209FCD /* IMFamilyDataViewController.m in Sources */,
 				ACE693BB17F159E20095F90C /* AFPropertyListRequestOperation.m in Sources */,
 				ACE6933F17F159BA0095F90C /* IMDataTableViewController.m in Sources */,
 				ACE6946017F159E80095F90C /* IMMenuViewController.m in Sources */,
@@ -1908,6 +1948,7 @@
 				AC8A6B691820B67B005A1C3C /* IMRegistrationCollectionViewCell.m in Sources */,
 				ACE6930417F159AC0095F90C /* Port+Extended.m in Sources */,
 				F977449518F3E5C8001D30FA /* ServerSettingViewController.m in Sources */,
+				F2B1B2D819A1F05600209FCD /* FamilyRegister+Extended.m in Sources */,
 				ACE693CE17F159E20095F90C /* NSString+Encryption.m in Sources */,
 				ACE6929117F1599A0095F90C /* IMDataFetcher.m in Sources */,
 				AC6D727F1806636500E5F845 /* IMMigrantFetcher.m in Sources */,
@@ -1930,6 +1971,7 @@
 				ACE6931017F159AC0095F90C /* InterceptionGroup.m in Sources */,
 				ACE6931417F159AC0095F90C /* IomOffice.m in Sources */,
 				ACE693B617F159E20095F90C /* AFHTTPClient.m in Sources */,
+				F2B1B2F319A20BB200209FCD /* IMFamilyDataFetcher.m in Sources */,
 				ACB2900418221375000322B4 /* BozorthSort.m in Sources */,
 				AC8A6B7D18213825005A1C3C /* IMFingerprintPreviewCell.m in Sources */,
 				ACE694E017F190340095F90C /* UIButton+IMMS.m in Sources */,

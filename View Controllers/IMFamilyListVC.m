@@ -27,7 +27,7 @@
 @property (nonatomic,strong) FamilyData *familyData;
 @property (nonatomic, strong) IMMigrantFilterDataVC * filterChooser;
 @property (nonatomic, strong) UIPopoverController *popover;
-@property (nonatomic,strong)  UIBarButtonItem *itemSelected;
+//@property (nonatomic,strong)  UIBarButtonItem *itemSelected;
 @property (nonatomic,strong) NSMutableArray *migrants;
 
 
@@ -61,13 +61,16 @@
     self.thumbnailQueue = [[NSOperationQueue alloc] init];
     self.thumbnailQueue.maxConcurrentOperationCount = 3;
     
+    //set multiple selection as default
+     self.collectionView.allowsMultipleSelection = YES;
     
     UIBarButtonItem *itemFilter = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                                 target:self action:@selector(showFilterOptions:)];
-    self.itemSelected = [[UIBarButtonItem alloc] initWithTitle:@"Select" style:UIBarButtonItemStyleBordered target:self action:@selector(setMultipleSelection)];
+//    self.itemSelected = [[UIBarButtonItem alloc] initWithTitle:@"Select" style:UIBarButtonItemStyleBordered target:self action:@selector(setMultipleSelection)];
     self.save =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(onSave)];
     
-    self.navigationItem.rightBarButtonItems = @[self.save,itemFilter,self.itemSelected];
+//    self.navigationItem.rightBarButtonItems = @[self.save,itemFilter,self.itemSelected];
+       self.navigationItem.rightBarButtonItems = @[self.save,itemFilter];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
     
     if (!self.migrants) {
@@ -76,8 +79,15 @@
         
     //set to no until user add migrant
     self.save.enabled = NO;
+    self.maxSelection = 1;
 }
 
+- (void)setMaxSelection:(int)maxSelection{
+    if (maxSelection > _maxSelection) {
+        _maxSelection = maxSelection;
+        [self reloadData];
+    }
+}
 -(void)onSave
 {
     if (self.self.onMultiSelect) {
@@ -209,14 +219,6 @@
     [_HUD showUsingAnimation:YES];
     
     [self executing];
-    
-}
-
-#pragma mark UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    
-    [self.collectionView reloadData];
     
 }
 
@@ -407,23 +409,30 @@
         // Determine the selected items by using the indexPath
         Migrant *migrant = self.dataProvider.dataObjects[indexPath.row];
         // implement multiple selection for collection view
-        
-        //set check for multi selection
-        if (self.multiSelect) {
-       
-        //add migrants to array
-        [self.migrants addObject:migrant];
-        
-        }
-        
+
         //set Yes, cause user already add the migrant data
         if (!self.save.enabled) {
             self.save.enabled = YES;
         }
+        
         if (self.onSelect) {
             self.onSelect(migrant);
             [self dismissViewControllerAnimated:YES completion:nil];
+            return;
         }
+        
+        //set check for multi selection
+        if (self.multiSelect && ([self.migrants count] < self.maxSelection)) {
+       
+        //add migrants to array
+        [self.migrants addObject:migrant];
+        
+        }else{
+            [self showAlertWithTitle:@"Maximum Selection" message:[NSString stringWithFormat:@"You only can select %i for this section",self.maxSelection]];
+            [collectionView deselectItemAtIndexPath:indexPath animated:NO];
+        }
+        
+       
         
     }else {
         @try {
@@ -535,35 +544,35 @@
 }
 
 
-- (void)setMultipleSelection
-{
-    if ([self.itemSelected.title isEqualToString:@"Select"]) {
-        self.collectionView.allowsMultipleSelection = YES;
-        //change title to Cancel
-        self.itemSelected.title = @"Cancel";
-        
-        
-    }else {
-        //change title to Select
-        self.itemSelected.title = @"Select";
-        self.collectionView.allowsMultipleSelection = NO;
-        
-        //clear all selected item
-        self.migrants = Nil;
-        
-        //set Yes, cause user already add the migrant data
-        if (self.save.enabled) {
-            self.save.enabled = NO;
-        }
-
-    }
-    
-    //reload data
-    if ([self isViewLoaded]) {
-        [self.collectionView reloadData];
-    }
-
-}
+//- (void)setMultipleSelection
+//{
+//    if ([self.itemSelected.title isEqualToString:@"Select"]) {
+//        self.collectionView.allowsMultipleSelection = YES;
+//        //change title to Cancel
+//        self.itemSelected.title = @"Cancel";
+//        
+//        
+//    }else {
+//        //change title to Select
+//        self.itemSelected.title = @"Select";
+//        self.collectionView.allowsMultipleSelection = NO;
+//        
+//        //clear all selected item
+//        self.migrants = Nil;
+//        
+//        //set Yes, cause user already add the migrant data
+//        if (self.save.enabled) {
+//            self.save.enabled = NO;
+//        }
+//
+//    }
+//    
+//    //reload data
+//    if ([self isViewLoaded]) {
+//        [self.collectionView reloadData];
+//    }
+//
+//}
 
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration

@@ -245,28 +245,28 @@
         
         cell.buttonUpload.hidden = TRUE;
         
-        if (animated) {
-            cell.photoView.alpha = 0;
-            cell.labelTitle.alpha = 0;
-            cell.labelSubtitle.alpha = 0;
-            cell.labelDetail1.alpha = 0;
-            cell.labelDetail2.alpha = 0;
-            cell.labelDetail3.alpha = 0;
-            cell.labelDetail4.alpha = 0;
-            cell.labelDetail5.alpha = 0;
-            cell.buttonUpload.alpha = 0;
-            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
-                cell.photoView.alpha = 1;
-                cell.labelTitle.alpha = 1;
-                cell.labelSubtitle.alpha = 1;
-                cell.labelDetail1.alpha = 1;
-                cell.labelDetail2.alpha = 1;;
-                cell.labelDetail3.alpha = 1;
-                cell.labelDetail4.alpha = 1;
-                cell.labelDetail5.alpha = 1;
-                cell.buttonUpload.alpha = 1;
-            }completion:Nil];
-        }
+//        if (animated) {
+//            cell.photoView.alpha = 0;
+//            cell.labelTitle.alpha = 0;
+//            cell.labelSubtitle.alpha = 0;
+//            cell.labelDetail1.alpha = 0;
+//            cell.labelDetail2.alpha = 0;
+//            cell.labelDetail3.alpha = 0;
+//            cell.labelDetail4.alpha = 0;
+//            cell.labelDetail5.alpha = 0;
+//            cell.buttonUpload.alpha = 0;
+//            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
+//                cell.photoView.alpha = 1;
+//                cell.labelTitle.alpha = 1;
+//                cell.labelSubtitle.alpha = 1;
+//                cell.labelDetail1.alpha = 1;
+//                cell.labelDetail2.alpha = 1;;
+//                cell.labelDetail3.alpha = 1;
+//                cell.labelDetail4.alpha = 1;
+//                cell.labelDetail5.alpha = 1;
+//                cell.buttonUpload.alpha = 1;
+//            }completion:Nil];
+//        }
     }
 }
 

@@ -17,6 +17,7 @@
 #import "IMMigrantFetcher.h"
 #import "IMAuthManager.h"
 #import "IMRegistrationFetcher.h"
+#import "IMFamilyDataFetcher.h"
 
 typedef enum : NSUInteger {
     state_start,
@@ -27,6 +28,7 @@ typedef enum : NSUInteger {
     state_reference,
     state_migrant,
     state_photo,
+    state_family,
     state_registration
 } synchState;
 
@@ -97,6 +99,9 @@ typedef enum : NSUInteger {
                 break;
             case state_finish:
                 [self finished];
+                break;
+            case state_family:
+                [self fetchFamilys];
                 break;
             default:
                 [self fetchReferences];
@@ -236,11 +241,27 @@ typedef enum : NSUInteger {
         self.currentState = state_photo;
        _currentFetcher = [[IMPhotoFetcher alloc] init];
          __weak typeof(self) weakSelf = self;
-        _currentFetcher.onFinished = ^{ [weakSelf finished]; };
+//        _currentFetcher.onFinished = ^{ [weakSelf fetchFamilys]; };
+                _currentFetcher.onFinished = ^{ [weakSelf finished]; };
     }
     self.labelProgress.text = @"Downloading Photos...";
     [self execute:_currentFetcher];
 }
+
+
+
+- (void)fetchFamilys
+{
+    if (self.currentState != state_family) {
+        self.currentState = state_family;
+        _currentFetcher = [[IMFamilyDataFetcher alloc] init];
+        __weak typeof(self) weakSelf = self;
+        _currentFetcher.onFinished = ^{ [weakSelf finished]; };
+    }
+    self.labelProgress.text = @"Updating Family Data";
+    [self execute:_currentFetcher];
+}
+
 
 - (void)synchronizeRegistrations
 {

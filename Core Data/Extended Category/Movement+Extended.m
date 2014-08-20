@@ -28,6 +28,7 @@ NSString *const MOVEMENT_DEPARTURE_PORT                         = @"departurePor
 NSString *const MOVEMENT_ORIGINAL_LOCATION                      = @"origin";
 NSString *const MOVEMENT_TRANSFER_LOCATION                      = @"destination";
 NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationCountry";
+NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLocation";
 
 
 
@@ -97,6 +98,12 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
                 
             }
             
+        }else {
+            if ([self.type isEqual:@"Escape"] || [self.type isEqual:@"Released"]) {
+                if (self.originLocation.accommodationId) {
+                    [formatted setObject:self.originLocation.accommodationId forKey:MOVEMENT_DETENTION_LOCATION];
+                }
+            }
         }
         
         return formatted;
@@ -117,7 +124,7 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
             data.movementId = Id;
         }
         data.type = [dictionary objectForKey:@"type"];
-         data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"date"]];
+        data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"date"]];
         if (![data.type isEqual:@"Escape"]) {
             data.documentNumber = CORE_DATA_OBJECT([dictionary objectForKey:@"documentNumber"]);
             data.proposedDate = [NSDate dateFromUTCString:[dictionary objectForKey:@"proposedDate"]];
@@ -135,19 +142,32 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
             if ([data.type isEqual:@"AVR"] || [data.type isEqual:@"Deportation"] || [data.type isEqual:@"Resettlement"]) {
                 
                 data.destinationCountry = [Country countryWithCode:[dictionary objectForKey:@"destinationCountry"] inManagedObjectContext:context];
+            }else if ([data.type isEqual:@"Released"] && [dictionary objectForKey:MOVEMENT_DETENTION_LOCATION]){
+                 data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:MOVEMENT_DETENTION_LOCATION] inManagedObjectContext:context];
             }else{
                 data.destinationCountry = nil;
             }
             
         }else{
-            data.documentNumber = nil;
-            data.proposedDate = Nil;
-            data.travelMode = Nil;
-            data.referenceCode = Nil;
-            data.departurePort = Nil;
-            data.originLocation = Nil;
-            data.transferLocation = Nil;
-            data.destinationCountry = nil;
+            if ([dictionary objectForKey:MOVEMENT_DETENTION_LOCATION]) {
+                data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:MOVEMENT_DETENTION_LOCATION] inManagedObjectContext:context];
+                data.documentNumber = nil;
+                data.proposedDate = Nil;
+                data.travelMode = Nil;
+                data.referenceCode = Nil;
+                data.departurePort = Nil;
+                data.transferLocation = Nil;
+                data.destinationCountry = nil;
+            }else {
+                data.documentNumber = nil;
+                data.proposedDate = Nil;
+                data.travelMode = Nil;
+                data.referenceCode = Nil;
+                data.departurePort = Nil;
+                data.originLocation = Nil;
+                data.transferLocation = Nil;
+                data.destinationCountry = nil;
+            }
         }
         return data;
     }
@@ -172,15 +192,15 @@ NSString *const MOVEMENT_DESTINATION_COUNTRY                    = @"destinationC
 {
     @try {
         Movement *data = [NSEntityDescription insertNewObjectForEntityForName:@"Movement" inManagedObjectContext:context];
-        Port *port = [NSEntityDescription insertNewObjectForEntityForName:@"Port" inManagedObjectContext:context];
-        Country * country = [NSEntityDescription insertNewObjectForEntityForName:@"Country" inManagedObjectContext:context];
-        Accommodation * origin= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];
-        Accommodation * transfer= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];
+        //        Port *port = [NSEntityDescription insertNewObjectForEntityForName:@"Port" inManagedObjectContext:context];
+        //        Country * country = [NSEntityDescription insertNewObjectForEntityForName:@"Country" inManagedObjectContext:context];
+        //        Accommodation * origin= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];
+        //        Accommodation * transfer= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];
         //save data
-        data.departurePort = port;
-        data.destinationCountry = country;
-        data.originLocation = origin;
-        data.transferLocation = transfer;
+        //        data.departurePort = port;
+        //        data.destinationCountry = country;
+        //        data.originLocation = origin;
+        //        data.transferLocation = transfer;
         
         return data;
     }
