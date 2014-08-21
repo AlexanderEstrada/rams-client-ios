@@ -8,6 +8,7 @@
 
 #import "FamilyRegister+Extended.h"
 #import "FamilyRegisterEntry+Extended.h"
+#import "Biometric+Extended.h"
 
 @implementation FamilyRegister (Extended)
 
@@ -66,7 +67,7 @@
         NSLog(@"Error : %@",[exception description]);
         return Nil;
     }
-
+    
 }
 
 - (NSDictionary *)format{
@@ -82,17 +83,47 @@
         NSLog(@"Exception while creating formatted Movement data: %@", [exception description]);
     }
     return Nil;
-
+    
 }
 
 - (UIImage *)photographImageThumbnail
 {
-    return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
+    @try {
+        //check if the path has change
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photographThumbnail] && self.photographThumbnail) {
+            //get from old file
+            NSString * Identifier = [self.photographThumbnail lastPathComponent];
+            //case has change then update the path before show
+            NSString *dir = [Biometric photograpThumbnailDir];
+            self.photographThumbnail = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", Identifier]];
+        }
+        
+        return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+    }
+    return Nil;
+    
 }
 
 - (UIImage *)photographImage
 {
-    return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
+    @try{
+        //check if the path has change
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photograph) {
+            //get from old file
+            NSString * Identifier = [self.photograph lastPathComponent];
+            //case has change then update the path before show
+            NSString *dir = [Biometric photograpDir];
+            self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", Identifier]];
+        }
+        return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+    }
+    return Nil;
 }
 
 @end

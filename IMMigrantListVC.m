@@ -77,7 +77,6 @@
                 request.predicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
             }
             
-            NSLog(@"predicate : %@",[request.predicate description]);
             request.returnsObjectsAsFaults = YES;
             NSError *error;
             NSUInteger total = [context countForFetchRequest:request error:&error];
@@ -141,31 +140,31 @@
     id data = self.dataProvider.dataObjects[indexPath.row];
     [self _configureCell:cell forDataObject:data animated:NO];
     cell.buttonUpload.tag = indexPath.row;
-    // load photo images in the background
-    __weak IMMigrantListVC *weakSelf = self;
-    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-        //        UIImage *image = [photo image];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // then set them via the main queue if the cell is still visible.
-            if ([weakSelf.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
-                IMRegistrationCollectionViewCell *cell =
-                (IMRegistrationCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
-                id data = self.dataProvider.dataObjects[indexPath.row];
-                [self _configureCell:cell forDataObject:data animated:NO];
-                cell.buttonUpload.tag = indexPath.row;
-            }
-        });
-    }];
-    
-    [self.thumbnailQueue addOperation:operation];
+//    // load photo images in the background
+//    __weak IMMigrantListVC *weakSelf = self;
+//    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+//        //        UIImage *image = [photo image];
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            // then set them via the main queue if the cell is still visible.
+//            if ([weakSelf.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
+//                IMRegistrationCollectionViewCell *cell =
+//                (IMRegistrationCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
+//                id data = self.dataProvider.dataObjects[indexPath.row];
+//                [self _configureCell:cell forDataObject:data animated:NO];
+//                cell.buttonUpload.tag = indexPath.row;
+//            }
+//        });
+//    }];
+//    
+//    [self.thumbnailQueue addOperation:operation];
     
     return cell;
 }
 
 #pragma mark - Data controller delegate
 - (void)dataProvider:(DataProvider *)dataProvider willLoadDataAtIndexes:(NSIndexSet *)indexes {
-    
+
 }
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {

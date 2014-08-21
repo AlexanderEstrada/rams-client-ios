@@ -12,7 +12,7 @@
 #import "IMMovementListVC.h"
 #import "IMMovementReviewTableVC.h"
 
-@interface IMMovementViewController : IMTableViewController<IMMovementListVCDelegate,IMMovementReviewTableVCDelegate>
+@interface IMMovementViewController : IMTableViewController<IMMovementListVCDelegate>
 
 @property (nonatomic, assign) id<IMSideMenuDelegate> sideMenuDelegate;
 @property (nonatomic, strong) Migrant *migrant;

@@ -214,7 +214,9 @@ typedef enum : NSUInteger {
 {
     controller.title = self.registration.fullname;
     
-    return [NSURL fileURLWithPath:self.previewingPhotos[index]];
+    return [NSURL fileURLWithPath:self.previewingPhotos[index] isDirectory:YES];
+    
+    
 }
 
 - (void)showPhotoLibrary

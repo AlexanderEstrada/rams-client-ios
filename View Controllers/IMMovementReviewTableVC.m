@@ -54,6 +54,16 @@
     return self;
 }
 
+- (void)setShow_migrant_list:(BOOL)show_migrant_list{
+    if (_show_migrant_list != show_migrant_list) {
+        _show_migrant_list = show_migrant_list;
+        if ([self.delegate respondsToSelector:@selector(showMigrantList:shouldShowMigrantList:)]) {
+            // tell our delegate of our ending state
+            [self.delegate showMigrantList:self shouldShowMigrantList:self.show_migrant_list];
+        }
+    }
+}
+
 - (void)setMovement:(Movement *)movement
 {
     if (movement) {
@@ -275,7 +285,7 @@
 {
     @try {
         
-        [self.navigationController popToRootViewControllerAnimated:YES];
+        [self.navigationController popToRootViewControllerAnimated:NO];
         if (self.show_migrant_list) {
             [[NSNotificationCenter defaultCenter] postNotificationName:IMShowMigrantListNotification object:nil];
         }else {
@@ -591,11 +601,10 @@
 {
     [super viewWillDisappear:animated];
     
-    if (self.show_migrant_list) {
-        // tell our delegate of our ending state
+    if ([self.delegate respondsToSelector:@selector(showMigrantList:shouldShowMigrantList:)]) {
+         // tell our delegate of our ending state
         [self.delegate showMigrantList:self shouldShowMigrantList:self.show_migrant_list];
     }
-    
 }
 
 //

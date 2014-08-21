@@ -21,7 +21,7 @@
 
 #import "IMMovementListVC.h"
 
-@interface IMMovementViewController ()<UIPopoverControllerDelegate, IMOptionChooserDelegate,UITableViewDataSource, UITableViewDelegate>
+@interface IMMovementViewController ()<UIPopoverControllerDelegate, IMOptionChooserDelegate,UITableViewDataSource, UITableViewDelegate,IMMovementReviewTableVCDelegate>
 
 @property (nonatomic) BOOL creating;
 @property (nonatomic) BOOL show;
@@ -494,7 +494,7 @@
     }
 }
 -(void)showMigrantList:(IMMovementReviewTableVC *)view shouldShowMigrantList:(BOOL)bShowMigrantList{
-    
+    NSLog(@"============= get notification ============= ");
     if (bShowMigrantList) {
         [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
     }

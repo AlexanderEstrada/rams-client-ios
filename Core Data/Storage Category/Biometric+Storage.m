@@ -115,7 +115,7 @@
     
     return dir;
 }
-                     
+
 + (NSString *)leftThumbImageDir
 {
     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
@@ -149,7 +149,7 @@
     
     //create thumbnail
     UIImage *image = [[self photographImage] scaledToWidthInPoint:125];
-      NSData *imgData= UIImagePNGRepresentation(image);
+    NSData *imgData= UIImagePNGRepresentation(image);
     
     [self updatePhotographThumbnailData:imgData];
 }
@@ -192,14 +192,14 @@
         }
         else
         {
-        NSData *templateData = nil;
-        templateData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+            NSData *templateData = nil;
+            templateData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
             [self updateTemplateWithData:templateData forFingerPosition:position];
         }
         
     }
     @catch (NSException *exception) {
-    NSLog(@"Exception while creating updateTemplateFromBase64String: \n%@", [exception description]);
+        NSLog(@"Exception while creating updateTemplateFromBase64String: \n%@", [exception description]);
     }
     
     
@@ -232,7 +232,7 @@
 
 - (void)updateFingerImageFromBase64String:(NSString *)base64String forFingerPosition:(FingerPosition)position
 {
-   
+    
     @try {
         if (base64String == Nil) {
             switch (position) {
@@ -255,14 +255,14 @@
             
         }
         else{
-                NSData *imageData = nil;
-                imageData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
-                [self updateFingerImageWithData:imageData forFingerPosition:position];
+            NSData *imageData = nil;
+            imageData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+            [self updateFingerImageWithData:imageData forFingerPosition:position];
         }
     }
     @catch (NSException *exception)
     {
-    NSLog(@"Exception while creating updateFingerImageFromBase64String: \n%@", [exception description]);
+        NSLog(@"Exception while creating updateFingerImageFromBase64String: \n%@", [exception description]);
     }
     
     
@@ -313,35 +313,109 @@
 
 - (NSData *)photographData
 {
-    return self.photograph ? [[NSData alloc] initWithContentsOfFile:self.photograph] : nil;
+    @try {
+        //check if the path has change
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photograph) {
+            //case has change then update the path before show
+            NSString *dir = [Biometric photograpDir];
+            self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+        }
+        return self.photograph ? [[NSData alloc] initWithContentsOfFile:self.photograph] : nil;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+    }
+    return Nil;
 }
 
 - (UIImage *)photographImageThumbnail
 {
-    return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
+    @try {
+        //check if the path has change
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photographThumbnail] && self.photographThumbnail) {
+            //case has change then update the path before show
+            NSString *dir = [Biometric photograpThumbnailDir];
+            self.photographThumbnail = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", self.biometricId]];
+        }
+        return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+    }
+    return Nil;
 }
 
 - (UIImage *)photographImage
 {
-    return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
+    @try {
+        //check if the path has change
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photograph) {
+            //case has change then update the path before show
+            NSString *dir = [Biometric photograpDir];
+            self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+        }
+        return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+    }
+    return Nil;
 }
 
 - (UIImage *)fingerImageForPosition:(FingerPosition)position
 {
-    NSString *file;
-    
-    switch (position) {
-        case RightThumb:
-            file = self.rightThumbImage; break;
-        case RightIndex:
-            file = self.rightIndexImage; break;
-        case LeftThumb:
-            file = self.leftThumbImage; break;
-        case LeftIndex:
-            file = self.leftIndexImage; break;
+    @try {
+        NSString *file;
+        
+        switch (position) {
+            case RightThumb:{
+                file = self.rightThumbImage;
+                //check if the path has change
+                if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    //case has change then update the path before show
+                    NSString *dir = [Biometric rightThumbImageDir];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+                }
+                break;
+            }
+            case RightIndex:{
+                file = self.rightIndexImage;
+                //check if the path has change
+                if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    //case has change then update the path before show
+                    NSString *dir = [Biometric rightIndexImageDir];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+                }
+                break;
+            }
+            case LeftThumb:{
+                file = self.leftThumbImage;
+                //check if the path has change
+                if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    //case has change then update the path before show
+                    NSString *dir = [Biometric leftThumbImageDir];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+                }
+                break;
+            }
+            case LeftIndex:{
+                file = self.leftIndexImage;
+                //check if the path has change
+                if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    //case has change then update the path before show
+                    NSString *dir = [Biometric leftIndexImageDir];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+                }
+                break;
+            }
+        }
+        
+        return file ? [UIImage imageWithContentsOfFile:file] : nil;
     }
-    
-    return file ? [UIImage imageWithContentsOfFile:file] : nil;
+    @catch (NSException *exception) {
+        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+    }
+    return Nil;
 }
 
 - (void)deleteBiometricData
@@ -361,7 +435,7 @@
     }
     @catch (NSException *exception)
     {
-    NSLog(@"Exception while creating deleteBiometricData: \n%@", [exception description]);
+        NSLog(@"Exception while creating deleteBiometricData: \n%@", [exception description]);
     }
 }
 

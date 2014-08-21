@@ -62,6 +62,10 @@ typedef enum : NSUInteger {
 @property (nonatomic,strong) MBProgressHUD *hud;
 @property (nonatomic,strong) UIBarButtonItem *itemUploadAll;
 @property (nonatomic,strong) NSManagedObjectContext *context;
+@property (nonatomic,strong) NSPredicate *predicateHeadOfFamily;
+@property (nonatomic,strong) NSPredicate *predicateSpouse;
+@property (nonatomic,strong) NSPredicate *predicateChilds;
+@property (nonatomic,strong) NSPredicate *predicateExclude;
 @property (nonatomic) BOOL next;
 @property (nonatomic) BOOL editingMode;
 @property (nonatomic) BOOL uploadStatus;
@@ -126,19 +130,19 @@ typedef enum : NSUInteger {
     
     
     
-//    self.save =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(onSave)];
+    //    self.save =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(onSave)];
     
     UIBarButtonItem *cancelBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(onCancel)];
     //add upload icon
     self.itemUploadAll= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon-upload-small"] style:UIBarButtonItemStylePlain target:self action:@selector(uploadAll:)];
     self.itemUploadAll.enabled = FALSE;
-
-//    self.navigationItem.rightBarButtonItems = @[self.itemUploadAll,self.save];
-      self.navigationItem.rightBarButtonItems = @[self.itemUploadAll];
+    
+    //    self.navigationItem.rightBarButtonItems = @[self.itemUploadAll,self.save];
+    self.navigationItem.rightBarButtonItems = @[self.itemUploadAll];
     self.navigationItem.leftBarButtonItems = @[cancelBtn];
     
     //set to no until user add migrant
-//    self.save.enabled = NO;
+    //    self.save.enabled = NO;
     
     //set default value
     _tapCount = 0;
@@ -148,9 +152,88 @@ typedef enum : NSUInteger {
         _hud = [[MBProgressHUD alloc] initWithView:self.view];
     }
     self.reloading = NO;
+    //reset predicate
+    self.predicateHeadOfFamily = Nil;
+    self.predicateSpouse= Nil;
+    self.predicateChilds= Nil;
+    //add predicate
+    [self addPredicate];
+    
     
 }
 
+- (void)addPredicate{
+    //add predicate
+    @try {
+        
+        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"FamilyRegister"];
+        
+        request.returnsObjectsAsFaults = YES;
+        NSError *error;
+        NSArray *familyRegister = [context executeFetchRequest:request error:&error];
+        
+        if (error) {
+            NSLog(@"Error : %@",[error description]);
+        }else {
+            if ([familyRegister count]) {
+                for (FamilyRegister * registered in familyRegister) {
+                    for (FamilyRegisterEntry *entry in registered.familyEntryID) {
+                        
+                        //predicate algorithm
+                        NSArray *items = [IMConstants constantsForKey:CONST_FAMILY_TYPE];
+                        NSUInteger item = [items indexOfObject:entry.type];
+                        NSPredicate * tmp = Nil;
+                        switch (item) {
+                            case 0:{
+                                // HEAD_OF_FAMILY
+                                tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
+                                if (!self.predicateHeadOfFamily) {
+                                    self.predicateHeadOfFamily =tmp;
+                                }else {
+                                    self.predicateHeadOfFamily =[NSCompoundPredicate andPredicateWithSubpredicates:@[self.predicateHeadOfFamily,tmp]];
+                                }
+                                break;
+                            }
+                            case 4 :{
+                                //SPOUSE
+                                tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
+                                if (!self.predicateSpouse) {
+                                    self.predicateSpouse =tmp;
+                                }else {
+                                    self.predicateSpouse =[NSCompoundPredicate andPredicateWithSubpredicates:@[self.predicateSpouse,tmp]];
+                                }
+                                break;
+                            }
+                            case 5:{
+                                //CHILD
+                                tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
+                                if (!self.predicateChilds) {
+                                    self.predicateChilds =tmp;
+                                }else {
+                                    self.predicateChilds =[NSCompoundPredicate andPredicateWithSubpredicates:@[self.predicateChilds,tmp]];
+                                }
+                                break;
+                            }
+                            case 1:// GRAND_FATHER
+                            case 2:// GRAND_MOTHER
+                            case 3://GUARDIAN
+                            case 6://OTHER_EXTENDED_MEMBER
+                            default:
+                                //only show registered entry type
+                                break;
+                        }
+                        
+                    }
+                }
+            }
+        }
+        
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exeption on addPredicate : %@",[exception description]);
+    }
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -285,8 +368,8 @@ typedef enum : NSUInteger {
     IMHTTPClient *client = [IMHTTPClient sharedClient];
     NSString * path = [IMConstants getIMConstantKey:CONST_IMFamilySave];
     NSLog(@"path : %@",path);
-//    [client postJSONWithPath:@"family/save"
-     [client postJSONWithPath:path
+    //    [client postJSONWithPath:@"family/save"
+    [client postJSONWithPath:path
                   parameters:params
                      success:^(NSDictionary *jsonData, int statusCode){
                          [self showAlertWithTitle:@"Upload Success" message:nil];
@@ -333,6 +416,8 @@ typedef enum : NSUInteger {
             [self.others removeAllObjects];
         }
         
+          NSPredicate * tmp = Nil;
+        self.predicateExclude = Nil;
         for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
             if ([entry.type isEqualToString:FAMILY_TYPE_OTHER_EXTENDED_MEMBER]) {
                 //add to child data
@@ -347,6 +432,14 @@ typedef enum : NSUInteger {
                 //add to child data
                 [self.childData addObject:entry];
             }
+            //add exclude predicate to avoid more than one choice for ever section
+            tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
+              //get all member that already select
+            if (!self.predicateExclude) {
+                self.predicateExclude =tmp;
+            }else {
+                self.predicateExclude =[NSCompoundPredicate andPredicateWithSubpredicates:@[self.predicateExclude,tmp]];
+            }
         }
         
         if ([self validate]) {
@@ -354,7 +447,7 @@ typedef enum : NSUInteger {
             //set upload button enable
             self.itemUploadAll.enabled = self.save.enabled = YES;
         }
-        
+ 
         [self.tableView reloadData];
         self.reloading = NO;
     }
@@ -479,7 +572,7 @@ typedef enum : NSUInteger {
     }else if (section == section_guadian){
         headerView.labelTitle.text = @"Guardian";
     }else if (section == section_childs){
-        headerView.labelTitle.text = @"Childs";
+        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:@"Childs (%i)",[self.childData count]]:@"Childs";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -497,7 +590,7 @@ typedef enum : NSUInteger {
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
         headerView.buttonAction.tag = tag_child;
     }else if (section == section_grand_father){
-        headerView.labelTitle.text = @"Grand Father";
+        headerView.labelTitle.text = [self.grandFather count]?[NSString stringWithFormat:@"Grand Father (%i)",[self.grandFather count]]:@"Grand Father";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = tag_grand_father;
@@ -513,7 +606,7 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
     }else if (section == section_grand_mother){
-        headerView.labelTitle.text = @"Grand Mother";
+         headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat:@"Grand Mother (%i)",[self.grandMother count]]:@"Grand Mother";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = tag_grand_mother;
@@ -529,7 +622,7 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
     }else if (section == section_other_extended_member){
-        headerView.labelTitle.text = @"Other Extended Member";
+         headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat:@"Other Extended Member (%i)",[self.others count]]:@"Other Extended Member";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -551,32 +644,32 @@ typedef enum : NSUInteger {
 }
 
 
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 40)];
-    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
-    label.textAlignment = NSTextAlignmentCenter;
-    
-    switch (section) {
-        case section_head_of_family:
-        case section_grand_mother:
-        case section_grand_father:
-        case section_spouse:
-        case section_childs :
-        case section_other_extended_member:
-        case section_guadian:
-            label.text = [NSString stringWithFormat:@"This is Footer"];
-            break;
-        default:
-            //only show defined section
-            label.text = [NSString stringWithFormat:@"This is Default Footer"];
-            break;
-    }
-    
-    label.textColor = [UIColor darkGrayColor];
-    
-    return label;
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 40)];
+//    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+//    label.textAlignment = NSTextAlignmentCenter;
+//    
+//    switch (section) {
+//        case section_head_of_family:
+//        case section_grand_mother:
+//        case section_grand_father:
+//        case section_spouse:
+//        case section_childs :
+//        case section_other_extended_member:
+//        case section_guadian:
+//            label.text = [NSString stringWithFormat:@"This is Footer"];
+//            break;
+//        default:
+//            //only show defined section
+//            label.text = [NSString stringWithFormat:@"This is Default Footer"];
+//            break;
+//    }
+//    
+//    label.textColor = [UIColor darkGrayColor];
+//    
+//    return label;
+//}
 
 #pragma mark QLPreviewControllerDelegate
 - (void)previewControllerDidDismiss:(QLPreviewController *)controller
@@ -911,35 +1004,55 @@ typedef enum : NSUInteger {
             //get head of family as migrant
             migrant = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
         }
-
+        
+        NSPredicate *tmp = Nil;
         switch (indexPath.section) {
-            case section_head_of_family:
-                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ ",[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]]];
+            case section_head_of_family:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ ",[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]];
+                if (self.predicateHeadOfFamily) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateHeadOfFamily]];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
                 break;
-            case section_other_extended_member:
-                list.basePredicate = Nil;
+            }
+            case section_other_extended_member:{
+                //do not show head of family and child and spouse and grand mother and grand father and guardian
+                tmp = self.predicateExclude?self.predicateExclude:Nil;
                 break;
-            case section_grand_mother:
-//                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@ && bioData.gender = %@",migrant.bioData.dateOfBirth,@"Female"]];
-                 [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Female"]];
+            }
+            case section_grand_mother:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Female"];
+                 if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
                 break;
-            case section_grand_father:
-//                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@ && bioData.gender = %@",migrant.bioData.dateOfBirth,@"Male"]];
-                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Male"]];
+            }
+            case section_grand_father:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Male"];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
                 break;
-            case section_guadian:
-                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@",migrant.bioData.dateOfBirth]];
+            }
+            case section_guadian:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@",migrant.bioData.dateOfBirth];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
                 break;
-            case section_spouse:
-                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.gender != %@ AND bioData.dateOfBirth <= %@ ",migrant.bioData.gender,[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]]];
+            }
+            case section_spouse:{
+                //do not show head of family and child
+                tmp = [NSPredicate predicateWithFormat:@"bioData.gender != %@ AND bioData.dateOfBirth <= %@ ",migrant.bioData.gender,[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]];
+                if (self.predicateSpouse) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateSpouse]];
+                 if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
                 break;
+            }
             case section_childs :
             default:
-//                [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@",migrant.bioData.dateOfBirth]];
-                 [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth >= %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_plus]]];
+            {
+                //do not show head of family and spouse
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth >= %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_plus]];
+                if (self.predicateChilds) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateChilds]];
+                 if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+               
                 break;
+            }
         }
-        //        }
+        //set predicate for list
+         [list setBasePredicate:tmp];
         
         list.onSelect = ^(Migrant *migrant)
         {

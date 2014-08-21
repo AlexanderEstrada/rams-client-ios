@@ -11,8 +11,12 @@
 #import "Movement+Extended.h"
 
 
-@protocol IMMovementReviewTableVCDelegate;
+@class IMMovementReviewTableVC;
+@protocol IMMovementReviewTableVCDelegate<NSObject>
 
+@required
+-(void)showMigrantList:(IMMovementReviewTableVC *)view shouldShowMigrantList:(BOOL)bShowMigrantList;
+@end
 
 @interface IMMovementReviewTableVC : IMTableViewController
 @property (weak, atomic) id<IMMovementReviewTableVCDelegate> delegate;
@@ -22,10 +26,3 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *uploadButton;
 @end
 
-
-@protocol IMMovementReviewTableVCDelegate <NSObject>
-
-@required
--(void)showMigrantList:(IMMovementReviewTableVC *)view shouldShowMigrantList:(BOOL)bShowMigrantList;
-
-@end

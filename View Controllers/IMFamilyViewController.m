@@ -319,6 +319,9 @@ typedef enum : NSUInteger {
             
             [self.navigationController presentViewController:navCon animated:YES completion:Nil];
             
+            //reset tap count
+            _tapCount =0;
+            
         }
     }else NSLog(@"indexPath.row : %i -- do nothing",indexPath.row);
     
