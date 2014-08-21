@@ -340,7 +340,7 @@
         return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on Biometric - photographImageThumbnail : %@",[exception description]);
     }
     return Nil;
 }
@@ -357,7 +357,7 @@
         return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on Biometric - photographImage : %@",[exception description]);
     }
     return Nil;
 }
@@ -413,7 +413,7 @@
         return file ? [UIImage imageWithContentsOfFile:file] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on Biometric - fingerImageForPosition : %@",[exception description]);
     }
     return Nil;
 }

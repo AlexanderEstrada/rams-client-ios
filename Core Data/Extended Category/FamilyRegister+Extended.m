@@ -101,7 +101,7 @@
         return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on FamilyRegister - photographImageThumbnail : %@",[exception description]);
     }
     return Nil;
     
@@ -121,7 +121,7 @@
         return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on FamilyRegister - photographImage : %@",[exception description]);
     }
     return Nil;
 }

@@ -108,7 +108,7 @@
         return self.photograph ? [[NSData alloc] initWithContentsOfFile:self.photograph] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on RegistrationBiometric - photographData : %@",[exception description]);
     }
     return Nil;
 }
@@ -126,7 +126,7 @@
         return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on RegistrationBiometric - photographImage : %@",[exception description]);
     }
     return Nil;
 }
@@ -144,7 +144,7 @@
         return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on RegistrationBiometric - photographImageThumbnail : %@",[exception description]);
     }
     return Nil;
 }
@@ -200,7 +200,7 @@
         return file ? [UIImage imageWithContentsOfFile:file] : nil;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on photographImageThumbnail : %@",[exception description]);
+        NSLog(@"Exception on RegistrationBiometric - fingerImageForPosition : %@",[exception description]);
     }
     return Nil;
 }
