@@ -13,6 +13,7 @@
 @interface IMEditRegistrationVC : IMViewController 
 
 @property (nonatomic, strong) Registration *registration;
+@property (nonatomic) BOOL  isMigrant;
 @property (nonatomic, strong) NSMutableArray *previewingPhotos;
 
 @property (nonatomic, copy) void (^registrationSave)(BOOL remove);

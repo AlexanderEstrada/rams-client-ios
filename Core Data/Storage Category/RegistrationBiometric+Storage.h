@@ -11,6 +11,8 @@
 
 @interface RegistrationBiometric (Storage)
 
+@property (nonatomic) BOOL  isMigrant;
+
 + (NSString *)photograpDir;
 + (NSString *)photograpThumbnailDir;
 + (NSString *)leftIndexImageDir;

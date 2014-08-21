@@ -38,6 +38,7 @@
 @synthesize delegate;
 @synthesize dataProvider = _dataProvider;
 
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -51,7 +52,6 @@
 {
     [super viewDidLoad];
     //default value
-    self.multiSelect = NO;
     // Do any additional setup after loading the view.
     
     [self.collectionView registerNib:[UINib nibWithNibName:@"IMRegistrationCollectionViewCell"
@@ -88,6 +88,7 @@
         [self reloadData];
     }
 }
+
 -(void)onSave
 {
     if (self.self.onMultiSelect) {
@@ -110,12 +111,20 @@
 }
 
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [self showLoadingViewWithTitle:@"Loading ..."];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     if (!self.dataProvider.dataObjects && !self.reloadingData){
         
         [self reloadData];
+    }else {
+        [self hideLoadingView];
     }
     
 }
@@ -191,7 +200,10 @@
         self.dataProvider = Nil;
         [self setDataProvider:dataProvider];
         
-        [_HUD hideUsingAnimation:YES];
+//        [_HUD hideUsingAnimation:YES];
+        if (!total) {
+            [self hideLoadingView];
+        }
         self.reloadingData = NO;
         
     }
@@ -199,24 +211,24 @@
 
 - (void)reloadData
 {
-    // Show progress window
-    if (!_HUD) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    
-    
-    
-    // Add HUD to screen
-    [self.view addSubview:_HUD];
-    
-    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    _HUD.delegate = self;
-    
-    _HUD.labelText = @"Reloading Data...";
-    
-    // Show the HUD while the provided method executes in a new thread
-    [_HUD showUsingAnimation:YES];
+//    // Show progress window
+//    if (!_HUD) {
+//        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+//        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
+//    }
+//    
+//    
+//    
+//    // Add HUD to screen
+//    [self.view addSubview:_HUD];
+//    
+//    // Regisete for HUD callbacks so we can remove it from the window at the right time
+//    _HUD.delegate = self;
+//    
+//    _HUD.labelText = @"Reloading Data...";
+//    
+//    // Show the HUD while the provided method executes in a new thread
+//    [_HUD showUsingAnimation:YES];
     
     [self executing];
     
@@ -265,6 +277,9 @@
 }
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
+    
+    //hide loading view
+    [self hideLoadingView];
     
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
         
@@ -422,7 +437,7 @@
         }
         
         //set check for multi selection
-        if (self.multiSelect && ([self.migrants count] < self.maxSelection)) {
+        if ([self.migrants count] < self.maxSelection) {
        
         //add migrants to array
         [self.migrants addObject:migrant];
@@ -524,13 +539,13 @@
         //set predicate
         self.filterChooser.basePredicate = self.basePredicate;
     }
-    // Establish the weak self reference
-    __weak typeof(self) weakSelf = self;
-    self.filterChooser.doneCompletionBlock = ^(NSMutableDictionary * value)
-    {
-        //TODO : reload Data
-        weakSelf.basePredicate = Nil;
-    };
+//    // Establish the weak self reference
+//    __weak typeof(self) weakSelf = self;
+//    self.filterChooser.doneCompletionBlock = ^(NSMutableDictionary * value)
+//    {
+//        //TODO : reload Data
+//        weakSelf.basePredicate = Nil;
+//    };
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.filterChooser];
     

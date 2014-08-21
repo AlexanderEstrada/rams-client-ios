@@ -37,18 +37,11 @@ typedef enum : NSUInteger {
     function_minus =0,
     function_plus,
     function_multiple,
-    function_divided
+    function_divided,
+    function_by_section,
+    function_by_tag
     
 } function_type;
-
-
-typedef enum : NSUInteger {
-    
-    tag_child = 0,
-    tag_other_extended_member,
-    tag_grand_father,
-    tag_grand_mother
-} action_tag;
 
 #define TOTAL_SECTION 8
 
@@ -416,7 +409,7 @@ typedef enum : NSUInteger {
             [self.others removeAllObjects];
         }
         
-          NSPredicate * tmp = Nil;
+        NSPredicate * tmp = Nil;
         self.predicateExclude = Nil;
         for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
             if ([entry.type isEqualToString:FAMILY_TYPE_OTHER_EXTENDED_MEMBER]) {
@@ -434,7 +427,7 @@ typedef enum : NSUInteger {
             }
             //add exclude predicate to avoid more than one choice for ever section
             tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
-              //get all member that already select
+            //get all member that already select
             if (!self.predicateExclude) {
                 self.predicateExclude =tmp;
             }else {
@@ -447,7 +440,7 @@ typedef enum : NSUInteger {
             //set upload button enable
             self.itemUploadAll.enabled = self.save.enabled = YES;
         }
- 
+        
         [self.tableView reloadData];
         self.reloading = NO;
     }
@@ -588,12 +581,12 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
-        headerView.buttonAction.tag = tag_child;
+        headerView.buttonAction.tag = section_childs;
     }else if (section == section_grand_father){
         headerView.labelTitle.text = [self.grandFather count]?[NSString stringWithFormat:@"Grand Father (%i)",[self.grandFather count]]:@"Grand Father";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
-        headerView.buttonAction.tag = tag_grand_father;
+        headerView.buttonAction.tag = section_grand_father;
         [headerView.buttonAction setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
         [headerView.buttonAction setTitle:Nil forState:UIControlStateNormal];
         [headerView.buttonAction setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -606,10 +599,10 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
     }else if (section == section_grand_mother){
-         headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat:@"Grand Mother (%i)",[self.grandMother count]]:@"Grand Mother";
+        headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat:@"Grand Mother (%i)",[self.grandMother count]]:@"Grand Mother";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
-        headerView.buttonAction.tag = tag_grand_mother;
+        headerView.buttonAction.tag = section_grand_mother;
         [headerView.buttonAction setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
         [headerView.buttonAction setTitle:Nil forState:UIControlStateNormal];
         [headerView.buttonAction setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -622,7 +615,7 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
     }else if (section == section_other_extended_member){
-         headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat:@"Other Extended Member (%i)",[self.others count]]:@"Other Extended Member";
+        headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat:@"Other Extended Member (%i)",[self.others count]]:@"Other Extended Member";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -637,7 +630,7 @@ typedef enum : NSUInteger {
         
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
-        headerView.buttonAction.tag = tag_other_extended_member;
+        headerView.buttonAction.tag = section_other_extended_member;
     }
     
     return headerView;
@@ -649,7 +642,7 @@ typedef enum : NSUInteger {
 //    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 40)];
 //    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
 //    label.textAlignment = NSTextAlignmentCenter;
-//    
+//
 //    switch (section) {
 //        case section_head_of_family:
 //        case section_grand_mother:
@@ -665,9 +658,9 @@ typedef enum : NSUInteger {
 //            label.text = [NSString stringWithFormat:@"This is Default Footer"];
 //            break;
 //    }
-//    
+//
 //    label.textColor = [UIColor darkGrayColor];
-//    
+//
 //    return label;
 //}
 
@@ -1005,54 +998,9 @@ typedef enum : NSUInteger {
             migrant = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
         }
         
-        NSPredicate *tmp = Nil;
-        switch (indexPath.section) {
-            case section_head_of_family:{
-                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ ",[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]];
-                if (self.predicateHeadOfFamily) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateHeadOfFamily]];
-                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
-                break;
-            }
-            case section_other_extended_member:{
-                //do not show head of family and child and spouse and grand mother and grand father and guardian
-                tmp = self.predicateExclude?self.predicateExclude:Nil;
-                break;
-            }
-            case section_grand_mother:{
-                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Female"];
-                 if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
-                break;
-            }
-            case section_grand_father:{
-                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Male"];
-                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
-                break;
-            }
-            case section_guadian:{
-                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@",migrant.bioData.dateOfBirth];
-                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
-                break;
-            }
-            case section_spouse:{
-                //do not show head of family and child
-                tmp = [NSPredicate predicateWithFormat:@"bioData.gender != %@ AND bioData.dateOfBirth <= %@ ",migrant.bioData.gender,[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]];
-                if (self.predicateSpouse) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateSpouse]];
-                 if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
-                break;
-            }
-            case section_childs :
-            default:
-            {
-                //do not show head of family and spouse
-                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth >= %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_plus]];
-                if (self.predicateChilds) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateChilds]];
-                 if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
-               
-                break;
-            }
-        }
-        //set predicate for list
-         [list setBasePredicate:tmp];
+        //get predicate
+//        list.basePredicate = [self getPredicate:indexPath.section];
+        [list setBasePredicate:[self getPredicate:indexPath.section]];
         
         list.onSelect = ^(Migrant *migrant)
         {
@@ -1072,6 +1020,9 @@ typedef enum : NSUInteger {
                         if ([entry.type isEqualToString:FAMILY_TYPE_HEAD_OF_FAMILY]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1094,6 +1045,9 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
+                            found = YES;
                         }
                     }
                     if (!found) {
@@ -1114,6 +1068,9 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
+                            found = YES;
                         }
                     }
                     if (!found) {
@@ -1132,6 +1089,9 @@ typedef enum : NSUInteger {
                         if ([entry.type isEqualToString:FAMILY_TYPE_SPOUSE]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1152,6 +1112,9 @@ typedef enum : NSUInteger {
                         if ([entry.type isEqualToString:FAMILY_TYPE_GUARDIAN]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1175,6 +1138,9 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
+                            found = YES;
                         }
                     }
                     if (!found) {
@@ -1197,6 +1163,9 @@ typedef enum : NSUInteger {
                         if ([entry.migrantId isEqualToString:tmp.migrantId] && [entry.type isEqualToString:FAMILY_TYPE_CHILD]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1284,24 +1253,31 @@ typedef enum : NSUInteger {
 
 - (void)onCancel
 {
-    if (self.editingMode) {
-        [self.familyRegister.managedObjectContext rollback];
-    }else {
-        [self.context deleteObject:self.familyRegister];
-    }
-    
-    NSError *error;
-    if (![self.context save:&error]) {
-        NSLog(@"Error deleting family data: %@", [error description]);
-        [self showAlertWithTitle:@"Failed Saving Family Data" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
+    @try {
+        if (self.editingMode) {
+            [self.familyRegister.managedObjectContext rollback];
+        }else {
+            [self.context deleteObject:self.familyRegister];
+        }
         
-    }else {
-        [[IMDBManager sharedManager] saveDatabase:^(BOOL success){
-            //            [self dismissViewControllerAnimated:YES completion:nil];
-        }];
+        NSError *error;
+        if (![self.context save:&error]) {
+            NSLog(@"Error deleting family data: %@", [error description]);
+            [self showAlertWithTitle:@"Failed Saving Family Data" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
+            
+        }else {
+            [[IMDBManager sharedManager] saveDatabase:^(BOOL success){
+                //            [self dismissViewControllerAnimated:YES completion:nil];
+            }];
+        }
+        
+        [self.navigationController dismissViewControllerAnimated:YES completion:Nil];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"exception onCancel : %@",[exception description]);
     }
     
-    [self.navigationController dismissViewControllerAnimated:YES completion:Nil];
+    
 }
 
 - (void)onSave
@@ -1365,6 +1341,64 @@ typedef enum : NSUInteger {
     
 }
 
+- (NSPredicate *)getPredicate:(section_type) section{
+    NSPredicate *tmp = Nil;
+    @try {
+        
+        Migrant * migrant = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
+        switch (section) {
+            case section_head_of_family:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ ",[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]];
+                if (self.predicateHeadOfFamily) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateHeadOfFamily]];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+                break;
+            }
+            case section_other_extended_member:{
+                //do not show head of family and child and spouse and grand mother and grand father and guardian
+                tmp = self.predicateExclude?self.predicateExclude:Nil;
+                break;
+            }
+            case section_grand_mother:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Female"];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+                break;
+            }
+            case section_grand_father:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Male"];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+                break;
+            }
+            case section_guadian:{
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth < %@",migrant.bioData.dateOfBirth];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+                break;
+            }
+            case section_spouse:{
+                //do not show head of family and child
+                tmp = [NSPredicate predicateWithFormat:@"bioData.gender != %@ AND bioData.dateOfBirth <= %@ ",migrant.bioData.gender,[self calculateAge:[NSDate date] compareAge:18 typeOfFuction:function_minus]];
+                if (self.predicateSpouse) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateSpouse]];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+                break;
+            }
+            case section_childs :
+            default:
+            {
+                //do not show head of family and spouse
+                tmp = [NSPredicate predicateWithFormat:@"bioData.dateOfBirth >= %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_plus]];
+                if (self.predicateChilds) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self.predicateChilds]];
+                if (self.predicateExclude) tmp =[NSCompoundPredicate andPredicateWithSubpredicates:@[tmp,self. self.predicateExclude]];
+                
+                break;
+            }
+        }
+        
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Error on getPredicate : %@",[exception description]);
+    }
+    
+    return tmp;
+}
 
 - (void)addMoreChild:(UIButton *)sender
 {
@@ -1375,59 +1409,56 @@ typedef enum : NSUInteger {
     [aFlowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     
     IMFamilyListVC *list = [[IMFamilyListVC alloc] initWithCollectionViewLayout:aFlowLayout];
-    list.basePredicate = Nil;
-    Migrant * migrant = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
     
     switch (sender.tag) {
-        case tag_child:{
+        case section_childs:{
             if (!self.familyRegister.headOfFamilyId) {
                 [self showAlertWithTitle:@"Failed Add Childs" message:@"Please input Head Of Family before adding child."];
                 
                 return;
             }
-            [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth >= %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_plus]]];
             list.maxSelection = 100;
             break;
         }
-        case tag_other_extended_member:{
+        case section_other_extended_member:{
             if (!self.familyRegister.headOfFamilyId) {
                 [self showAlertWithTitle:@"Failed Add Other Extended Member" message:@"Please input Head Of Family before adding Other Extended Member."];
                 
                 return;
             }
             list.maxSelection = 100;
-            list.basePredicate = Nil;
             break;
         }
-        case tag_grand_father:{
-            [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Male"]];
+        case section_grand_father:{
             list.maxSelection = 2;
             break;
         }
-        case tag_grand_mother:{
-            [list setBasePredicate:[NSPredicate predicateWithFormat:@"bioData.dateOfBirth <= %@ && bioData.gender = %@",[self calculateAge:migrant.bioData.dateOfBirth compareAge:15 typeOfFuction:function_minus],@"Female"]];
+        case section_grand_mother:{
             list.maxSelection = 2;
             break;
         }
         default:
             list.maxSelection = 2;
-            list.basePredicate = Nil;
             break;
     }
     
-    
-    list.multiSelect = YES;
+    //get predicate
+//    list.basePredicate = [self getPredicate:sender.tag];
+    [list setBasePredicate:[self getPredicate:sender.tag]];
     
     list.onMultiSelect = ^(NSMutableArray *migrants)
     {
         BOOL found = NO;
         switch (sender.tag) {
-            case tag_child:{
+            case section_childs:{
                 for (Migrant * migrant in migrants) {
                     for (FamilyRegisterEntry *entry in self.familyRegister.familyEntryID) {
                         if ([entry.migrantId isEqualToString:migrant.registrationNumber] && [entry.type isEqualToString:FAMILY_TYPE_CHILD]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1444,13 +1475,16 @@ typedef enum : NSUInteger {
                 }
                 break;
             }
-            case tag_other_extended_member:{
+            case section_other_extended_member:{
                 for (Migrant * migrant in migrants) {
                     
                     for (FamilyRegisterEntry *entry in self.familyRegister.familyEntryID) {
                         if ([entry.migrantId isEqualToString:migrant.registrationNumber] && [entry.type isEqualToString:FAMILY_TYPE_OTHER_EXTENDED_MEMBER]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1467,13 +1501,16 @@ typedef enum : NSUInteger {
                 }
                 break;
             }
-            case tag_grand_father:{
+            case section_grand_father:{
                 for (Migrant * migrant in migrants) {
                     
                     for (FamilyRegisterEntry *entry in self.familyRegister.familyEntryID) {
                         if ([entry.migrantId isEqualToString:migrant.registrationNumber] && [entry.type isEqualToString:FAMILY_TYPE_GRAND_FATHER]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1491,7 +1528,7 @@ typedef enum : NSUInteger {
                 //todo : only get 2 migrants
                 break;
             }
-            case tag_grand_mother:
+            case section_grand_mother:
             default:{
                 for (Migrant * migrant in migrants) {
                     
@@ -1499,6 +1536,9 @@ typedef enum : NSUInteger {
                         if ([entry.migrantId isEqualToString:migrant.registrationNumber] && [entry.type isEqualToString:FAMILY_TYPE_GRAND_MOTHER]) {
                             //update
                             entry.migrantId = migrant.registrationNumber;
+                            found = YES;
+                        }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
+                            //do not insert same value on different section
                             found = YES;
                         }
                     }
@@ -1511,25 +1551,18 @@ typedef enum : NSUInteger {
                         [self.familyRegister addFamilyEntryIDObject:entry];
                     }
                     
-                    
                 }
                 //todo : only get 2 migrants
                 break;
             }
                 
-                
         }
-        
-        
         
         [self reloadData];
         
     };
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:list];
     [self presentViewController:navCon animated:YES completion:nil];
-    
-    
-    //    [self showPopoverFromRect:[self.tableView rectForHeaderInSection:3] withViewController:vc navigationController:YES];
 }
 
 #pragma mark -

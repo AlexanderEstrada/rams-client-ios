@@ -19,7 +19,6 @@
 @property (nonatomic) BOOL reloadingData;
 @property (nonatomic, strong) NSOperationQueue *thumbnailQueue;
 @property (nonatomic) int currentIndex;
-@property (nonatomic) BOOL multiSelect;
 @property (nonatomic) int maxSelection;
 @property (nonatomic,strong) IBOutlet UIBarButtonItem *save;
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancel;

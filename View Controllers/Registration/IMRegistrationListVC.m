@@ -89,6 +89,7 @@
             [self setDataProvider:dataProvider];
             
             [_HUD hideUsingAnimation:YES];
+//            [self hideLoadingView];
             
             self.reloadingData = NO;
         }
@@ -126,7 +127,7 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    [self hideLoadingView];
+//    [self hideLoadingView];
     [self dismissViewControllerAnimated:YES completion:nil];
     [self.collectionView reloadData];
     
@@ -246,6 +247,7 @@
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
     
+//    [self hideLoadingView];
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
@@ -406,6 +408,8 @@
     self.thumbnailQueue = [[NSOperationQueue alloc] init];
     self.thumbnailQueue.maxConcurrentOperationCount = 3;
     self.firstLaunch = YES;
+    //hide loading view
+//     [self hideLoadingView];
     
 }
 
@@ -415,12 +419,20 @@
     [super viewWillDisappear:animated];
 }
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     if (!self.dataProvider.dataObjects && !self.reloadingData){
         [self reloadData];
     }
+//    else {
+//        [self hideLoadingView];
+//    }
     
 }
 

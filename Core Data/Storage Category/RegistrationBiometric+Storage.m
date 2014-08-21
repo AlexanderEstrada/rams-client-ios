@@ -14,6 +14,8 @@
 
 @implementation RegistrationBiometric (Storage)
 
+@dynamic isMigrant;
+
 + (NSString *)photograpDir
 {
     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
@@ -99,10 +101,20 @@
     @try {
         //check if the path has change
         if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photograph) {
+            //save last filename before change
+            NSString * tmp = [self.photograph lastPathComponent];
+            
             //case has change then update the path before show
             NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
             NSString *dir = [RegistrationBiometric photograpDir];
             self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]];
+            
+            //check if this from migrant
+            if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph]) {
+                //case has change then update the path before show
+                NSString *dir = [Biometric photograpDir];
+                self.photograph = [dir stringByAppendingPathComponent:tmp];
+            }
         }
         
         return self.photograph ? [[NSData alloc] initWithContentsOfFile:self.photograph] : nil;
@@ -118,10 +130,18 @@
     @try{
         //check if the path has change
         if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photograph) {
+            //save last filename before change
+            NSString * tmp = [self.photograph lastPathComponent];
             //case has change then update the path before show
             NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
             NSString *dir = [RegistrationBiometric photograpDir];
             self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]];
+            //check if this from migrant
+             if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph]) {
+                 //case has change then update the path before show
+                 NSString *dir = [Biometric photograpDir];
+                 self.photograph = [dir stringByAppendingPathComponent:tmp];
+             }
         }
         return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
     }
@@ -135,11 +155,20 @@
 {
     @try {
         //check if the path has change
-        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photographThumbnail) {
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photographThumbnail] && self.photographThumbnail) {
+            NSString * tmp = [self.photographThumbnail lastPathComponent];
             //case has change then update the path before show
             NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
             NSString *dir = [RegistrationBiometric photograpThumbnailDir];
             self.photographThumbnail = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", identifier]];
+            
+            //check if this from migrant
+            if (![[NSFileManager defaultManager] fileExistsAtPath:self.photographThumbnail]) {
+                //case has change then update the path before show
+                NSString *dir = [Biometric photograpThumbnailDir];
+                self.photographThumbnail = [dir stringByAppendingPathComponent:tmp];
+            }
+            
         }
         return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
     }
@@ -153,15 +182,24 @@
 {
     @try{
         NSString *file;
+        NSString * tmp;
         NSString *identifier = [NSString stringWithFormat:@"%f", [self.registration.dateCreated timeIntervalSince1970]];
         switch (position) {
             case RightThumb:{
                 file = self.rightThumb;
                 //check if the path has change
                 if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    tmp = [file lastPathComponent];
                     //case has change then update the path before show
                     NSString *dir = [RegistrationBiometric rightThumbImageDir];
-                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", identifier]];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]];
+                    
+                    //check if this from migrant
+                    if (![[NSFileManager defaultManager] fileExistsAtPath:self.rightThumb]) {
+                        //case has change then update the path before show
+                        NSString *dir = [Biometric rightThumbImageDir];
+                        self.rightThumb = [dir stringByAppendingPathComponent:tmp];
+                    }
                 }
                 break;
             }
@@ -169,9 +207,19 @@
                 file = self.rightIndex;
                 //check if the path has change
                 if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    tmp = [file lastPathComponent];
+                    
                     //case has change then update the path before show
                     NSString *dir = [RegistrationBiometric rightIndexImageDir];
-                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", identifier]];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]];
+                    
+                    //check if this from migrant
+                    if (![[NSFileManager defaultManager] fileExistsAtPath:self.rightIndex]) {
+                        //case has change then update the path before show
+                        NSString *dir = [Biometric rightIndexImageDir];
+                        self.rightIndex = [dir stringByAppendingPathComponent:tmp];
+                    }
+
                 }
                 break;
             }
@@ -179,9 +227,18 @@
                 file = self.leftThumb;
                 //check if the path has change
                 if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    tmp = [file lastPathComponent];
+                    
                     //case has change then update the path before show
                     NSString *dir = [RegistrationBiometric leftThumbImageDir];
-                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", identifier]];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]];
+                    
+                    //check if this from migrant
+                    if (![[NSFileManager defaultManager] fileExistsAtPath:self.leftThumb]) {
+                        //case has change then update the path before show
+                        NSString *dir = [Biometric leftThumbImageDir];
+                        self.leftThumb = [dir stringByAppendingPathComponent:tmp];
+                    }
                 }
                 break;
             }
@@ -189,9 +246,19 @@
                 file = self.leftIndex;
                 //check if the path has change
                 if (![[NSFileManager defaultManager] fileExistsAtPath:file] && file) {
+                    tmp = [file lastPathComponent];
+                    
                     //case has change then update the path before show
                     NSString *dir = [RegistrationBiometric leftIndexImageDir];
-                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", identifier]];
+                    file = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", identifier]];
+                    
+                    //check if this from migrant
+                    if (![[NSFileManager defaultManager] fileExistsAtPath:self.leftIndex]) {
+                        //case has change then update the path before show
+                        NSString *dir = [Biometric leftIndexImageDir];
+                        self.leftIndex = [dir stringByAppendingPathComponent:tmp];
+                    }
+
                 }
                 break;
             }

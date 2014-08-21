@@ -178,8 +178,6 @@ typedef enum : NSUInteger {
     self.previewingPhotos = [NSMutableArray array];
     }
     
-    NSLog(@"self.registration.biometric.photograph : %@",self.registration.biometric.photograph);
-    
     //add all photo
     if (self.registration.biometric.photograph)[self.previewingPhotos addObject:self.registration.biometric.photograph];
     if (self.registration.biometric.leftIndex)[self.previewingPhotos addObject:self.registration.biometric.leftIndex];
@@ -294,7 +292,7 @@ typedef enum : NSUInteger {
             //            [self dismissViewControllerAnimated:YES completion:nil];
         }];
     }
-    //     [self.context reset];
+        [self.context reset];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     
@@ -306,7 +304,8 @@ typedef enum : NSUInteger {
 
 - (void)saving
 {
-    
+    @try {
+        
     NSNumber * lastStatus = self.registration.complete;
     BOOL needRemove =FALSE;
     
@@ -377,10 +376,10 @@ typedef enum : NSUInteger {
         //save database
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
         
-        if(self.editingMode && [data count]){
-            // sleep for synch
-            sleep(5);
-        }
+//        if(self.editingMode && [data count]){
+//            // sleep for synch
+//            sleep(2);
+//        }
         
         if (!self.editingMode) {
             //new registration
@@ -393,6 +392,12 @@ typedef enum : NSUInteger {
         
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+        
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on saving : %@",[exception description]);
+    }
+    
     
 }
 
@@ -492,6 +497,7 @@ typedef enum : NSUInteger {
     UIImage *defaultImage = [UIImage imageNamed:@"icon-fingerprint-empty"];
     
     if (self.registration.biometric.rightIndex) {
+        [self.registration.biometric fingerImageForPosition:RightIndex] ;
         self.imageRightIndex.image = [[self.registration.biometric fingerImageForPosition:RightIndex] scaledToWidthInPoint:100];
         
     }else {
@@ -499,24 +505,30 @@ typedef enum : NSUInteger {
     }
     
     if (self.registration.biometric.rightThumb) {
+        [self.registration.biometric fingerImageForPosition:RightThumb];
         self.imageRightThumb.image = [[self.registration.biometric fingerImageForPosition:RightThumb] scaledToWidthInPoint:100];
     }else {
         self.imageRightThumb.image = defaultImage;
     }
     
     if (self.registration.biometric.leftIndex) {
+        [self.registration.biometric fingerImageForPosition:LeftIndex];
         self.imageLeftIndex.image = [[self.registration.biometric fingerImageForPosition:LeftIndex] scaledToWidthInPoint:100];
     }else {
         self.imageLeftIndex.image = defaultImage;
     }
     
     if (self.registration.biometric.leftThumb) {
+        [self.registration.biometric fingerImageForPosition:LeftThumb];
         self.imageLeftThumb.image = [[self.registration.biometric fingerImageForPosition:LeftThumb] scaledToWidthInPoint:100];
     }else {
         self.imageLeftThumb.image = defaultImage;
     }
     
     if (self.registration.biometric.photograph) {
+        
+        [self.registration.biometric photographImage];
+        
         //show thumbnail
         if (!self.registration.biometric.photographThumbnail) {
             //save as thumbnail
@@ -539,6 +551,12 @@ typedef enum : NSUInteger {
         self.imagePhotograph.image = [self.registration.biometric photographImageThumbnail];
     }else {
         self.imagePhotograph.image = [UIImage imageNamed:@"icon-avatar-large"];
+    }
+    
+    NSError *error;
+    if (![self.registration.managedObjectContext save:&error]) {
+        NSLog(@"Error saving registration: %@", [error description]);
+        
     }
 }
 
