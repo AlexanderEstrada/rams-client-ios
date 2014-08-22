@@ -51,7 +51,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
         }
         
         
-        if (![self.type isEqual:@"Escape"]) {
+        if (![self.type isEqual:@"Escape"] && ![self.type isEqual:@"Release"] && ![self.type isEqual:@"Decease"]) {
             //document number
             if (self.documentNumber) {
                 [formatted setObject:self.documentNumber forKey:MOVEMENT_DOCUMENT_NUMBER];
@@ -99,11 +99,9 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
             }
             
         }else {
-            if ([self.type isEqual:@"Escape"] || [self.type isEqual:@"Released"]) {
                 if (self.originLocation.accommodationId) {
                     [formatted setObject:self.originLocation.accommodationId forKey:MOVEMENT_DETENTION_LOCATION];
                 }
-            }
         }
         
         return formatted;
@@ -125,7 +123,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
         }
         data.type = [dictionary objectForKey:@"type"];
         data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"date"]];
-        if (![data.type isEqual:@"Escape"]) {
+        if (![data.type isEqual:@"Escape"] && ![data.type isEqual:@"Release"] && ![data.type isEqual:@"Decease"]) {
             data.documentNumber = CORE_DATA_OBJECT([dictionary objectForKey:@"documentNumber"]);
             data.proposedDate = [NSDate dateFromUTCString:[dictionary objectForKey:@"proposedDate"]];
             data.travelMode = CORE_DATA_OBJECT([dictionary objectForKey:@"travelMode"]);
@@ -142,7 +140,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
             if ([data.type isEqual:@"AVR"] || [data.type isEqual:@"Deportation"] || [data.type isEqual:@"Resettlement"]) {
                 
                 data.destinationCountry = [Country countryWithCode:[dictionary objectForKey:@"destinationCountry"] inManagedObjectContext:context];
-            }else if ([data.type isEqual:@"Released"] && [dictionary objectForKey:MOVEMENT_DETENTION_LOCATION]){
+            }else if ([data.type isEqual:@"Release"] && [dictionary objectForKey:MOVEMENT_DETENTION_LOCATION]){
                  data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:MOVEMENT_DETENTION_LOCATION] inManagedObjectContext:context];
             }else{
                 data.destinationCountry = nil;

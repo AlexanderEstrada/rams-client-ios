@@ -105,7 +105,7 @@
 
 + (NSArray *)movementTypes
 {
-    return @[@"Deceased", @"Deportation", @"Escape", @"Released", @"Transfer"];
+    return @[@"Decease", @"Deportation", @"Escape", @"Release", @"Transfer",@"AVR",@"Resettlement"];
 }
 
 @end

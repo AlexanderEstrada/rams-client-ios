@@ -67,7 +67,7 @@
 
 - (void)hideLoadingView
 {
-    if (!self.loading) return;
+//    if (!self.loading) return;
     
     [UIView animateWithDuration:.25
                      animations:^{

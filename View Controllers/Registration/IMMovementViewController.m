@@ -71,7 +71,7 @@
     BOOL stat = TRUE;
     
     
-    if (![self.movement.type isEqual:@"Escape"] && ![self.movement.type isEqual:@"Released"]) {
+    if (![self.movement.type isEqual:@"Escape"] && ![self.movement.type isEqual:@"Release"] && ![self.movement.type isEqual:@"Decease"]) {
         stat &= self.movement.date?TRUE:FALSE;
         stat &= self.movement.documentNumber?TRUE:FALSE;
         stat &= self.movement.proposedDate?TRUE:FALSE;
@@ -115,8 +115,10 @@
     NSArray *items = [IMConstants constantsForKey:CONST_MOVEMENT_TYPE];
     NSUInteger item = [items indexOfObject:movementType?movementType:self.movement.type];
     switch (item) {
+        case 6:
+            //Decease
         case 5:
-            //Released
+            //Release
         case 0:
             // Escape
             totalSection += 1;
@@ -133,12 +135,6 @@
             //Deportation
             totalSection +=6;
             break;
-       
-        case 6:
-            //Decesead
-            totalSection +=5;
-            break;
-            
         default:
             //only show movement type and date
             break;
@@ -185,7 +181,7 @@
             cell.labelTitle.text = @"Movement Date";
             cell.labelValue.text = [self.movement.date mediumFormatted];
         }else if (indexPath.row == 2) {
-            if ([self.movement.type isEqualToString:@"Escape"] || [self.movement.type isEqualToString:@"Released"]) {
+            if ([self.movement.type isEqualToString:@"Escape"] || [self.movement.type isEqualToString:@"Release"] || [self.movement.type isEqualToString:@"Decease"]) {
                 cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
                 cell.labelTitle.text = @"Origin Location";
                 cell.labelValue.text = self.movement.originLocation.name;
@@ -339,7 +335,7 @@
             }
         }else if (indexPath.row == 8) {
             [self showAccommodation:indexPath];
-        }else if (indexPath.row == 2 && ([self.movement.type isEqualToString:@"Escape"] || [self.movement.type isEqualToString:@"Released"])){
+        }else if (indexPath.row == 2 && ([self.movement.type isEqualToString:@"Escape"] || [self.movement.type isEqualToString:@"Release"] || [self.movement.type isEqualToString:@"Decease"])){
              [self showAccommodation:indexPath];
         }
     }

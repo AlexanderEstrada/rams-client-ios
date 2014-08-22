@@ -46,13 +46,7 @@
 
 - (void)openDatabase:(void (^)(BOOL success))successBlock
 {
-    //close before open
-    if (self.localDatabase ) {
-        [self closeDatabase];
-        //sleep for synch
-        sleep(1);
-    }
-    
+ 
     if (![[NSFileManager defaultManager] fileExistsAtPath:[self.localDatabase.fileURL path]]) {
         [self.localDatabase saveToURL:self.localDatabase.fileURL
                      forSaveOperation:UIDocumentSaveForCreating

@@ -114,21 +114,26 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    [self showLoadingViewWithTitle:@"Loading ..."];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
+    
     if (!self.dataProvider.dataObjects && !self.reloadingData){
         
         [self reloadData];
-    }else {
-        [self hideLoadingView];
+    }
+    
+    if ([self.dataProvider.dataObjects count]) {
+        [self showLoadingViewWithTitle:@"Loading ..."];
     }
     
 }
 
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    //hide loading view
+    [self hideLoadingView];
+}
 
 #pragma mark - Accessors
 - (void)setDataProvider:(DataProvider *)dataProvider {
@@ -201,9 +206,7 @@
         [self setDataProvider:dataProvider];
         
 //        [_HUD hideUsingAnimation:YES];
-        if (!total) {
-            [self hideLoadingView];
-        }
+       
         self.reloadingData = NO;
         
     }

@@ -140,6 +140,8 @@ typedef enum : NSUInteger {
 - (NSInteger)numberOfSectionsInTableView
 {
     NSUInteger numberOfMovement = [self.migrant.movements count];
+    if (!numberOfMovement) return TOTAL_SECTION -1; //do not show movement section
+    
     return TOTAL_SECTION + numberOfMovement;
 }
 
@@ -147,7 +149,10 @@ typedef enum : NSUInteger {
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSUInteger numberOfMovement = [self.migrant.movements count];
-    return TOTAL_SECTION + numberOfMovement;
+    if (!numberOfMovement) {
+        //do not show movement section
+        return TOTAL_SECTION -1;
+    }else return TOTAL_SECTION + numberOfMovement;
 }
 
 - (NSInteger)movementSectionFormula:(NSSet *) movements
@@ -176,9 +181,9 @@ typedef enum : NSUInteger {
                 totalData +=6;
                 break;
             case 5:
-                //Released
+                //Release
             case 6:
-                //Decesead
+                //Decease
                 totalData +=5;
                 break;
                 //only show movement type and date
@@ -218,9 +223,9 @@ typedef enum : NSUInteger {
             totalData +=6;
             break;
         case 5:
-            //Released
+            //Release
         case 6:
-            //Decesead
+            //Decease
             totalData +=5;
             break;
             
@@ -239,9 +244,11 @@ typedef enum : NSUInteger {
         return 2;
     }else if (section == table_interception_data){
         return 6;
-    }else if (section == table_movements){
-        return 1;
-    }else if ((section > table_movements) && [self.migrant.movements count]) {
+    }
+    //    else if (section == table_movements){
+    //        return 1;
+    //    }
+    else if ((section > table_movements) && [self.migrant.movements count]) {
         NSUInteger index = (section - table_location);
         Movement *movement = [self.movementData objectAtIndex:index];
         //get number of row
@@ -255,6 +262,13 @@ typedef enum : NSUInteger {
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 50;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    if (section != table_movements && section < table_movements) return 40;
+    
+    return 0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -290,7 +304,8 @@ typedef enum : NSUInteger {
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
         headerView.labelTitle.text = @"Interception Data";
     }else if (section == table_movements){
-        headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:@"movementHeader"];
+        //        headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:@"movementHeader"];
+        headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:headerIdentifier];
         headerView.labelTitle.font = [UIFont thinFontWithSize:28];
         headerView.labelTitle.textAlignment = NSTextAlignmentCenter;
         headerView.labelTitle.textColor = [UIColor blackColor];
@@ -298,22 +313,23 @@ typedef enum : NSUInteger {
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
         // implement Add button for movement
         headerView.labelTitle.text = @"Movements";
-//        
-//        headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
-//        [headerView.buttonAction setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
-//        headerView.buttonAction.tag = section;
-//        [headerView.buttonAction setTitle:Nil forState:UIControlStateNormal];
-//        [headerView.buttonAction setTranslatesAutoresizingMaskIntoConstraints:NO];
-//        [headerView.contentView addSubview:headerView.buttonAction];
-//        
-//        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:20]];
-//        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAction attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:-20]];
-//        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAction attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-//        
-//        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
-//        
-//        [headerView.buttonAction addTarget:self action:@selector(addMoreMovement:) forControlEvents:UIControlEventTouchUpInside];
+        //
+        //        headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
+        //        [headerView.buttonAction setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+        //        headerView.buttonAction.tag = section;
+        //        [headerView.buttonAction setTitle:Nil forState:UIControlStateNormal];
+        //        [headerView.buttonAction setTranslatesAutoresizingMaskIntoConstraints:NO];
+        //        [headerView.contentView addSubview:headerView.buttonAction];
+        //
+        //        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:20]];
+        //        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAction attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:-20]];
+        //        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAction attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+        //
+        //        [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
+        //
+        //        [headerView.buttonAction addTarget:self action:@selector(addMoreMovement:) forControlEvents:UIControlEventTouchUpInside];
     }else if (section > table_movements){
+        headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:@"movementHeader"];
         headerView.labelTitle.font = [UIFont boldFontWithSize:20];
         headerView.labelTitle.textAlignment = NSTextAlignmentLeft;
         headerView.labelTitle.text = [NSString stringWithFormat:@"Movement Detail # %i",(section - table_location)+1];
@@ -328,20 +344,20 @@ typedef enum : NSUInteger {
 //                                                      action:^(Movement *movement, BOOL editing){
 //                                                          [self.popover dismissPopoverAnimated:YES];
 //                                                          self.popover = nil;
-//                                                          
+//
 //                                                          if (movement && !editing) {
-//                                                              
+//
 //                                                              //get all movement from Migrant
 //                                                              NSManagedObjectContext *workingContext = [IMDBManager sharedManager].localDatabase.managedObjectContext;
 //                                                              NSError *error;
-//                                                              
+//
 //                                                              //get all movement
 //                                                              NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
 //                                                              request.predicate = [NSPredicate predicateWithFormat:@"registrationNumber = %@",self.registration.registrationId];
 //                                                              request.returnsObjectsAsFaults = YES;
-//                                                              
+//
 //                                                              NSArray *results = [workingContext executeFetchRequest:request error:&error];
-//                                                              
+//
 //                                                              if (![results count]) {
 //                                                                  //todo : add movement to migrant
 //                                                                  if (!self.registration.registrationId) {
@@ -350,15 +366,15 @@ typedef enum : NSUInteger {
 //                                                                  }
 //                                                                  //create new migrant data
 //                                                                  self.migrant = [Migrant newMigrantInContext:workingContext withId:self.registration.registrationId];
-//                                                                  
+//
 //                                                                  //deep copy new registration data to migrant
 //                                                                  [Migrant saveMigrantInContext:workingContext withId:self.registration.registrationId andRegistrationData:self.registration];
-//                                                                  
+//
 //                                                                  //init movement data
 //                                                                  self.movementData = [NSMutableArray array];
 //                                                              }
-//                                                              
-//                                                              
+//
+//
 //                                                              [self.migrant addMovementsObject:movement];
 //                                                              //save to database
 //                                                              if (![workingContext save:&error]) {
@@ -366,12 +382,12 @@ typedef enum : NSUInteger {
 //                                                                  [self showAlertWithTitle:@"Failed Adding Movements" message:@"Please fill Personal Information."];
 //                                                                  [workingContext rollback];
 //                                                              }
-//                                                              
+//
 //                                                              //delete unused pointer
 //                                                              workingContext = Nil;
 //                                                              results = Nil;
 //                                                              request = Nil;
-//                                                              
+//
 //                                                          }
 //                                                          [self reloadData];
 //                                                      }];

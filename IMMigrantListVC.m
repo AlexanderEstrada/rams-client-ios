@@ -85,7 +85,7 @@
             self.dataProvider = Nil;
             [self setDataProvider:dataProvider];
     
-            [_HUD hideUsingAnimation:YES];
+//            [_HUD hideUsingAnimation:YES];
             self.reloadingData = NO;
             
         }
@@ -94,24 +94,24 @@
 
 - (void)reloadData
 {
-    // Show progress window
-    if (!_HUD) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    
-    
-    
-    // Add HUD to screen
-    [self.view addSubview:_HUD];
-    
-    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    _HUD.delegate = self;
-    
-    _HUD.labelText = @"Reloading Data...";
-    
-    // Show the HUD while the provided method executes in a new thread
-    [_HUD showUsingAnimation:YES];
+//    // Show progress window
+//    if (!_HUD) {
+//        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+//        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
+//    }
+//    
+//    
+//    
+//    // Add HUD to screen
+//    [self.view addSubview:_HUD];
+//    
+//    // Regisete for HUD callbacks so we can remove it from the window at the right time
+//    _HUD.delegate = self;
+//    
+//    _HUD.labelText = @"Reloading Data...";
+//    
+//    // Show the HUD while the provided method executes in a new thread
+//    [_HUD showUsingAnimation:YES];
     
      [self executing];
     
@@ -169,6 +169,9 @@
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
 
+    //hide loading view
+    [self hideLoadingView];
+    
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
@@ -343,14 +346,27 @@
     //    self.dataProvider = Nil;
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    
     if (!self.dataProvider.dataObjects && !self.reloadingData){
         
         [self reloadData];
     }
     
+    if ([self.dataProvider.dataObjects count]) {
+        [self showLoadingViewWithTitle:@"Loading ..."];
+    }
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+   
+    //hide loading view
+    [self hideLoadingView];
 }
 
 - (void)didReceiveMemoryWarning

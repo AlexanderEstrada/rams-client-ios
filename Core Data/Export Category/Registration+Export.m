@@ -540,10 +540,13 @@ NSString *const REG_MOVEMENT                 = @"movements";
 - (void)validateCompletion
 {
     BOOL stat = [self.bioData.firstName length] && self.bioData.gender && self.bioData.maritalStatus && self.bioData.dateOfBirth && [self.bioData.placeOfBirth length] && self.bioData.countryOfBirth && self.bioData.nationality;
-    stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length];
+    if (self.interceptionData) {
+         stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length];
+    }
+   
     
     if (self.unhcrDocument) stat &= self.unhcrDocument && [self.unhcrNumber length];
-    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
+//    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
     self.complete = @(stat);
 }
 

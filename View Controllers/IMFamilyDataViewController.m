@@ -62,6 +62,7 @@ typedef enum : NSUInteger {
 @property (nonatomic) BOOL next;
 @property (nonatomic) BOOL editingMode;
 @property (nonatomic) BOOL uploadStatus;
+@property (nonatomic) BOOL isHeadOfFamilyFemale;
 @property (nonatomic) BOOL reloading;
 @end
 
@@ -86,6 +87,7 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.isHeadOfFamilyFemale = NO;
     // Do any additional setup after loading the view.
     if (!self.childData) {
         self.childData = [NSMutableArray array];
@@ -441,6 +443,16 @@ typedef enum : NSUInteger {
             self.itemUploadAll.enabled = self.save.enabled = YES;
         }
         
+        //set head of family gender
+        Migrant * migrant = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
+        
+        //set default value
+        self.isHeadOfFamilyFemale = NO;
+        if (migrant) {
+            if ([migrant.bioData.gender isEqualToString:@"Female"]) {
+                self.isHeadOfFamilyFemale = YES;
+            }
+        }
         [self.tableView reloadData];
         self.reloading = NO;
     }
@@ -472,8 +484,12 @@ typedef enum : NSUInteger {
     int counter = 0;
     switch (section) {
             //        case section_family_information:
+        case section_spouse:{
+            if (self.isHeadOfFamilyFemale) {
+                break;
+            }
+        }
         case section_head_of_family:
-        case section_spouse:
         case section_guadian:
             totalSection +=2;
             break;
@@ -561,6 +577,9 @@ typedef enum : NSUInteger {
     if (section == section_head_of_family){
         headerView.labelTitle.text = @"Head Of Family";
     }else if (section == section_spouse){
+        if (self.isHeadOfFamilyFemale) {
+            return Nil;
+        }
         headerView.labelTitle.text = @"Spouse";
     }else if (section == section_guadian){
         headerView.labelTitle.text = @"Guardian";
@@ -894,6 +913,10 @@ typedef enum : NSUInteger {
         }
         case section_spouse:{
             tmp = Nil;
+            if (self.isHeadOfFamilyFemale) {
+                cell.userInteractionEnabled = NO;
+            }else{
+                cell.userInteractionEnabled = YES;
             for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
                 if ([entry.type isEqualToString:FAMILY_TYPE_SPOUSE]) {
                     tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
@@ -921,6 +944,7 @@ typedef enum : NSUInteger {
             }
             
             break;
+            }
         }
         case section_guadian:{
             tmp = Nil;

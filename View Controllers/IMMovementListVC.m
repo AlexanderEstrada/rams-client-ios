@@ -144,7 +144,7 @@
             }else if([_movement.type isEqual:@"AVR"] || [self.movement.type isEqual:@"Deportation"]){
                 //do the stuff
                 self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES AND complete = YES AND bioData.nationality.code = %@ || bioData.nationality.name = %@", _movement.destinationCountry.code,_movement.destinationCountry.name];
-            }else if ([self.movement.type isEqual:@"Escape"] || [self.movement.type isEqual:@"Released"]){
+            }else if ([self.movement.type isEqual:@"Escape"] || [self.movement.type isEqual:@"Release"]){
                 //do the stuff
                 self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES AND complete = YES AND detentionLocation = %@",_movement.originLocation.accommodationId];
             }
@@ -184,9 +184,7 @@
         [self setDataProvider:dataProvider];
         
 //        [_HUD hideUsingAnimation:YES];
-        if (!total) {
-            [self hideLoadingView];
-        }
+   
         self.reloadingData = NO;
         
     }
@@ -629,19 +627,25 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    [self showLoadingViewWithTitle:@"Loading ..."];
+    
+    if (!self.dataProvider.dataObjects && !self.reloadingData){
+        
+        [self reloadData];
+    }
+    
+    if ([self.dataProvider.dataObjects count]) {
+        [self showLoadingViewWithTitle:@"Loading ..."];
+    }
+    
 }
+
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    if (!self.dataProvider.dataObjects && !self.reloadingData){
-        
-        [self reloadData];
-    }else {
-        [self hideLoadingView];
-    }
     
+    //hide loading view
+    [self hideLoadingView];
 }
 
 

@@ -103,8 +103,8 @@
 		<string>AVR</string>
 		<string>Resettlement</string>
 		<string>Deportation</string>
-		<string>Released</string>
-		<string>Deceased</string>
+		<string>Release</string>
+		<string>Decease</string>
 	</array>
 	<key>TravelMode</key>
 	<array>
