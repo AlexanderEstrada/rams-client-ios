@@ -89,11 +89,13 @@
             self.textValue = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
             self.textValue.font = font;
             self.textValue.textColor = [UIColor darkGrayColor];
-            self.textValue.textAlignment = NSTextAlignmentRight;
+//            self.textValue.textAlignment = NSTextAlignmentRight;
             self.textValue.delegate = self;
             self.textValue.autocapitalizationType = UITextAutocapitalizationTypeWords;
             self.textValue.clearButtonMode = UITextFieldViewModeWhileEditing;
             self.textValue.returnKeyType = UIReturnKeyDone;
+             self.textValue.rightViewMode = UITextFieldViewModeAlways;
+            self.textValue.autocorrectionType = UITextAutocorrectionTypeNo;
             [self.textValue setTranslatesAutoresizingMaskIntoConstraints:NO];
             [self.contentView addSubview:self.textValue];
             break;
@@ -301,6 +303,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
+
     if ([self.characterSets count]) {
         string = [string lowercaseString];
         
@@ -316,7 +319,7 @@
     if (stat && self.onTextValueReturn) {
         self.onTextValueReturn([NSString stringWithFormat:@"%@%@", textField.text, string]);
     }
-    
+
     return stat;
 }
 

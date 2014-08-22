@@ -9,6 +9,7 @@
 #import "FamilyRegister+Extended.h"
 #import "FamilyRegisterEntry+Extended.h"
 #import "Biometric+Extended.h"
+#import "RegistrationBiometric+Storage.h"
 
 @implementation FamilyRegister (Extended)
 
@@ -95,7 +96,15 @@
             NSString * Identifier = [self.photographThumbnail lastPathComponent];
             //case has change then update the path before show
             NSString *dir = [Biometric photograpThumbnailDir];
-            self.photographThumbnail = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", Identifier]];
+            self.photographThumbnail = [dir stringByAppendingPathComponent:Identifier];
+            
+            //check if this from registration
+            if (![[NSFileManager defaultManager] fileExistsAtPath:self.photographThumbnail]) {
+                //case has change then update the path before show
+                dir = [RegistrationBiometric photograpThumbnailDir];
+                self.photographThumbnail = [dir stringByAppendingPathComponent:Identifier];
+            }
+            
         }
         
         return self.photographThumbnail ? [UIImage imageWithContentsOfFile:self.photographThumbnail] : nil;
@@ -116,7 +125,16 @@
             NSString * Identifier = [self.photograph lastPathComponent];
             //case has change then update the path before show
             NSString *dir = [Biometric photograpDir];
-            self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", Identifier]];
+            self.photograph = [dir stringByAppendingPathComponent:Identifier];
+            
+            //check if this from registration
+            if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph]) {
+                //case has change then update the path before show
+                dir = [RegistrationBiometric photograpDir];
+                self.photograph = [dir stringByAppendingPathComponent:Identifier];
+            }
+
+            
         }
         return self.photograph ? [UIImage imageWithContentsOfFile:self.photograph] : nil;
     }

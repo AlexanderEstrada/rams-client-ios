@@ -406,7 +406,9 @@ typedef enum : NSUInteger {
             cell.labelTitle.text = @"First Name";
             cell.textValue.placeholder = @"e.g Jafar";
             cell.textValue.text = self.registration.bioData.firstName;
-            cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.firstName = value; };
+            cell.onTextValueReturn = ^(NSString *value){
+                self.registration.bioData.firstName = value;
+            };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
             cell.maxCharCount = 40;
         }else if (indexPath.row == 1) {

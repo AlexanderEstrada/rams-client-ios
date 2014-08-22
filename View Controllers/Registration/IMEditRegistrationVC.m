@@ -184,7 +184,7 @@ typedef enum : NSUInteger {
 - (void)showPhotoPreview
 {
     if(!self.previewingPhotos){
-    self.previewingPhotos = [NSMutableArray array];
+        self.previewingPhotos = [NSMutableArray array];
     }
     
     //add all photo
@@ -306,7 +306,7 @@ typedef enum : NSUInteger {
             //            [self dismissViewControllerAnimated:YES completion:nil];
         }];
     }
-        [self.context reset];
+    [self.context reset];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     
@@ -320,93 +320,97 @@ typedef enum : NSUInteger {
 {
     @try {
         
-    NSNumber * lastStatus = self.registration.complete;
-    BOOL needRemove =FALSE;
-    
-    //checking the value
-    if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
-        //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        NSNumber * lastStatus = self.registration.complete;
+        BOOL needRemove =FALSE;
         
-        [alert show];
-        return;
-    }
-    
-    //check interception date and date of entry
-    if ([self.registration.interceptionData.dateOfEntry compare:self.registration.interceptionData.interceptionDate] == NSOrderedDescending) {
-        //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Interception Data" message:@"Date Of Entry can not be more than interception date" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        
-        [alert show];
-        return;
-        
-    }
-    
-    //validate Biodata value
-    if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
-        //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Personal Information" message:@"Please fill all of Personal Information Data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        
-        [alert show];
-        return;
-    }
-    
-    [self.registration validateCompletion];
-    needRemove = (lastStatus != self.registration.complete);
-    
-    if (!self.registration.dateCreated) {
-        self.registration.dateCreated = [NSDate date];
-    }
-    
-    
-    NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
-    NSError *error;
-    
-    
-    //TODO : check if this is from Migrant list, if Yes then delete the migrant data
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"registrationNumber = %@",self.registration.registrationId];
-    request.returnsObjectsAsFaults = YES;
-    
-    NSArray *data = [workingContext executeFetchRequest:request error:&error];
-    if ([data count]) {
-        int i = 1;
-        for (Migrant * migrant in data) {
-            migrant.complete = @(FALSE);
-            NSLog(@"%i object deleted",i);
-            needRemove = TRUE;
+        //checking the value
+        if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
+            //show alert
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
             
+            [alert show];
+            [_hud hideUsingAnimation:YES];
+            return;
+        }
+        
+        //check interception date and date of entry
+        if ([self.registration.interceptionData.dateOfEntry compare:self.registration.interceptionData.interceptionDate] == NSOrderedDescending) {
+            //show alert
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Interception Data" message:@"Date Of Entry can not be more than interception date" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            
+            [alert show];
+            [_hud hideUsingAnimation:YES];
+            return;
             
         }
-        //deep copy new registration data to migrant
-        [Migrant saveMigrantInContext:workingContext withId:self.registration.registrationId andRegistrationData:self.registration];
-    }
-    
-    if (![workingContext save:&error]) {
-        NSLog(@"Error saving context: %@", [error description]);
-        [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
-    }else {
-        //save database
-        [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
         
-//        if(self.editingMode && [data count]){
-//            // sleep for synch
-//            sleep(2);
-//        }
-        
-        if (!self.editingMode) {
-            //new registration
-            needRemove = TRUE;
+        //validate Biodata value
+        if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
+            //show alert
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Personal Information" message:@"Please fill all of Personal Information Data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            
+            [alert show];
+            [_hud hideUsingAnimation:YES];
+            return;
         }
         
-        if (self.registrationSave) {
-            self.registrationSave(needRemove);
+        [self.registration validateCompletion];
+        needRemove = (lastStatus != self.registration.complete);
+        
+        if (!self.registration.dateCreated) {
+            self.registration.dateCreated = [NSDate date];
         }
         
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
         
+        NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
+        NSError *error;
+        
+        
+        //TODO : check if this is from Migrant list, if Yes then delete the migrant data
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
+        
+        request.predicate = [NSPredicate predicateWithFormat:@"registrationNumber = %@",self.registration.registrationId];
+        request.returnsObjectsAsFaults = YES;
+        
+        NSArray *data = [workingContext executeFetchRequest:request error:&error];
+        if ([data count]) {
+            int i = 1;
+            for (Migrant * migrant in data) {
+                migrant.complete = @(FALSE);
+                NSLog(@"%i object deleted",i);
+                needRemove = TRUE;
+                
+                
+            }
+            //deep copy new registration data to migrant
+            [Migrant saveMigrantInContext:workingContext withId:self.registration.registrationId andRegistrationData:self.registration];
+        }
+        
+        if (![workingContext save:&error]) {
+            NSLog(@"Error saving context: %@", [error description]);
+            [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
+        }else {
+            //save database
+            [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
+            
+            //        if(self.editingMode && [data count]){
+            //            // sleep for synch
+            //            sleep(2);
+            //        }
+            
+            if (!self.editingMode) {
+                //new registration
+                needRemove = TRUE;
+            }
+            
+            if (self.registrationSave) {
+                self.registrationSave(needRemove);
+            }
+            
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+        
+        [_hud hideUsingAnimation:YES];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception on saving : %@",[exception description]);
@@ -417,6 +421,24 @@ typedef enum : NSUInteger {
 
 - (void)save
 {
+    //    // Add HUD to screen
+    //    [self.view addSubview:_hud];
+    //
+    //    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    //    _hud.delegate = self;
+    //
+    //    _hud.labelText = @"Saving...";
+    //    //    Show progress window
+    //    [_hud showWhileExecuting:@selector(saving) onTarget:self withObject:nil animated:YES];
+    
+    // Show progress window
+    if (!_hud) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    
+    
+    
     // Add HUD to screen
     [self.view addSubview:_hud];
     
@@ -424,9 +446,11 @@ typedef enum : NSUInteger {
     _hud.delegate = self;
     
     _hud.labelText = @"Saving...";
-    //    Show progress window
-    [_hud showWhileExecuting:@selector(saving) onTarget:self withObject:nil animated:YES];
     
+    // Show the HUD while the provided method executes in a new thread
+    [_hud showUsingAnimation:YES];
+    
+    [self saving];
 }
 
 
@@ -475,12 +499,12 @@ typedef enum : NSUInteger {
         [doubleTapGestureRecognizer setNumberOfTapsRequired:2];
         // Wait for failed doubleTapGestureRecognizer
         [singleTapGestureRecognizer requireGestureRecognizerToFail:doubleTapGestureRecognizer];
-         [self.imagePhotograph addGestureRecognizer:doubleTapGestureRecognizer];
+        [self.imagePhotograph addGestureRecognizer:doubleTapGestureRecognizer];
     }
     
     self.imagePhotograph.userInteractionEnabled = YES;
     [self.imagePhotograph addGestureRecognizer:singleTapGestureRecognizer];
-   
+    
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)];

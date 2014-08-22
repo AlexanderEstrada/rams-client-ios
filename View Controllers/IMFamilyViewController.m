@@ -86,9 +86,9 @@ typedef enum : NSUInteger {
     //set default value
     _tapCount = 0;
     
-//    UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(onClear)];
-//    
-//    self.navigationItem.rightBarButtonItems = @[self.addButton ,clearButton];
+    UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(onClear)];
+    
+    self.navigationItem.rightBarButtonItems = @[self.addButton ,clearButton];
     
     //get all data from database
     
