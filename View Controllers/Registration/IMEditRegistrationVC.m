@@ -137,7 +137,16 @@ typedef enum : NSUInteger {
     }
     
     if (camera && library) {
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Choose Photo Source" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Camera" otherButtonTitles:@"Photo Library", @"Photo Preview",nil];
+        //check if there is image to preview
+        UIActionSheet *actionSheet = Nil;
+        
+        //check if there is image to preview
+        if (self.registration.biometric.photograph || self.registration.biometric.rightIndex || self.registration.biometric.rightThumb || self.registration.biometric.leftIndex || self.registration.biometric.leftThumb) {
+            
+            actionSheet = [[UIActionSheet alloc] initWithTitle:@"Choose Photo Source" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Camera" otherButtonTitles:@"Photo Library", @"Photo Preview",nil];
+            
+        }else actionSheet = [[UIActionSheet alloc] initWithTitle:@"Choose Photo Source" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Camera" otherButtonTitles:@"Photo Library",nil];
+        
         CGPoint location = [gesture locationInView:self.view];
         CGRect rect = CGRectMake(location.x, location.y, self.imagePhotograph.frame.size.width, self.imagePhotograph.frame.size.height);
         [actionSheet showFromRect:rect inView:self.view animated:YES];
@@ -184,6 +193,11 @@ typedef enum : NSUInteger {
     if (self.registration.biometric.leftThumb)[self.previewingPhotos addObject:self.registration.biometric.leftThumb];
     if (self.registration.biometric.rightIndex)[self.previewingPhotos addObject:self.registration.biometric.rightIndex];
     if (self.registration.biometric.rightThumb)[self.previewingPhotos addObject:self.registration.biometric.rightThumb];
+    
+    if (![self.previewingPhotos count]) {
+        //there is no data
+        return;
+    }
     
     QLPreviewController *previewController = [[QLPreviewController alloc] init];
     previewController.delegate = self;
@@ -450,17 +464,23 @@ typedef enum : NSUInteger {
     [self setupFingerprintGestureRecognizer:self.imageLeftThumb];
     [self setupFingerprintGestureRecognizer:self.imageLeftIndex];
     
-    UITapGestureRecognizer *doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc]
-                                                          initWithTarget:self
-                                                          action:@selector(showPhotoPreview)];
-    [doubleTapGestureRecognizer setNumberOfTapsRequired:2];
     UITapGestureRecognizer *singleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showPhotographOption:)];
     [singleTapGestureRecognizer setNumberOfTapsRequired:1];
-    // Wait for failed doubleTapGestureRecognizer
-    [singleTapGestureRecognizer requireGestureRecognizerToFail:doubleTapGestureRecognizer];
+    
+    //check if there is image to preview
+    if (self.registration.biometric.photograph || self.registration.biometric.rightIndex || self.registration.biometric.rightThumb || self.registration.biometric.leftIndex || self.registration.biometric.leftThumb) {
+        UITapGestureRecognizer *doubleTapGestureRecognizer = [[UITapGestureRecognizer alloc]
+                                                              initWithTarget:self
+                                                              action:@selector(showPhotoPreview)];
+        [doubleTapGestureRecognizer setNumberOfTapsRequired:2];
+        // Wait for failed doubleTapGestureRecognizer
+        [singleTapGestureRecognizer requireGestureRecognizerToFail:doubleTapGestureRecognizer];
+         [self.imagePhotograph addGestureRecognizer:doubleTapGestureRecognizer];
+    }
+    
     self.imagePhotograph.userInteractionEnabled = YES;
     [self.imagePhotograph addGestureRecognizer:singleTapGestureRecognizer];
-    [self.imagePhotograph addGestureRecognizer:doubleTapGestureRecognizer];
+   
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)];
