@@ -466,7 +466,7 @@ typedef enum : NSUInteger {
             cell.onTextValueReturn = ^(NSString *value){
                 if (!self.registration.unhcrDocument){
                     //show alert
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please input UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     alert.tag = IMAlertNOUNHCR_Tag;
                     [alert show];
                     self.registration.unhcrNumber = value = Nil;
@@ -661,7 +661,7 @@ typedef enum : NSUInteger {
         }else if (indexPath.row == 1){
             if (!self.registration.unhcrDocument) {
                 //show alert
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please input UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 alert.tag = IMAlertNOUNHCR_Tag;
                 [alert show];
                 

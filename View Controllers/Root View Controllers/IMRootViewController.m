@@ -119,9 +119,10 @@
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == IMAlertUpdate_Tag &&  buttonIndex != [alertView cancelButtonIndex]){ [self openSynchronizationDialog:nil];}
-    else if (alertView.tag == IMDefaultAlertTag){
+    if (alertView.tag == IMAlertUpdate_Tag &&  buttonIndex != [alertView cancelButtonIndex]){ [self openSynchronizationDialog:nil];
+    }else if (alertView.tag == IMDefaultAlertTag){
         [self showLogin];
+          [[NSNotificationCenter defaultCenter] postNotificationName:IMAccessExpiredCloseNotification object:nil userInfo:nil];
     }
 }
 

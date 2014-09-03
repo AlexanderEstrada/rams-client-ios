@@ -30,7 +30,7 @@
         //check port
         if (_ServerPort.text.length) {
             if (![self isNumeric:_ServerPort.text]) {
-                [self showAlertWithTitle:@"" message:@"Please fill Server port with numeric."];
+                [self showAlertWithTitle:@"" message:@"Please input Server port with numeric."];
                 return;
             }
             //get the port
@@ -43,7 +43,7 @@
         [IMConstants setConstantForKey:@"API URL" withValue:server];
         [self dismissViewControllerAnimated:YES completion:nil];
         
-    }else [self showAlertWithTitle:@"" message:@"Please fill out  server address before  press save."];
+    }else [self showAlertWithTitle:@"" message:@"Please input server address before  press save."];
     return;
 }
 

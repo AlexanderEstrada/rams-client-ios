@@ -2,7 +2,7 @@
 //  FamilyRegister.h
 //  IMMS Manager
 //
-//  Created by IOM Jakarta on 8/18/14.
+//  Created by IOM Jakarta on 9/2/14.
 //  Copyright (c) 2014 Mario Yohanes. All rights reserved.
 //
 
@@ -16,8 +16,8 @@
 @property (nonatomic, retain) NSString * familyID;
 @property (nonatomic, retain) NSString * headOfFamilyId;
 @property (nonatomic, retain) NSString * headOfFamilyName;
-@property (nonatomic, retain) NSString * photographThumbnail;
 @property (nonatomic, retain) NSString * photograph;
+@property (nonatomic, retain) NSString * photographThumbnail;
 @property (nonatomic, retain) NSSet *familyEntryID;
 @end
 

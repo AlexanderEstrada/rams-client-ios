@@ -311,6 +311,23 @@
     return stat ? path : nil;
 }
 
+//- (NSString *)photograph
+//{
+//    @try {
+//        //check if the path has change
+//        if (![[NSFileManager defaultManager] fileExistsAtPath:self.photograph] && self.photograph) {
+//            //case has change then update the path before show
+//            NSString *dir = [Biometric photograpDir];
+//            self.photograph = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg", self.biometricId]];
+//        }
+//        return self.photograph;
+//    }
+//    @catch (NSException *exception) {
+//        NSLog(@"Exception on photograph : %@",[exception description]);
+//    }
+//    return Nil;
+//}
+
 - (NSData *)photographData
 {
     @try {

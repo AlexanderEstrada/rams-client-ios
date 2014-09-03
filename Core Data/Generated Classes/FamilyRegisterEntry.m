@@ -2,7 +2,7 @@
 //  FamilyRegisterEntry.m
 //  IMMS Manager
 //
-//  Created by IOM Jakarta on 8/18/14.
+//  Created by IOM Jakarta on 9/2/14.
 //  Copyright (c) 2014 Mario Yohanes. All rights reserved.
 //
 
@@ -12,8 +12,8 @@
 
 @implementation FamilyRegisterEntry
 
-@dynamic registerEntryId;
 @dynamic migrantId;
+@dynamic registerEntryId;
 @dynamic type;
 @dynamic familyID;
 

@@ -29,7 +29,6 @@
 		AC5DD1891805384600E3911C /* IMPhotoBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5DD1881805384600E3911C /* IMPhotoBrowserCell.m */; };
 		AC6D727F1806636500E5F845 /* IMMigrantFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = AC6D727E1806636500E5F845 /* IMMigrantFetcher.m */; };
 		AC6D728B18068C1100E5F845 /* Child.m in Sources */ = {isa = PBXBuildFile; fileRef = AC6D728A18068C1100E5F845 /* Child.m */; };
-		AC6D728E18068C1200E5F845 /* FamilyData.m in Sources */ = {isa = PBXBuildFile; fileRef = AC6D728D18068C1200E5F845 /* FamilyData.m */; };
 		AC807D3217F14F58000988D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC807D3117F14F58000988D0 /* Foundation.framework */; };
 		AC807D3417F14F58000988D0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC807D3317F14F58000988D0 /* CoreGraphics.framework */; };
 		AC807D3617F14F58000988D0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC807D3517F14F58000988D0 /* UIKit.framework */; };
@@ -222,6 +221,17 @@
 		F212784C198A0158006679AB /* IMSSCheckMark.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784B198A0158006679AB /* IMSSCheckMark.m */; };
 		F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784E198A3B8B006679AB /* IMFamilyListVC.m */; };
 		F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */; };
+		F288C34919B5761800EE7948 /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */; };
+		F288C34C19B5761900EE7948 /* FamilyData.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34B19B5761900EE7948 /* FamilyData.m */; };
+		F288C34F19B5761900EE7948 /* FamilyRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34E19B5761900EE7948 /* FamilyRegister.m */; };
+		F288C35119B5C43E00EE7948 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35019B5C43E00EE7948 /* Parse.framework */; };
+		F288C35319B5C51F00EE7948 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35219B5C51F00EE7948 /* Social.framework */; };
+		F288C35519B5C54300EE7948 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35419B5C54300EE7948 /* MobileCoreServices.framework */; };
+		F288C35719B5C55800EE7948 /* libz.1.1.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35619B5C55800EE7948 /* libz.1.1.3.dylib */; };
+		F288C35919B5C56900EE7948 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35819B5C56900EE7948 /* Accounts.framework */; };
+		F288C35B19B5C59100EE7948 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35A19B5C59100EE7948 /* libsqlite3.dylib */; };
+		F288C35D19B5C5D500EE7948 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35C19B5C5D500EE7948 /* CFNetwork.framework */; };
+		F288C35F19B5C5E500EE7948 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F288C35E19B5C5E500EE7948 /* AdSupport.framework */; };
 		F2AD1DBA194B089700B05D0D /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F2AD1DB9194B089700B05D0D /* MBProgressHUD.m */; };
 		F2B09A21194EA05B00289E8F /* AWPagedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A20194EA05B00289E8F /* AWPagedArray.m */; };
 		F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B09A23194EA07F00289E8F /* DataLoadingOperation.m */; };
@@ -229,8 +239,6 @@
 		F2B1B2CC19A1D7B100209FCD /* IMFamilyDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2CB19A1D7B100209FCD /* IMFamilyDataViewController.m */; };
 		F2B1B2CF19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2CE19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m */; };
 		F2B1B2D819A1F05600209FCD /* FamilyRegister+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2D719A1F05600209FCD /* FamilyRegister+Extended.m */; };
-		F2B1B2ED19A1F68300209FCD /* FamilyRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2EC19A1F68300209FCD /* FamilyRegister.m */; };
-		F2B1B2F019A1F68300209FCD /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2EF19A1F68300209FCD /* FamilyRegisterEntry.m */; };
 		F2B1B2F319A20BB200209FCD /* IMFamilyDataFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2F219A20BB200209FCD /* IMFamilyDataFetcher.m */; };
 		F2B1B2F619A37BF000209FCD /* IMMovementReviewTableVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B1B2F519A37BF000209FCD /* IMMovementReviewTableVC.m */; };
 		F2B2A7C3193C2A1B00991614 /* IMMigrantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2B2A7C2193C2A1B00991614 /* IMMigrantListVC.m */; };
@@ -300,8 +308,6 @@
 		AC6D727E1806636500E5F845 /* IMMigrantFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantFetcher.m; sourceTree = "<group>"; };
 		AC6D728918068C1100E5F845 /* Child.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Child.h; sourceTree = "<group>"; };
 		AC6D728A18068C1100E5F845 /* Child.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Child.m; sourceTree = "<group>"; };
-		AC6D728C18068C1200E5F845 /* FamilyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyData.h; sourceTree = "<group>"; };
-		AC6D728D18068C1200E5F845 /* FamilyData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyData.m; sourceTree = "<group>"; };
 		AC807D2E17F14F58000988D0 /* IMMS Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IMMS Manager.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC807D3117F14F58000988D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AC807D3317F14F58000988D0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -675,6 +681,20 @@
 		F212784E198A3B8B006679AB /* IMFamilyListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyListVC.m; sourceTree = "<group>"; };
 		F23DA50B19812D0100DDF0C1 /* IMMovementListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementListVC.h; sourceTree = "<group>"; };
 		F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementListVC.m; sourceTree = "<group>"; };
+		F288C34719B5761800EE7948 /* FamilyRegisterEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegisterEntry.h; sourceTree = "<group>"; };
+		F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegisterEntry.m; sourceTree = "<group>"; };
+		F288C34A19B5761900EE7948 /* FamilyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyData.h; sourceTree = "<group>"; };
+		F288C34B19B5761900EE7948 /* FamilyData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyData.m; sourceTree = "<group>"; };
+		F288C34D19B5761900EE7948 /* FamilyRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegister.h; sourceTree = "<group>"; };
+		F288C34E19B5761900EE7948 /* FamilyRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegister.m; sourceTree = "<group>"; };
+		F288C35019B5C43E00EE7948 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = Libraries/Parse.framework; sourceTree = "<group>"; };
+		F288C35219B5C51F00EE7948 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		F288C35419B5C54300EE7948 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		F288C35619B5C55800EE7948 /* libz.1.1.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.1.3.dylib; path = usr/lib/libz.1.1.3.dylib; sourceTree = SDKROOT; };
+		F288C35819B5C56900EE7948 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		F288C35A19B5C59100EE7948 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		F288C35C19B5C5D500EE7948 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		F288C35E19B5C5E500EE7948 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		F2AD1DB8194B089700B05D0D /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		F2AD1DB9194B089700B05D0D /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		F2B09A1F194EA05B00289E8F /* AWPagedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWPagedArray.h; sourceTree = "<group>"; };
@@ -690,10 +710,6 @@
 		F2B1B2CE19A1EB8600209FCD /* FamilyRegisterEntry+Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FamilyRegisterEntry+Extended.m"; sourceTree = "<group>"; };
 		F2B1B2D619A1F05600209FCD /* FamilyRegister+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FamilyRegister+Extended.h"; sourceTree = "<group>"; };
 		F2B1B2D719A1F05600209FCD /* FamilyRegister+Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FamilyRegister+Extended.m"; sourceTree = "<group>"; };
-		F2B1B2EB19A1F68300209FCD /* FamilyRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegister.h; sourceTree = "<group>"; };
-		F2B1B2EC19A1F68300209FCD /* FamilyRegister.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegister.m; sourceTree = "<group>"; };
-		F2B1B2EE19A1F68300209FCD /* FamilyRegisterEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegisterEntry.h; sourceTree = "<group>"; };
-		F2B1B2EF19A1F68300209FCD /* FamilyRegisterEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegisterEntry.m; sourceTree = "<group>"; };
 		F2B1B2F119A20BB200209FCD /* IMFamilyDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyDataFetcher.h; sourceTree = "<group>"; };
 		F2B1B2F219A20BB200209FCD /* IMFamilyDataFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyDataFetcher.m; sourceTree = "<group>"; };
 		F2B1B2F419A37BF000209FCD /* IMMovementReviewTableVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementReviewTableVC.h; sourceTree = "<group>"; };
@@ -726,6 +742,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F288C35F19B5C5E500EE7948 /* AdSupport.framework in Frameworks */,
+				F288C35D19B5C5D500EE7948 /* CFNetwork.framework in Frameworks */,
+				F288C35B19B5C59100EE7948 /* libsqlite3.dylib in Frameworks */,
+				F288C35919B5C56900EE7948 /* Accounts.framework in Frameworks */,
+				F288C35719B5C55800EE7948 /* libz.1.1.3.dylib in Frameworks */,
+				F288C35519B5C54300EE7948 /* MobileCoreServices.framework in Frameworks */,
+				ACE6947E17F15A780095F90C /* QuartzCore.framework in Frameworks */,
+				F288C35319B5C51F00EE7948 /* Social.framework in Frameworks */,
+				F288C35119B5C43E00EE7948 /* Parse.framework in Frameworks */,
 				ACB2901418221375000322B4 /* libwsq.a in Frameworks */,
 				AC44670B1803EA1C00534428 /* QuickLook.framework in Frameworks */,
 				ACB2900718221375000322B4 /* libcblas.a in Frameworks */,
@@ -749,7 +774,6 @@
 				ACB2900E18221375000322B4 /* libjpegb.a in Frameworks */,
 				ACE6948017F15A800095F90C /* CoreImage.framework in Frameworks */,
 				ACB2900C18221375000322B4 /* libimage.a in Frameworks */,
-				ACE6947E17F15A780095F90C /* QuartzCore.framework in Frameworks */,
 				ACB2901318221375000322B4 /* libutil.a in Frameworks */,
 				ACE6947C17F15A700095F90C /* ExternalAccessory.framework in Frameworks */,
 				ACE6947A17F15A690095F90C /* MapKit.framework in Frameworks */,
@@ -898,6 +922,14 @@
 		AC807D3017F14F58000988D0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F288C35E19B5C5E500EE7948 /* AdSupport.framework */,
+				F288C35C19B5C5D500EE7948 /* CFNetwork.framework */,
+				F288C35A19B5C59100EE7948 /* libsqlite3.dylib */,
+				F288C35819B5C56900EE7948 /* Accounts.framework */,
+				F288C35619B5C55800EE7948 /* libz.1.1.3.dylib */,
+				F288C35419B5C54300EE7948 /* MobileCoreServices.framework */,
+				F288C35219B5C51F00EE7948 /* Social.framework */,
+				F288C35019B5C43E00EE7948 /* Parse.framework */,
 				AC44670A1803EA1C00534428 /* QuickLook.framework */,
 				ACE694F017F199AE0095F90C /* GoogleMaps.bundle */,
 				ACE694EE17F199770095F90C /* GoogleMaps.framework */,
@@ -1253,16 +1285,16 @@
 		ACE692C317F159AC0095F90C /* Generated Classes */ = {
 			isa = PBXGroup;
 			children = (
-				F2B1B2EE19A1F68300209FCD /* FamilyRegisterEntry.h */,
-				F2B1B2EF19A1F68300209FCD /* FamilyRegisterEntry.m */,
-				F2B1B2EB19A1F68300209FCD /* FamilyRegister.h */,
-				F2B1B2EC19A1F68300209FCD /* FamilyRegister.m */,
+				F288C34D19B5761900EE7948 /* FamilyRegister.h */,
+				F288C34E19B5761900EE7948 /* FamilyRegister.m */,
+				F288C34A19B5761900EE7948 /* FamilyData.h */,
+				F288C34B19B5761900EE7948 /* FamilyData.m */,
+				F288C34719B5761800EE7948 /* FamilyRegisterEntry.h */,
+				F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */,
 				ACCBD25E181E27DC00CC3EDE /* RegistrationBiometric.h */,
 				ACCBD25F181E27DC00CC3EDE /* RegistrationBiometric.m */,
 				ACCBD24F181E27DB00CC3EDE /* RegistrationBioData.h */,
 				ACCBD250181E27DB00CC3EDE /* RegistrationBioData.m */,
-				AC6D728C18068C1200E5F845 /* FamilyData.h */,
-				AC6D728D18068C1200E5F845 /* FamilyData.m */,
 				AC6D728918068C1100E5F845 /* Child.h */,
 				AC6D728A18068C1100E5F845 /* Child.m */,
 				ACE692C417F159AC0095F90C /* Accommodation.h */,
@@ -1822,6 +1854,7 @@
 				ACE693D117F159E20095F90C /* PDKeychainBindingsController.m in Sources */,
 				ACE6934117F159BA0095F90C /* IMPhotoCell.m in Sources */,
 				ACE6930917F159AC0095F90C /* Biometric.m in Sources */,
+				F288C34919B5761800EE7948 /* FamilyRegisterEntry.m in Sources */,
 				ACE6931A17F159AC0095F90C /* Port.m in Sources */,
 				AC807D4017F14F58000988D0 /* main.m in Sources */,
 				ACE694CD17F17B4F0095F90C /* UIColor+IMMS.m in Sources */,
@@ -1852,13 +1885,13 @@
 				F9C6042818E6D05000D9A450 /* IMRegistrationFetcher.m in Sources */,
 				ACE6931917F159AC0095F90C /* PoliceOfficer.m in Sources */,
 				ACE6931617F159AC0095F90C /* Migrant.m in Sources */,
-				F2B1B2ED19A1F68300209FCD /* FamilyRegister.m in Sources */,
 				ACE6933D17F159BA0095F90C /* IMCollectionViewController.m in Sources */,
 				ACE6930117F159AC0095F90C /* IomOfficer+Extended.m in Sources */,
 				ACB28FC2182211D9000322B4 /* IMBiometricEngine.m in Sources */,
 				ACE6930817F159AC0095F90C /* BioData.m in Sources */,
 				ACE6945B17F159E80095F90C /* IMIOMOfficerVC.m in Sources */,
 				ACE6934617F159BA0095F90C /* IMTableViewCell.m in Sources */,
+				F288C34C19B5761900EE7948 /* FamilyData.m in Sources */,
 				AC14E0A1181F6F4400EB356B /* IMEditRegistrationVC.m in Sources */,
 				ACE6944C17F159E80095F90C /* IMEditInterceptionVC.m in Sources */,
 				ACE6931517F159AC0095F90C /* IomOfficer.m in Sources */,
@@ -1879,7 +1912,6 @@
 				ACE6930B17F159AC0095F90C /* DetentionLocation.m in Sources */,
 				F2B1B2F619A37BF000209FCD /* IMMovementReviewTableVC.m in Sources */,
 				ACE6934817F159BA0095F90C /* IMTextField.m in Sources */,
-				AC6D728E18068C1200E5F845 /* FamilyData.m in Sources */,
 				ACE6929317F1599A0095F90C /* IMInterceptionLocationFetcher.m in Sources */,
 				F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */,
 				ACE6929D17F1599A0095F90C /* IMLocationManager.m in Sources */,
@@ -1918,6 +1950,7 @@
 				ACE694DD17F18DC30095F90C /* UIImage+ImageEffects.m in Sources */,
 				ACB2900218221375000322B4 /* Bozorth3.m in Sources */,
 				AC4FE85018153A8A0043111B /* IMAccommodationMapVC.m in Sources */,
+				F288C34F19B5761900EE7948 /* FamilyRegister.m in Sources */,
 				ACE6930317F159AC0095F90C /* PoliceOfficer+Extended.m in Sources */,
 				ACA7C64C182162C100C560FD /* Interception+Extended.m in Sources */,
 				ACE6945E17F159E80095F90C /* IMLoginViewController.m in Sources */,
@@ -1936,7 +1969,6 @@
 				F2B09A27194EA07F00289E8F /* DataLoadingOperation.m in Sources */,
 				ACE6945917F159E80095F90C /* IMInterceptionMapVC.m in Sources */,
 				ACE6946117F159E80095F90C /* IMRootViewController.m in Sources */,
-				F2B1B2F019A1F68300209FCD /* FamilyRegisterEntry.m in Sources */,
 				ACE6929E17F1599A0095F90C /* IMGPlace.m in Sources */,
 				ACE6930017F159AC0095F90C /* IomOffice+Extended.m in Sources */,
 				ACE6930E17F159AC0095F90C /* Interception.m in Sources */,

@@ -19,6 +19,7 @@
 #import "Migrant+Extended.h"
 #import "UIImage+ImageUtils.h"
 #import "Registration+Export.h"
+#import "IMConstants.h"
 
 
 @interface IMFamilyListVC () <DataProviderDelegate,MBProgressHUDDelegate,UIPopoverControllerDelegate>
@@ -28,7 +29,8 @@
 @property (nonatomic, strong) IMMigrantFilterDataVC * filterChooser;
 @property (nonatomic, strong) UIPopoverController *popover;
 //@property (nonatomic,strong)  UIBarButtonItem *itemSelected;
-@property (nonatomic,strong) NSMutableArray *migrants;
+@property (nonatomic,strong) NSMutableArray *deletedMigrants;
+
 
 
 @end
@@ -80,8 +82,16 @@
     //set to no until user add migrant
     self.save.enabled = NO;
     self.maxSelection = 1;
+//    self.useStaticData = NO;
 }
 
+- (void)setUseStaticData:(BOOL)useStaticData
+{
+    if (_useStaticData != useStaticData) {
+        _useStaticData = useStaticData;
+         [self reloadData];
+    }
+}
 - (void)setMaxSelection:(int)maxSelection{
     if (maxSelection > _maxSelection) {
         _maxSelection = maxSelection;
@@ -89,8 +99,36 @@
     }
 }
 
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMDeleteItems_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        //start deleting
+        //send data to caller
+        if (self.self.onMultiSelect) {
+            self.onMultiSelect(self.deletedMigrants);
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+    }
+    
+    
+}
+
 -(void)onSave
 {
+    if (self.useStaticData) {
+        //show warning alert
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete Data"
+                                                        message:@"Are you sure to delete this items?"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"Yes", nil];
+        alert.tag = IMDeleteItems_Tag;
+        [alert show];
+        
+        return;
+    }
+    //send data to caller
     if (self.self.onMultiSelect) {
         self.onMultiSelect(self.migrants);
         [self dismissViewControllerAnimated:YES completion:nil];
@@ -189,23 +227,32 @@
 
         self.reloadingData = YES;
         
-        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
-        if (self.basePredicate) {
-            request.predicate = self.basePredicate;
+        if (!self.useStaticData) {
+            //case use data from database
+            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
+            if (self.basePredicate) {
+                request.predicate = self.basePredicate;
+            }else {
+                //default
+                request.predicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
+            }
+            request.returnsObjectsAsFaults = YES;
+            NSError *error;
+            NSUInteger total = [context countForFetchRequest:request error:&error];
+            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:request.predicate];
+            
+            self.dataProvider = Nil;
+            [self setDataProvider:dataProvider];
+            
+            //        [_HUD hideUsingAnimation:YES];
         }else {
-            //default
-            request.predicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
+//            if ([self isViewLoaded]) {
+                [self.collectionView reloadData];
+//            }
+
         }
-        request.returnsObjectsAsFaults = YES;
-        NSError *error;
-        NSUInteger total = [context countForFetchRequest:request error:&error];
-        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:request.predicate];
-        
-        self.dataProvider = Nil;
-        [self setDataProvider:dataProvider];
-        
-//        [_HUD hideUsingAnimation:YES];
+    
        
         self.reloadingData = NO;
         
@@ -241,7 +288,7 @@
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     [collectionView.collectionViewLayout invalidateLayout];
-    return self.dataProvider.dataObjects.count;
+    return self.useStaticData?self.migrants.count:self.dataProvider.dataObjects.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -249,7 +296,13 @@
     static NSString *cellIdentifier = @"IMRegistrationCollectionViewCell";
     IMRegistrationCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    id data = self.dataProvider.dataObjects[indexPath.row];
+    id data = self.useStaticData?self.migrants[indexPath.row]:self.dataProvider.dataObjects[indexPath.row];
+    
+    if ([collectionView.indexPathsForSelectedItems containsObject:indexPath]) {
+        [collectionView selectItemAtIndexPath:indexPath animated:FALSE scrollPosition:UICollectionViewScrollPositionNone];
+        // Select Cell
+    }
+    
     [self _configureCell:cell forDataObject:data animated:NO];
     cell.buttonUpload.tag = indexPath.row;
     // load photo images in the background
@@ -262,7 +315,7 @@
             if ([weakSelf.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
                 IMRegistrationCollectionViewCell *cell =
                 (IMRegistrationCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
-                id data = self.dataProvider.dataObjects[indexPath.row];
+                id data = self.useStaticData?self.migrants[indexPath.row]:self.dataProvider.dataObjects[indexPath.row];
                 [self _configureCell:cell forDataObject:data animated:NO];
                 cell.buttonUpload.tag = indexPath.row;
             }
@@ -318,6 +371,7 @@
             //case multiple selection, then mark all data that already selected
             for (Migrant * tmp in self.migrants) {
                 if ([tmp.registrationNumber isEqualToString:migrant.registrationNumber]) {
+                    
                     CGRect rect = CGRectMake(290, 120, 30, 30);
                     IMSSCheckMark * checkmark = [[IMSSCheckMark alloc] initWithFrame:rect];
                     checkmark.checked = TRUE;
@@ -325,7 +379,7 @@
                     cell.selectedBackgroundView = checkmark;
                     cell.selectedBackgroundView.frame = rect;
                     cell.selectedBackgroundView.backgroundColor = [UIColor clearColor];
-                    
+                    [self.collectionView setNeedsDisplay];
                 }
             }
             
@@ -425,7 +479,7 @@
         
         [collectionView setNeedsDisplay];
         // Determine the selected items by using the indexPath
-        Migrant *migrant = self.dataProvider.dataObjects[indexPath.row];
+        Migrant *migrant = self.useStaticData?self.migrants[indexPath.row]:self.dataProvider.dataObjects[indexPath.row];
         // implement multiple selection for collection view
 
         //set Yes, cause user already add the migrant data
@@ -439,6 +493,17 @@
             return;
         }
         
+        if (self.useStaticData) {
+            //remove data
+            //remove migrants from array
+//            [self.migrants removeObject:migrant];
+            if (!self.deletedMigrants) {
+                self.deletedMigrants = [NSMutableArray array];
+            }
+            //add migrants to array
+            [self.deletedMigrants addObject:migrant];
+        }else{
+        
         //set check for multi selection
         if ([self.migrants count] < self.maxSelection) {
        
@@ -450,7 +515,7 @@
             [collectionView deselectItemAtIndexPath:indexPath animated:NO];
         }
         
-       
+        }
         
     }else {
         @try {
@@ -481,12 +546,12 @@
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath{
     
     // Determine the selected items by using the indexPath
-    Migrant *migrant = self.dataProvider.dataObjects[indexPath.row];
+    Migrant *migrant = self.useStaticData?self.migrants[indexPath.row]:self.dataProvider.dataObjects[indexPath.row];
     // implement multiple selection for collection view
-    
+
     //set check
     //remove migrants from array
-    [self.migrants removeObject:migrant];
+        self.useStaticData?[self.deletedMigrants removeObject:migrant]:[self.migrants removeObject:migrant];
     
     static NSString *cellIdentifier = @"IMRegistrationCollectionViewCell";
     IMRegistrationCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
@@ -495,7 +560,7 @@
     cell.backgroundView = Nil;
     
     // user can not move to next page if the migrant data is empty
-    if (![self.migrants count] && self.save.enabled) {
+    if (self.useStaticData?![self.deletedMigrants count]:![self.migrants count] && self.save.enabled) {
         self.save.enabled = NO;
     }
 }
@@ -503,9 +568,9 @@
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     @try {
-        if (indexPath.row < [self.dataProvider.dataObjects count] ) {
-            if ([self.dataProvider.dataObjects[indexPath.row] isKindOfClass:[Migrant class]]) {
-                Migrant *migrant = self.dataProvider.dataObjects[indexPath.row];
+        if (indexPath.row < self.useStaticData?[self.migrants count]:[self.dataProvider.dataObjects count] ) {
+            if (self.useStaticData?[self.migrants[indexPath.row] isKindOfClass:[Migrant class]]:[self.dataProvider.dataObjects[indexPath.row] isKindOfClass:[Migrant class]]) {
+                Migrant *migrant = self.useStaticData?self.migrants[indexPath.row] :self.dataProvider.dataObjects[indexPath.row];
                 
                 if (migrant) {
                     [migrant didTurnIntoFault];

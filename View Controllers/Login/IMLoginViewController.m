@@ -12,6 +12,8 @@
 #import "IMAuthManager.h"
 #import "NSDate+Relativity.h"
 #import "ServerSettingViewController.h"
+#import "IMConstants.h"
+#import "Parse/Parse.h"
 
 
 @interface IMLoginViewController ()<UITextFieldDelegate>
@@ -27,11 +29,100 @@
 - (IBAction)forgotPassword
 {
     
+    UIAlertView * forgotPassword=[[UIAlertView alloc] initWithTitle:@"Forgot Password"      message:@"Please enter your email id" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ok", nil];
+    forgotPassword.alertViewStyle=UIAlertViewStylePlainTextInput;
+    [forgotPassword textFieldAtIndex:0].delegate=self;
+    forgotPassword.tag = IMForgotPassword_Tag;
+    [forgotPassword show];
+    
 }
+
+
 
 - (IBAction)callAssistance
 {
+     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://2135554321"]];
+    UIAlertView *display;
+    display=[[UIAlertView alloc] initWithTitle:@"Call for assistance" message:@"Please call IOM representative for assistance" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+    [display show];
+}
+
+
+- (BOOL)validateEmail:(NSString *)emailStr {
+    NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:emailStr];
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMForgotPassword_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        NSString *femailId=[alertView textFieldAtIndex:0].text;
+        if ([femailId isEqualToString:@""] || ![self validateEmail:[alertView textFieldAtIndex:0].text]) {
+            UIAlertView *display;
+            display=[[UIAlertView alloc] initWithTitle:@"Email" message:@"Please enter valid E-mail for resetting password" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+            [display show];
+            
+        }else{
+            @try {
+                
+                //show loading view
+                [self showLoadingView];
+                
+                IMHTTPClient *client = [IMHTTPClient sharedClient];
+                NSMutableDictionary *params = [NSMutableDictionary dictionary];
+                NSString * path = [IMConstants getIMConstantKey:CONST_IMForgotPassword];
+                    [params setObject:femailId forKey:@"email"];
+
+                [client postJSONWithPath:path
+                              parameters:params
+                                 success:^(NSDictionary *jsonData, int statusCode){
+                                       [self hideLoadingView];
+                                 UIAlertView *display;
+                                     NSLog(@"Upload Success");
+                                     NSLog(@"return JSON : %@",[jsonData description]);
+                                      display=[[UIAlertView alloc] initWithTitle:@"Password email" message:@"Please check your email for resetting the password" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                             [display show];
+                                     
+                                 }
+                                 failure:^(NSDictionary *jsonData, NSError *error, int statusCode){
+                                       [self hideLoadingView];
+                                     UIAlertView *display;
+                                     NSLog(@"Upload Fail : %@",[error description]);
+                                     NSLog(@"return JSON : %@",[jsonData description]);
+                                   display=[[UIAlertView alloc] initWithTitle:@"Email" message:@"Email doesn't exists in our database" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles: nil];
+                                     [display show];
+                                 }];
+
+                
+//                [PFUser requestPasswordResetForEmailInBackground:femailId block:^(BOOL succeeded, NSError *error) {
+//                    UIAlertView *display;
+//                    if(succeeded){
+//                        display=[[UIAlertView alloc] initWithTitle:@"Password email" message:@"Please check your email for resetting the password" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+//                        
+//                    }else{
+//                        display=[[UIAlertView alloc] initWithTitle:@"Email" message:@"Email doesn't exists in our database" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles: nil];
+//                    }
+//                    [display show];
+//                }];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"Exeption on alertView : %@",[exception description]);
+            }
+            
+          
+        }
+        
+        
+        
+    }
     
+}
+
+- (void) ExpiredToken{
+//get expired notification, then hide loading view
+    [self hideLoadingView];
 }
 
 - (IBAction)settings
@@ -61,7 +152,7 @@
 - (IBAction)login
 {
     if (!self.textEmail.text.length || !self.textPassword.text.length) {
-        [self showAlertWithTitle:@"" message:@"Please fill out email and password before signing in."];
+        [self showAlertWithTitle:@"" message:@"Please input email and password before signing in."];
         return;
     }
     
@@ -168,6 +259,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ExpiredToken) name:IMAccessExpiredCloseNotification object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

@@ -18,6 +18,7 @@
 #import "FamilyRegisterEntry+Extended.h"
 #import "IMDBManager.h"
 #import "IMConstants.h"
+#import "UIImage+ImageUtils.h"
 
 
 typedef enum : NSUInteger {
@@ -29,7 +30,7 @@ typedef enum : NSUInteger {
     section_grand_mother,
     section_childs,
     section_other_extended_member
-    
+
 } section_type;
 
 typedef enum : NSUInteger {
@@ -88,6 +89,7 @@ typedef enum : NSUInteger {
 {
     [super viewDidLoad];
     self.isHeadOfFamilyFemale = NO;
+
     // Do any additional setup after loading the view.
     if (!self.childData) {
         self.childData = [NSMutableArray array];
@@ -180,7 +182,7 @@ typedef enum : NSUInteger {
                         NSUInteger item = [items indexOfObject:entry.type];
                         NSPredicate * tmp = Nil;
                         switch (item) {
-                            case 0:{
+                            case section_head_of_family:{
                                 // HEAD_OF_FAMILY
                                 tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
                                 if (!self.predicateHeadOfFamily) {
@@ -190,7 +192,7 @@ typedef enum : NSUInteger {
                                 }
                                 break;
                             }
-                            case 4 :{
+                            case section_spouse :{
                                 //SPOUSE
                                 tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
                                 if (!self.predicateSpouse) {
@@ -200,7 +202,7 @@ typedef enum : NSUInteger {
                                 }
                                 break;
                             }
-                            case 5:{
+                            case section_childs:{
                                 //CHILD
                                 tmp = [NSPredicate predicateWithFormat:@"registrationNumber != %@",entry.migrantId];
                                 if (!self.predicateChilds) {
@@ -210,10 +212,10 @@ typedef enum : NSUInteger {
                                 }
                                 break;
                             }
-                            case 1:// GRAND_FATHER
-                            case 2:// GRAND_MOTHER
-                            case 3://GUARDIAN
-                            case 6://OTHER_EXTENDED_MEMBER
+                            case section_grand_father:// GRAND_FATHER
+                            case section_grand_mother:// GRAND_MOTHER
+                            case section_guadian://GUARDIAN
+                            case section_other_extended_member://OTHER_EXTENDED_MEMBER
                             default:
                                 //only show registered entry type
                                 break;
@@ -291,6 +293,19 @@ typedef enum : NSUInteger {
         
         // Show the HUD while the provided method executes in a new thread
         [_hud showWhileExecuting:@selector(uploading) onTarget:self withObject:nil animated:YES];
+    }else if (alertView.tag == IMAlertUploadSuccess_Tag){
+        //         finish blocking
+        
+        
+        //         finish blocking
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+        [self.sideMenuDelegate disableMenu:NO];
+        
+        //reset flag
+        self.next = TRUE;
+        
+        //close view
+        [self dismissViewControllerAnimated:YES completion:Nil];
     }
     
     //         finish blocking
@@ -299,6 +314,8 @@ typedef enum : NSUInteger {
     
     //reset flag
     self.next = TRUE;
+   
+    
     
 }
 
@@ -367,7 +384,10 @@ typedef enum : NSUInteger {
     [client postJSONWithPath:path
                   parameters:params
                      success:^(NSDictionary *jsonData, int statusCode){
-                         [self showAlertWithTitle:@"Upload Success" message:nil];
+//                         [self showAlertWithTitle:@"Upload Success" message:nil];
+                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Upload Success" message:Nil delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                         alert.tag = IMAlertUploadSuccess_Tag;
+                         [alert show];
                          NSLog(@"Upload Success");
                          NSLog(@"return JSON : %@",[jsonData description]);
                          self.uploadStatus = self.next = YES;
@@ -555,7 +575,7 @@ typedef enum : NSUInteger {
 
 - (void) headerTap:(NSInteger)section
 {
-    NSLog(@"section : %i",section);
+    NSLog(@"section : %li",(long)section);
     
     //forward function
     [self singleTap:[NSIndexPath indexPathForRow:0 inSection:section]];
@@ -584,7 +604,7 @@ typedef enum : NSUInteger {
     }else if (section == section_guadian){
         headerView.labelTitle.text = @"Guardian";
     }else if (section == section_childs){
-        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:@"Childs (%i)",[self.childData count]]:@"Childs";
+        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:@"Childs (%lu)",(unsigned long)[self.childData count]]:@"Childs";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -592,6 +612,9 @@ typedef enum : NSUInteger {
         [headerView.buttonAction setTitle:Nil forState:UIControlStateNormal];
         [headerView.buttonAction setTranslatesAutoresizingMaskIntoConstraints:NO];
         [headerView.contentView addSubview:headerView.buttonAction];
+        
+        
+        
         
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeLeft multiplier:1 constant:20]];
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAction attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:-20]];
@@ -601,8 +624,22 @@ typedef enum : NSUInteger {
         
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
         headerView.buttonAction.tag = section_childs;
+        
+        if ([self.childData count]) {
+            headerView.buttonAdd = [UIButton buttonWithType:UIButtonTypeCustom];
+            [headerView.buttonAdd setImage:[[UIImage imageNamed:@"icon-delete"] imageMaskWithColor:[UIColor IMMagenta]] forState:UIControlStateNormal];
+            [headerView.buttonAdd setTitle:Nil forState:UIControlStateNormal];
+            [headerView.buttonAdd setTranslatesAutoresizingMaskIntoConstraints:NO];
+            [headerView.contentView addSubview:headerView.buttonAdd];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAdd attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAction attribute:NSLayoutAttributeRight multiplier:1 constant:-40]];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAdd attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+            [headerView.buttonAdd addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
+            headerView.buttonAdd.tag = section_childs;
+        }
+        
+        
     }else if (section == section_grand_father){
-        headerView.labelTitle.text = [self.grandFather count]?[NSString stringWithFormat:@"Grand Father (%i)",[self.grandFather count]]:@"Grand Father";
+        headerView.labelTitle.text = [self.grandFather count]?[NSString stringWithFormat:@"Grand Father (%lu)",(unsigned long)[self.grandFather count]]:@"Grand Father";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = section_grand_father;
@@ -617,8 +654,21 @@ typedef enum : NSUInteger {
         
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([self.grandFather count]) {
+            headerView.buttonAdd = [UIButton buttonWithType:UIButtonTypeCustom];
+            [headerView.buttonAdd setImage:[[UIImage imageNamed:@"icon-delete"] imageMaskWithColor:[UIColor IMMagenta]] forState:UIControlStateNormal];
+            [headerView.buttonAdd setTitle:Nil forState:UIControlStateNormal];
+            [headerView.buttonAdd setTranslatesAutoresizingMaskIntoConstraints:NO];
+            [headerView.contentView addSubview:headerView.buttonAdd];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAdd attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAction attribute:NSLayoutAttributeRight multiplier:1 constant:-40]];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAdd attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+            [headerView.buttonAdd addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
+            headerView.buttonAdd.tag = section_grand_father;
+        }
+        
     }else if (section == section_grand_mother){
-        headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat:@"Grand Mother (%i)",[self.grandMother count]]:@"Grand Mother";
+        headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat:@"Grand Mother (%lu)",(unsigned long)[self.grandMother count]]:@"Grand Mother";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = section_grand_mother;
@@ -633,8 +683,20 @@ typedef enum : NSUInteger {
         
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([self.grandMother count]) {
+            headerView.buttonAdd = [UIButton buttonWithType:UIButtonTypeCustom];
+            [headerView.buttonAdd setImage:[[UIImage imageNamed:@"icon-delete"] imageMaskWithColor:[UIColor IMMagenta]] forState:UIControlStateNormal];
+            [headerView.buttonAdd setTitle:Nil forState:UIControlStateNormal];
+            [headerView.buttonAdd setTranslatesAutoresizingMaskIntoConstraints:NO];
+            [headerView.contentView addSubview:headerView.buttonAdd];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAdd attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAction attribute:NSLayoutAttributeRight multiplier:1 constant:-40]];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAdd attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+            [headerView.buttonAdd addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
+            headerView.buttonAdd.tag = section_grand_mother;
+        }
     }else if (section == section_other_extended_member){
-        headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat:@"Other Extended Member (%i)",[self.others count]]:@"Other Extended Member";
+        headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat:@"Other Extended Member (%lu)",(unsigned long)[self.others count]]:@"Other Extended Member";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -650,6 +712,18 @@ typedef enum : NSUInteger {
         [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:headerView.contentView attribute:NSLayoutAttributeBottom multiplier:1 constant:-10]];
         [headerView.buttonAction addTarget:self action:@selector(addMoreChild:) forControlEvents:UIControlEventTouchUpInside];
         headerView.buttonAction.tag = section_other_extended_member;
+        
+        if ([self.others count]) {
+            headerView.buttonAdd = [UIButton buttonWithType:UIButtonTypeCustom];
+            [headerView.buttonAdd setImage:[[UIImage imageNamed:@"icon-delete"] imageMaskWithColor:[UIColor IMMagenta]] forState:UIControlStateNormal];
+            [headerView.buttonAdd setTitle:Nil forState:UIControlStateNormal];
+            [headerView.buttonAdd setTranslatesAutoresizingMaskIntoConstraints:NO];
+            [headerView.contentView addSubview:headerView.buttonAdd];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.buttonAdd attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAction attribute:NSLayoutAttributeRight multiplier:1 constant:-40]];
+            [headerView.contentView addConstraint:[NSLayoutConstraint constraintWithItem:headerView.labelTitle attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:headerView.buttonAdd attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+            [headerView.buttonAdd addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
+            headerView.buttonAdd.tag = section_other_extended_member;
+        }
     }
     
     return headerView;
@@ -732,12 +806,28 @@ typedef enum : NSUInteger {
         entry = [ self.others objectAtIndex:index];
         tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
     }
-    
+    UIImage * image = Nil;
+    //update photo path
+    if (tmp) {
+        image = tmp.biometric.photographImage;
+    }
     switch (indexPath.section) {
         case section_head_of_family:{
             
             if (self.familyRegister && self.familyRegister.photograph) {
                 //add all photo
+                
+                //check if the path has change
+                if (![[NSFileManager defaultManager] fileExistsAtPath:self.familyRegister.photograph] && self.familyRegister.photograph) {
+                    //case has change then update the path before show
+                    tmp = Nil;
+                    tmp = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
+                    if (tmp && tmp.biometric.photograph) {
+                         image = tmp.biometric.photographImage;
+                        //add all photo
+                        self.familyRegister.photograph = tmp.biometric.photograph;
+                    }
+                }
                 [self.previewingPhotos addObject:self.familyRegister.photograph];
             }
             break;
@@ -749,8 +839,10 @@ typedef enum : NSUInteger {
                 if ([entry.type isEqualToString:FAMILY_TYPE_SPOUSE]) {
                     tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
                     if (tmp && tmp.biometric.photograph) {
+                         image = tmp.biometric.photographImage;
                         //add all photo
                         [self.previewingPhotos addObject:tmp.biometric.photograph];
+                        break;
                     }
                 }
             }
@@ -764,53 +856,10 @@ typedef enum : NSUInteger {
                 if ([entry.type isEqualToString:FAMILY_TYPE_GUARDIAN]) {
                     tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
                     if (tmp && tmp.biometric.photograph) {
+                         image = tmp.biometric.photographImage;
                         //add all photo
                         [self.previewingPhotos addObject:tmp.biometric.photograph];
-                    }
-                }
-            }
-            
-            break;
-        }
-        case section_grand_mother:{
-            //get section_grand_mother
-            tmp = Nil;
-            for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
-                if ([entry.type isEqualToString:FAMILY_TYPE_GRAND_MOTHER]) {
-                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
-                    if (tmp && tmp.biometric.photograph) {
-                        //add all photo
-                        [self.previewingPhotos addObject:tmp.biometric.photograph];
-                    }
-                }
-            }
-            
-            break;
-        }
-        case section_grand_father:{
-            //get section_grand_father
-            tmp = Nil;
-            for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
-                if ([entry.type isEqualToString:FAMILY_TYPE_GRAND_FATHER]) {
-                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
-                    if (tmp && tmp.biometric.photograph) {
-                        //add all photo
-                        [self.previewingPhotos addObject:tmp.biometric.photograph];
-                    }
-                }
-            }
-            
-            break;
-        }
-        case section_other_extended_member:{
-            //get section_other_extended_member
-            tmp = Nil;
-            for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
-                if ([entry.type isEqualToString:FAMILY_TYPE_OTHER_EXTENDED_MEMBER]) {
-                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
-                    if (tmp && tmp.biometric.photograph) {
-                        //add all photo
-                        [self.previewingPhotos addObject:tmp.biometric.photograph];
+                        break;
                     }
                 }
             }
@@ -818,18 +867,30 @@ typedef enum : NSUInteger {
             break;
         }
         case section_childs :
+        case section_other_extended_member:
+        case section_grand_father:
+        case section_grand_mother:
         default:{
-            //get childs
-            if (tmp && tmp.biometric.photograph) {
-                //add all photo
-                [self.previewingPhotos addObject:tmp.biometric.photograph];
-            }
-            //only show defined section
+            //get section_grand_mother
+                    if (tmp && tmp.biometric.photograph) {
+                        //add all photo
+                        [self.previewingPhotos addObject:tmp.biometric.photograph];
+                    }    
             break;
         }
     }
     
-    
+    if (![self.previewingPhotos count]) {
+        //there is no photo to show
+        //release memory
+        if (tmp) {
+            tmp = Nil;
+        }
+        if (entry) {
+            entry = Nil;
+        }
+        return;
+    }
     
     QLPreviewController *previewController = [[QLPreviewController alloc] init];
     previewController.delegate = self;
@@ -839,8 +900,8 @@ typedef enum : NSUInteger {
         previewController.view.tintColor = [UIColor IMMagenta];
         previewController.view.backgroundColor = [UIColor blackColor];
     }];
-    
-    
+
+
     //release memory
     if (tmp) {
         tmp = Nil;
@@ -917,33 +978,33 @@ typedef enum : NSUInteger {
                 cell.userInteractionEnabled = NO;
             }else{
                 cell.userInteractionEnabled = YES;
-            for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
-                if ([entry.type isEqualToString:FAMILY_TYPE_SPOUSE]) {
-                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
-                    if (tmp) {
-                        break;
+                for (FamilyRegisterEntry * entry in self.familyRegister.familyEntryID) {
+                    if ([entry.type isEqualToString:FAMILY_TYPE_SPOUSE]) {
+                        tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
+                        if (tmp) {
+                            break;
+                        }
                     }
                 }
-            }
-            if (indexPath.row == 0) {
-                cell.textLabel.text = @"Registration Number";
-                cell.detailTextLabel.text = tmp.registrationNumber;
-                
-            }else if (indexPath.row ==1){
-                
-                cell.textLabel.text = @"Name";
-                cell.detailTextLabel.text = [tmp fullname];
-                if (tmp.biometric.photographImageThumbnail) {
-                    cell.imageView.image = tmp.biometric.photographImageThumbnail;
+                if (indexPath.row == 0) {
+                    cell.textLabel.text = @"Registration Number";
+                    cell.detailTextLabel.text = tmp.registrationNumber;
                     
-                    if (cell.imageView.image) {
-                        cell.imageView.userInteractionEnabled = YES;
+                }else if (indexPath.row ==1){
+                    
+                    cell.textLabel.text = @"Name";
+                    cell.detailTextLabel.text = [tmp fullname];
+                    if (tmp.biometric.photographImageThumbnail) {
+                        cell.imageView.image = tmp.biometric.photographImageThumbnail;
+                        
+                        if (cell.imageView.image) {
+                            cell.imageView.userInteractionEnabled = YES;
+                        }
+                        
                     }
-                    
                 }
-            }
-            
-            break;
+                
+                break;
             }
         }
         case section_guadian:{
@@ -1023,7 +1084,7 @@ typedef enum : NSUInteger {
         }
         
         //get predicate
-//        list.basePredicate = [self getPredicate:indexPath.section];
+        //        list.basePredicate = [self getPredicate:indexPath.section];
         [list setBasePredicate:[self getPredicate:indexPath.section]];
         
         list.onSelect = ^(Migrant *migrant)
@@ -1045,9 +1106,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1069,9 +1132,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1092,9 +1157,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1114,9 +1181,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1137,9 +1206,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1162,9 +1233,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1188,9 +1261,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1223,7 +1298,6 @@ typedef enum : NSUInteger {
 }
 
 - (void)doubleTap:(NSIndexPath *)indexPath {
-    NSLog(@"indexPath.row : %i",indexPath.row);
     
     [self performSelector:@selector(showPhotoPreview:) withObject: indexPath];
     
@@ -1365,7 +1439,7 @@ typedef enum : NSUInteger {
     
 }
 
-- (NSPredicate *)getPredicate:(section_type) section{
+- (NSPredicate *)getPredicate:(NSInteger) section{
     NSPredicate *tmp = Nil;
     @try {
         
@@ -1424,15 +1498,133 @@ typedef enum : NSUInteger {
     return tmp;
 }
 
+- (void)deleteItem:(UIButton *)sender
+{
+    @try {
+        NSInteger maxSelection = [self getMaxSelection:sender.tag];
+        
+        //show migrant list
+        UICollectionViewFlowLayout *aFlowLayout = [[UICollectionViewFlowLayout alloc] init];
+        Migrant * tmp = Nil;
+        [aFlowLayout setItemSize:CGSizeMake(320, 150)];
+        [aFlowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        IMFamilyListVC *list = [[IMFamilyListVC alloc] initWithCollectionViewLayout:aFlowLayout];
+        list.maxSelection = maxSelection;
+        
+        if (!list.migrants) {
+            list.migrants = [NSMutableArray array];
+        }
+        
+        //set static data
+        switch (sender.tag) {
+            case section_childs:{
+                NSLog(@"sender : %ld",(long)sender.tag);
+                //get all migrant data, then copy it
+                for (FamilyRegisterEntry *entry in self.childData) {
+                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
+                    [list.migrants addObject:tmp];
+                }
+                break;
+            }
+            case section_other_extended_member:{
+                NSLog(@"sender : %ld",(long)sender.tag);
+                //get all migrant data, then copy it
+                for (FamilyRegisterEntry *entry in self.others) {
+                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
+                    [list.migrants addObject:tmp];
+                }
+                break;
+            }
+            case section_grand_father:{
+                NSLog(@"sender : %ld",(long)sender.tag);
+                //get all migrant data, then copy it
+                for (FamilyRegisterEntry *entry in self.grandFather) {
+                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
+                    [list.migrants addObject:tmp];
+                }
+                break;
+            }
+            case section_grand_mother:{
+                NSLog(@"sender : %ld",(long)sender.tag);
+                //get all migrant data, then copy it
+                for (FamilyRegisterEntry *entry in self.grandMother) {
+                    tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
+                    [list.migrants addObject:tmp];
+                }
+                break;
+            }
+            default:
+                NSLog(@"sender : %ld - not implement yet !",(long)sender.tag);
+                break;
+        }
+        
+        list.onMultiSelect = ^(NSMutableArray *migrants)
+        {
+            NSMutableArray *tobeDelete = Nil;
+            if ([migrants count]) {
+                tobeDelete = [NSMutableArray array];
+            }
+            //update familyRegister data
+            for (Migrant * migrant in migrants) {
+                for (FamilyRegisterEntry *entry in self.familyRegister.familyEntryID) {
+                    if ([entry.migrantId isEqualToString:migrant.registrationNumber]) {
+                        //add to array to be remove later
+                        [tobeDelete addObject:entry];
+                    }
+                }
+            }
+            
+            if ([tobeDelete count]) {
+                
+                for (FamilyRegisterEntry *entry in tobeDelete) {
+                    //delete from data
+                    [self.familyRegister removeFamilyEntryIDObject:entry];
+                }
+                [self reloadData];
+            }
+            
+            
+        };
+        
+        list.useStaticData = YES;
+        
+        //show it
+        UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:list];
+        [self presentViewController:navCon animated:YES completion:nil];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on deleteItem : %@",[exception description]);
+    }
+}
+
+- (NSInteger)getMaxSelection:(NSInteger)section
+{
+    NSInteger maxSelection = 2;
+    
+    switch (section) {
+        case section_other_extended_member:
+        case section_childs:{
+            maxSelection = 100;
+            break;
+        }
+        case section_grand_father:
+        case section_grand_mother:{
+            maxSelection = 2;
+            break;
+        }
+        default:
+            maxSelection = 2;
+            break;
+    }
+    
+    return maxSelection;
+}
+
 - (void)addMoreChild:(UIButton *)sender
 {
     //add special predicate for child, origin migrant age must be greater than child , at minimum 15 years
-    //show migrant list
-    UICollectionViewFlowLayout *aFlowLayout = [[UICollectionViewFlowLayout alloc] init];
-    [aFlowLayout setItemSize:CGSizeMake(320, 150)];
-    [aFlowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
-    
-    IMFamilyListVC *list = [[IMFamilyListVC alloc] initWithCollectionViewLayout:aFlowLayout];
+    NSInteger maxSelection = [self getMaxSelection:sender.tag];
+    BOOL validation = YES;
     
     switch (sender.tag) {
         case section_childs:{
@@ -1441,7 +1633,11 @@ typedef enum : NSUInteger {
                 
                 return;
             }
-            list.maxSelection = 100;
+            if ([self.childData count] >= maxSelection) {
+                //validate input
+                validation = NO;
+                return;
+            }
             break;
         }
         case section_other_extended_member:{
@@ -1450,24 +1646,40 @@ typedef enum : NSUInteger {
                 
                 return;
             }
-            list.maxSelection = 100;
+            if ([self.others count] >= maxSelection) {
+                validation = NO;
+            }
             break;
         }
         case section_grand_father:{
-            list.maxSelection = 2;
+            if ([self.grandFather count] >= maxSelection) {
+                validation = NO;
+            }
             break;
         }
         case section_grand_mother:{
-            list.maxSelection = 2;
+            if ([self.grandMother count] >= maxSelection) {
+                validation = NO;
+            }
             break;
         }
         default:
-            list.maxSelection = 2;
             break;
     }
+    //validate data
+    if (!validation) {
+        [self showAlertWithTitle:@"Maximum Selection" message:[NSString stringWithFormat:@"You only can select %i for this section",maxSelection]];
+        return;
+    }
+    //show migrant list
+    UICollectionViewFlowLayout *aFlowLayout = [[UICollectionViewFlowLayout alloc] init];
+    [aFlowLayout setItemSize:CGSizeMake(320, 150)];
+    [aFlowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+    IMFamilyListVC *list = [[IMFamilyListVC alloc] initWithCollectionViewLayout:aFlowLayout];
+    list.maxSelection = maxSelection;
     
     //get predicate
-//    list.basePredicate = [self getPredicate:sender.tag];
+    //    list.basePredicate = [self getPredicate:sender.tag];
     [list setBasePredicate:[self getPredicate:sender.tag]];
     
     list.onMultiSelect = ^(NSMutableArray *migrants)
@@ -1481,9 +1693,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1507,9 +1721,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1533,9 +1749,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {
@@ -1561,9 +1779,11 @@ typedef enum : NSUInteger {
                             //update
                             entry.migrantId = migrant.registrationNumber;
                             found = YES;
+                            break;
                         }else if ([entry.migrantId isEqualToString:migrant.registrationNumber]){
                             //do not insert same value on different section
                             found = YES;
+                            break;
                         }
                     }
                     if (!found) {

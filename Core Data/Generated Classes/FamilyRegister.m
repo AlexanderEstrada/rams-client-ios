@@ -2,7 +2,7 @@
 //  FamilyRegister.m
 //  IMMS Manager
 //
-//  Created by IOM Jakarta on 8/18/14.
+//  Created by IOM Jakarta on 9/2/14.
 //  Copyright (c) 2014 Mario Yohanes. All rights reserved.
 //
 
@@ -15,8 +15,8 @@
 @dynamic familyID;
 @dynamic headOfFamilyId;
 @dynamic headOfFamilyName;
-@dynamic photographThumbnail;
 @dynamic photograph;
+@dynamic photographThumbnail;
 @dynamic familyEntryID;
 
 @end

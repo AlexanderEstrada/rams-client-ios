@@ -297,6 +297,8 @@
         <element name="Child" positionX="-756" positionY="-216" width="128" height="73"/>
         <element name="Country" positionX="205" positionY="-135" width="128" height="165"/>
         <element name="FamilyData" positionX="-576" positionY="-220" width="128" height="118"/>
+        <element name="FamilyRegister" positionX="-504" positionY="-666" width="128" height="133"/>
+        <element name="FamilyRegisterEntry" positionX="-270" positionY="-621" width="128" height="103"/>
         <element name="ImmigrationOfficer" positionX="756" positionY="180" width="128" height="103"/>
         <element name="Interception" positionX="-576" positionY="-37" width="128" height="133"/>
         <element name="InterceptionData" positionX="583" positionY="290" width="128" height="223"/>
@@ -316,7 +318,5 @@
         <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="150"/>
         <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>
         <element name="RegistrationProfile" positionX="576" positionY="-532" width="128" height="208"/>
-        <element name="FamilyRegister" positionX="-504" positionY="-666" width="128" height="133"/>
-        <element name="FamilyRegisterEntry" positionX="-270" positionY="-621" width="128" height="103"/>
     </elements>
 </model>

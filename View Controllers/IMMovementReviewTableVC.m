@@ -36,6 +36,23 @@
 @property (nonatomic) NSInteger total;
 @end
 
+typedef enum : NSUInteger {
+    
+    section_date_of_submission = 0,
+    section_proposed_date,
+    section_departure_date,
+    section_submitter,
+    section_iom_office_of_user,
+    section_movement_type,
+    section_destination,
+    section_number_of_migrant,
+    section_travel_mode,
+    section_departure_port,
+    section_document_number,
+    section_reference_code
+    
+} section_type;
+
 @implementation IMMovementReviewTableVC
 
 @synthesize delegate;
@@ -210,7 +227,7 @@
             //send formatted data to server
             [self sendMovement:formatted];
             //3 minutes before force close
-             NSNumber * defaultValue = [IMConstants getIMConstantKeyNumber:CONST_IMSleepDefault];
+            NSNumber * defaultValue = [IMConstants getIMConstantKeyNumber:CONST_IMSleepDefault];
             
             if (defaultValue.intValue < 0) {
                 defaultValue = @(36000);
@@ -289,7 +306,7 @@
         if (self.show_migrant_list) {
             [[NSNotificationCenter defaultCenter] postNotificationName:IMShowMigrantListNotification object:nil];
         }else {
-             [[NSNotificationCenter defaultCenter] postNotificationName:IMCancelNotification object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:IMCancelNotification object:nil];
         }
     }
     @catch (NSException *exception) {
@@ -425,7 +442,7 @@
         if (self.show_migrant_list) {
             self.show_migrant_list = NO;
         }
-          [self showMigrantListOnParent];
+        [self showMigrantListOnParent];
         
     }
     @catch (NSException *exception) {
@@ -460,74 +477,75 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellName forIndexPath:indexPath];
+
     
     switch (indexPath.row) {
-        case 0:{
+        case section_date_of_submission:{
             cell.textLabel.text = @"Date of Submission";
             cell.detailTextLabel.text = [[NSDate date] mediumFormatted];
             break;
         }
-        case 1:{
+        case section_proposed_date:{
             cell.textLabel.text = @"Proposed date";
             cell.detailTextLabel.text = [self.movement.proposedDate mediumFormatted];
             
             break;
         }
-        case 2:{
+        case section_departure_date:{
             cell.textLabel.text = @"Departure date";
             cell.detailTextLabel.text = [[NSDate date] mediumFormatted];
             
             break;
         }
-        case 3:{
+        case section_submitter:{
             cell.textLabel.text = @"Submitter";
             cell.detailTextLabel.text = [IMAuthManager sharedManager].activeUser.name;
             
             break;
         }
-        case 4:{
+        case section_iom_office_of_user:{
             cell.textLabel.text = @"IOM Office of user";
             cell.detailTextLabel.text = [IMAuthManager sharedManager].activeUser.officeName;
             
             break;
         }
-        case 5:{
+        case section_movement_type:{
             cell.textLabel.text = @"Movement Type";
             cell.detailTextLabel.text = self.movement.type;
             
             break;
         }
-        case 6:{
+        case section_destination:{
             cell.textLabel.text = @"Destination";
             cell.detailTextLabel.text = self.movement.destinationCountry.name;
             
             break;
         }
-        case 7:{
+        case section_number_of_migrant:{
             cell.textLabel.text = @"Number of Migrants";
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%i",[self.migrants count]];
             
             break;
         }
-        case 8:{
+        case section_travel_mode:{
             cell.textLabel.text = @"Travel mode";
             cell.detailTextLabel.text = self.movement.travelMode;
             
             break;
         }
-        case 9:{
+        case section_departure_port:{
             cell.textLabel.text = @"Departure port";
             cell.detailTextLabel.text = self.movement.departurePort.name;
             
             break;
         }
-        case 10:{
+        case section_document_number:{
             cell.textLabel.text = @"Document number";
             cell.detailTextLabel.text = self.movement.documentNumber;
             
             break;
         }
-        case 11:{
+        case section_reference_code:{
             cell.textLabel.text = @"Reference code";
             cell.detailTextLabel.text = self.movement.referenceCode;
             
@@ -583,7 +601,7 @@
 //- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 //{
 //    if ([identifier isEqualToString:@"goToMigrantList"]) {
-//        
+//
 //        [self upload:Nil];
 //        //        while(self.next ==FALSE){
 //        //            usleep(5000);
@@ -592,8 +610,8 @@
 //        //            return NO;
 //        //        }
 //    }
-//    
-//    
+//
+//
 //    return YES;
 //}
 
@@ -602,7 +620,7 @@
     [super viewWillDisappear:animated];
     
     if ([self.delegate respondsToSelector:@selector(showMigrantList:shouldShowMigrantList:)]) {
-         // tell our delegate of our ending state
+        // tell our delegate of our ending state
         [self.delegate showMigrantList:self shouldShowMigrantList:self.show_migrant_list];
     }
 }
@@ -615,11 +633,11 @@
 //{
 //    // Get the new view controller using [segue destinationViewController].
 //    // Pass the selected object to the new view controller.
-//    
+//
 //    if ([[segue identifier] isEqualToString:@"goToMigrantList"]) {
 //        NSLog(@"Do something");
 //    }
-//    
+//
 //}
 
 

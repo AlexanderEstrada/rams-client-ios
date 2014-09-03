@@ -14,8 +14,10 @@
 	</array>
 	<key>IMConstantKeys</key>
 	<dict>
+		<key>IMForgotPassword</key>
+		<string>password/reset</string>
 		<key>IMSleepDefault</key>
-		<integer>36000</integer>
+		<real>36000</real>
 		<key>IMReferences</key>
 		<string>references</string>
 		<key>IMMigrantShow</key>

@@ -42,6 +42,7 @@ NSString *const CONST_IMInterceptionSave                = @"IMInterceptionSave";
 NSString *const CONST_IMAccomodationSave                = @"IMAccomodationSave";
 NSString *const CONST_IMFamilySave                      = @"IMFamilySave";
 NSString *const CONST_IMSleepDefault                    = @"IMSleepDefault";
+NSString *const CONST_IMForgotPassword                  = @"IMForgotPassword";
 
 
 //NSString  * _UrlName = @"http://172.25.137.149:8080/";

@@ -2,7 +2,7 @@
 //  FamilyRegisterEntry.h
 //  IMMS Manager
 //
-//  Created by IOM Jakarta on 8/18/14.
+//  Created by IOM Jakarta on 9/2/14.
 //  Copyright (c) 2014 Mario Yohanes. All rights reserved.
 //
 
@@ -13,8 +13,8 @@
 
 @interface FamilyRegisterEntry : NSManagedObject
 
-@property (nonatomic, retain) NSString * registerEntryId;
 @property (nonatomic, retain) NSString * migrantId;
+@property (nonatomic, retain) NSString * registerEntryId;
 @property (nonatomic, retain) NSString * type;
 @property (nonatomic, retain) NSSet *familyID;
 @end

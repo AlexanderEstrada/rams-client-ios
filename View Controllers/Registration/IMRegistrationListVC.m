@@ -156,6 +156,7 @@
     [_HUD showUsingAnimation:YES];
     
     Registration * registration = self.dataProvider.dataObjects[sender.tag];
+    
     //implement success and failure handler
     
     registration.successHandler = ^{

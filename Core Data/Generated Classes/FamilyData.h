@@ -2,8 +2,8 @@
 //  FamilyData.h
 //  IMMS Manager
 //
-//  Created by Mario Yohanes on 10/21/13.
-//  Copyright (c) 2013 Mario Yohanes. All rights reserved.
+//  Created by IOM Jakarta on 9/2/14.
+//  Copyright (c) 2014 Mario Yohanes. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

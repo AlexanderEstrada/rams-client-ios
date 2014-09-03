@@ -75,6 +75,8 @@ NSString *const REG_MOVEMENT                 = @"movements";
 {
     @try {
         NSMutableDictionary *formatted = [NSMutableDictionary dictionary];
+        //update file path
+        [self.biometric photographImage];
         
         //Registration Data
         [formatted setObject:self.captureDevice forKey:REG_CAPTURE_DEVICE];
@@ -119,11 +121,36 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
+        NSString * base64Str;
         [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
-        if (self.biometric.rightThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:RightThumb] forKey:REG_RIGHT_THUMB];
-        if (self.biometric.rightIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:RightIndex] forKey:REG_RIGHT_INDEX];
-        if (self.biometric.leftThumb) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftThumb] forKey:REG_LEFT_THUMB];
-        if (self.biometric.leftIndex) [biometric setObject:[self.biometric base64FingerImageWithPosition:LeftIndex] forKey:REG_LEFT_INDEX];
+        if (self.biometric.rightThumb){
+            base64Str =[self.biometric base64FingerImageWithPosition:RightThumb];
+            if (base64Str) {
+                [biometric setObject:base64Str forKey:REG_RIGHT_THUMB];
+            }
+         
+        }
+        if (self.biometric.rightIndex){
+            base64Str = [self.biometric base64FingerImageWithPosition:RightIndex];
+            if (base64Str) {
+                [biometric setObject:base64Str forKey:REG_RIGHT_INDEX];
+            }
+            
+        }
+        if (self.biometric.leftThumb){
+            base64Str = [self.biometric base64FingerImageWithPosition:LeftThumb];
+            if (base64Str) {
+                [biometric setObject:base64Str forKey:REG_LEFT_THUMB];
+            }
+            
+        }
+        if (self.biometric.leftIndex){
+            base64Str = [self.biometric base64FingerImageWithPosition:LeftIndex];
+            if (base64Str) {
+                [biometric setObject:base64Str forKey:REG_LEFT_INDEX];
+            }
+        }
+        
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
         
         /*

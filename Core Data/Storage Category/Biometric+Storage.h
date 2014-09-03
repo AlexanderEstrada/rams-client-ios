@@ -27,6 +27,7 @@
 - (UIImage *)photographImage;
 - (UIImage *)photographImageThumbnail;
 - (UIImage *)fingerImageForPosition:(FingerPosition)position;
+//- (NSString *)photograph;
 
 - (void)updatePhotographData:(NSData *)photographData;
 - (void)updatePhotographThumbnailData:(NSData *)photographData;

@@ -86,9 +86,9 @@ typedef enum : NSUInteger {
     //set default value
     _tapCount = 0;
     
-    UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(onClear)];
-    
-    self.navigationItem.rightBarButtonItems = @[self.addButton ,clearButton];
+//    UIBarButtonItem *clearButton = [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(onClear)];
+//    
+//    self.navigationItem.rightBarButtonItems = @[self.addButton ,clearButton];
     
     //get all data from database
     
@@ -213,7 +213,25 @@ typedef enum : NSUInteger {
     
     FamilyRegister * familyRegister = [self.familyRegister objectAtIndex:indexPath.row];
     
+    
+    //check if the path has change
+    if (![[NSFileManager defaultManager] fileExistsAtPath:familyRegister.photograph] && familyRegister.photograph) {
+        //case has change then update the path before show
+        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        Migrant * tmp = [Migrant migrantWithId:familyRegister.headOfFamilyId inContext:context];
+        if (tmp && tmp.biometric.photograph) {
+            //add all photo
+            familyRegister.photograph = tmp.biometric.photograph;
+        }
+        
+    }
+    
     if (familyRegister.photograph)[self.previewingPhotos addObject:familyRegister.photograph];
+    
+    if (![self.previewingPhotos count]) {
+        //show nothing
+        return;
+    }
     
     QLPreviewController *previewController = [[QLPreviewController alloc] init];
     previewController.delegate = self;
@@ -271,8 +289,6 @@ typedef enum : NSUInteger {
         cell.textLabel.text = @"No Data";
         cell.imageView.image = Nil;
     }else {
-        NSLog(@"There is data on database");
-        
         if (indexPath.section == 0 ) {
             FamilyRegister * familyRegister = self.familyRegister[indexPath.row];
             if (familyRegister) {

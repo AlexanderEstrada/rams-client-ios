@@ -47,6 +47,7 @@ typedef enum
 
 #define IMDatabaseChangedNotification   @"IMDatabaseChangedNotification"
 #define IMAccessExpiredNotification     @"IMAccessExpiredNotification"
+#define IMAccessExpiredCloseNotification     @"IMAccessExpiredCloseNotification"
 #define IMSyncShouldStartedNotification @"IMSyncShouldStartedNotification"
 #define IMUserChangedNotification       @"IMUserChangedNotification"
 
@@ -79,6 +80,8 @@ typedef enum
 #define IMAlertContinueToPopNavigation_Tag  8
 #define IMAlertStartWithoutSynch_Tag        9
 #define IMAlertUploadSuccess_Tag                   10
+#define IMDeleteItems_Tag                   11
+#define IMForgotPassword_Tag                   12
 
 
 
@@ -128,6 +131,7 @@ extern NSString *const CONST_IMInterceptionSave;
 extern NSString *const CONST_IMAccomodationSave;
 extern NSString *const CONST_IMFamilySave;
 extern NSString *const CONST_IMSleepDefault;
+extern NSString *const CONST_IMForgotPassword;
 
 
 #define FAMILY_TYPE_HEAD_OF_FAMILY @"HEAD_OF_FAMILY"

@@ -17,10 +17,13 @@
 @property (weak, atomic) id<IMFamilyListVCDelegate> delegate;
 @property (nonatomic, strong) NSPredicate *basePredicate;
 @property (nonatomic) BOOL reloadingData;
+@property (nonatomic) BOOL useStaticData;
 @property (nonatomic, strong) NSOperationQueue *thumbnailQueue;
 @property (nonatomic) int currentIndex;
 @property (nonatomic) int maxSelection;
 @property (nonatomic,strong) IBOutlet UIBarButtonItem *save;
+@property (nonatomic,strong) NSMutableArray *migrants;
+
 //@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancel;
 
 

@@ -326,7 +326,7 @@ typedef enum : NSUInteger {
         //checking the value
         if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
             //show alert
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please Fill UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please input UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
             
             [alert show];
             [_hud hideUsingAnimation:YES];
@@ -347,7 +347,7 @@ typedef enum : NSUInteger {
         //validate Biodata value
         if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
             //show alert
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Personal Information" message:@"Please fill all of Personal Information Data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Personal Information" message:@"Please input all of Personal Information Data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
             
             [alert show];
             [_hud hideUsingAnimation:YES];
