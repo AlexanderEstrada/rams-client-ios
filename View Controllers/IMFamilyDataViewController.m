@@ -604,7 +604,7 @@ typedef enum : NSUInteger {
     }else if (section == section_guadian){
         headerView.labelTitle.text = @"Guardian";
     }else if (section == section_childs){
-        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:@"Childs (%lu)",(unsigned long)[self.childData count]]:@"Childs";
+        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:([self.childData count] > 1)?@"Childrens (%lu)" : @"Children (%lu)",(unsigned long)[self.childData count]]:@"Children";
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -1629,7 +1629,7 @@ typedef enum : NSUInteger {
     switch (sender.tag) {
         case section_childs:{
             if (!self.familyRegister.headOfFamilyId) {
-                [self showAlertWithTitle:@"Failed Add Childs" message:@"Please input Head Of Family before adding child."];
+                [self showAlertWithTitle:@"Failed Add Children" message:@"Please input Head Of Family before adding Children."];
                 
                 return;
             }

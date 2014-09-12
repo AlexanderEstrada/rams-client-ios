@@ -80,7 +80,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         //Registration Data
         [formatted setObject:self.captureDevice forKey:REG_CAPTURE_DEVICE];
-        [formatted setObject:self.underIOMCare?@"true":@"false" forKey:REG_IOM_CARE];
+        [formatted setObject:self.underIOMCare.intValue?@"true":@"false" forKey:REG_IOM_CARE];
         
         //    [formatted setObject:self.underIOMCare forKey:REG_IOM_CARE];
         [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
@@ -110,7 +110,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         [interception setObject:[self.interceptionData.interceptionDate toUTCString] forKey:REG_INTERCEPTION_DATE];
         [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
-        [interception setObject:self.selfReporting?@"true":@"false" forKey:REG_SELF_REPORT];
+        [interception setObject:self.selfReporting.intValue?@"true":@"false" forKey:REG_SELF_REPORT];
         [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
@@ -729,6 +729,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         data.registrationId = migrant.registrationNumber;
         if (![migrant.unhcrDocument isEqualToString:@"No Document"]) {
             data.unhcrDocument = migrant.unhcrDocument;
+            data.unhcrNumber = migrant.unhcrNumber;
         }else data.unhcrNumber = Nil;
         data.underIOMCare = migrant.underIOMCare;
         data.vulnerability = migrant.vulnerabilityStatus;

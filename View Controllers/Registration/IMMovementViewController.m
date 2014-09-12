@@ -315,8 +315,10 @@
             
             switch ([self movementSectionFormula:Nil]) {
                 case 8:{
-//                    IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES];
-                     IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:Nil presentAsModal:NO popover:YES withEntity:@"Migrant" sortDescriptorWithKey:@"bioData.nationality.name"];
+//                     case avr/deportation/resettlement
+                    //case movement type is resettlement then show all country, else only show migrant nationality that registered (AVR/Deportation)
+                    IMCountryListVC *vc = nil;
+                    vc = [self.movement.type isEqualToString:@"Resettlement"]?[[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES]:[[IMCountryListVC alloc] initWithBasePredicate:Nil presentAsModal:NO popover:YES withEntity:@"Migrant" sortDescriptorWithKey:@"bioData.nationality.name"];
                     
                     vc.onSelected = ^(Country *country){
                         self.movement.destinationCountry = [Country countryWithCode:country.code inManagedObjectContext:self.movement.managedObjectContext];

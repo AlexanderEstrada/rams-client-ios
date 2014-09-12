@@ -162,6 +162,7 @@
         //general information
         migrant.unhcrDocument = CORE_DATA_OBJECT([dictionary objectForKey:@"unhcrDocument"]);
         migrant.unhcrNumber = CORE_DATA_OBJECT([dictionary objectForKey:@"unhcrNumber"]);
+       
         migrant.vulnerabilityStatus = CORE_DATA_OBJECT([dictionary objectForKey:@"vulnerability"]);
         migrant.deceased = CORE_DATA_OBJECT([dictionary objectForKey:@"deceased"]);
         migrant.active = CORE_DATA_OBJECT([dictionary objectForKey:@"active"]);

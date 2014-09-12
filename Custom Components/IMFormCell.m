@@ -89,7 +89,7 @@
             self.textValue = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
             self.textValue.font = font;
             self.textValue.textColor = [UIColor darkGrayColor];
-//            self.textValue.textAlignment = NSTextAlignmentRight;
+            self.textValue.textAlignment = NSTextAlignmentRight;
             self.textValue.delegate = self;
             self.textValue.autocapitalizationType = UITextAutocapitalizationTypeWords;
             self.textValue.clearButtonMode = UITextFieldViewModeWhileEditing;
@@ -326,11 +326,13 @@
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     [self setSelected:YES animated:YES];
+       self.textValue.textAlignment = NSTextAlignmentCenter;    // Visually centered
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if (self.onTextValueReturn) self.onTextValueReturn(textField.text);
+        self.textValue.textAlignment = NSTextAlignmentRight;
     [self setSelected:NO animated:YES];
 }
 

@@ -649,7 +649,7 @@ Monitoring System</string>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LTq-p5-q4s" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3313" y="2725"/>
+            <point key="canvasLocation" x="3117" y="2261"/>
         </scene>
         <!--Accommodation ListVC - List View-->
         <scene sceneID="DIz-nH-yyW">
@@ -757,7 +757,7 @@ Monitoring System</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="evg-vD-AKo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3703" y="3717"/>
+            <point key="canvasLocation" x="3203" y="4357"/>
         </scene>
         <!--Server Setting View Controller-->
         <scene sceneID="VPC-hs-gE7">
@@ -980,7 +980,7 @@ Monitoring System</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jVi-08-Lh6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2647" y="3387"/>
+            <point key="canvasLocation" x="4491" y="3575"/>
         </scene>
         <!--Accommodation InfoVC-->
         <scene sceneID="F9P-8V-tQz">
@@ -1076,7 +1076,7 @@ Monitoring System</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qud-8O-DqC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3723" y="3327"/>
+            <point key="canvasLocation" x="3759" y="3911"/>
         </scene>
         <!--Interception View Controller - Interception Case-->
         <scene sceneID="oaE-dT-joW">

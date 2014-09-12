@@ -245,22 +245,24 @@ typedef enum : NSUInteger {
                 //case upload success and movement != transfer then deactived migrant
                 
                 NSError * error;
-                if (![self.movement.type isEqual:@"Transfer"]) {
-                    
-                    for (Migrant * migrant in self.migrants) {
+                
+                for (Migrant * migrant in self.migrants) {
+                    if (![self.movement.type isEqual:@"Transfer"]) {
                         //deactivated the migrants
                         migrant.active = @(0);
+                    }else if ([self.movement.type isEqualToString:@"Transfer"]){
+//                        update current detention location to destination
+                        migrant.detentionLocation = self.movement.transferLocation.accommodationId;
+                        migrant.detentionLocationName = self.movement.transferLocation.name;
                     }
-                }
-                
-                //save movement to migrant
-                for (Migrant * migrant in self.migrants) {
+                    
                     //save movement
                     [migrant addMovementsObject:self.movement];
                 }
                 
+               
                 
-                
+                //save movement to migrant database
                 [self.movement.managedObjectContext save:&error];
                 if (error) {
                     NSLog(@"=== save All database with error === : %@", [error description]);

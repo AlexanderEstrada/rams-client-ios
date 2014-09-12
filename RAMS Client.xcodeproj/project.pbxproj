@@ -308,21 +308,21 @@
 		AC6D727E1806636500E5F845 /* IMMigrantFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMigrantFetcher.m; sourceTree = "<group>"; };
 		AC6D728918068C1100E5F845 /* Child.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Child.h; sourceTree = "<group>"; };
 		AC6D728A18068C1100E5F845 /* Child.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Child.m; sourceTree = "<group>"; };
-		AC807D2E17F14F58000988D0 /* IMMS Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IMMS Manager.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC807D2E17F14F58000988D0 /* RAMS Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RAMS Client.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC807D3117F14F58000988D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AC807D3317F14F58000988D0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		AC807D3517F14F58000988D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		AC807D3717F14F58000988D0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		AC807D3B17F14F58000988D0 /* IMMS Manager-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IMMS Manager-Info.plist"; sourceTree = "<group>"; };
+		AC807D3B17F14F58000988D0 /* RAMS Client-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RAMS Client-Info.plist"; sourceTree = "<group>"; };
 		AC807D3D17F14F58000988D0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AC807D3F17F14F58000988D0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		AC807D4117F14F58000988D0 /* IMMS Manager-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IMMS Manager-Prefix.pch"; sourceTree = "<group>"; };
+		AC807D4117F14F58000988D0 /* RAMS Client-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RAMS Client-Prefix.pch"; sourceTree = "<group>"; };
 		AC807D4217F14F58000988D0 /* IMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMAppDelegate.h; sourceTree = "<group>"; };
 		AC807D4317F14F58000988D0 /* IMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IMAppDelegate.m; sourceTree = "<group>"; };
 		AC807D4817F14F58000988D0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		AC807D4E17F14F58000988D0 /* IMMS ManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "IMMS ManagerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC807D4E17F14F58000988D0 /* RAMS ClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RAMS ClientTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC807D4F17F14F58000988D0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		AC807D5817F14F58000988D0 /* IMMS ManagerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IMMS ManagerTests-Info.plist"; sourceTree = "<group>"; };
+		AC807D5817F14F58000988D0 /* RAMS ClientTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RAMS ClientTests-Info.plist"; sourceTree = "<group>"; };
 		AC807D5A17F14F58000988D0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AC807D5C17F14F58000988D0 /* IMMS_ManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IMMS_ManagerTests.m; sourceTree = "<group>"; };
 		AC8672E01807A6E50052491F /* IMAccommodationUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMAccommodationUpdater.h; sourceTree = "<group>"; };
@@ -903,8 +903,8 @@
 				ACE692A117F159AC0095F90C /* Core Data */,
 				ACE6931F17F159BA0095F90C /* Custom Components */,
 				ACE6934B17F159E10095F90C /* Libraries */,
-				AC807D3917F14F58000988D0 /* IMMS Manager */,
-				AC807D5617F14F58000988D0 /* IMMS ManagerTests */,
+				AC807D3917F14F58000988D0 /* RAMS Client */,
+				AC807D5617F14F58000988D0 /* RAMS ClientTests */,
 				AC807D3017F14F58000988D0 /* Frameworks */,
 				AC807D2F17F14F58000988D0 /* Products */,
 			);
@@ -913,8 +913,8 @@
 		AC807D2F17F14F58000988D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AC807D2E17F14F58000988D0 /* IMMS Manager.app */,
-				AC807D4E17F14F58000988D0 /* IMMS ManagerTests.xctest */,
+				AC807D2E17F14F58000988D0 /* RAMS Client.app */,
+				AC807D4E17F14F58000988D0 /* RAMS ClientTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -959,7 +959,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		AC807D3917F14F58000988D0 /* IMMS Manager */ = {
+		AC807D3917F14F58000988D0 /* RAMS Client */ = {
 			isa = PBXGroup;
 			children = (
 				F2C139F619487D04006F8EDD /* InfoPlist.strings */,
@@ -970,33 +970,35 @@
 				AC807D4817F14F58000988D0 /* Images.xcassets */,
 				AC807D3A17F14F58000988D0 /* Supporting Files */,
 			);
+			name = "RAMS Client";
 			path = "IMMS Manager";
 			sourceTree = "<group>";
 		};
 		AC807D3A17F14F58000988D0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				AC807D3B17F14F58000988D0 /* IMMS Manager-Info.plist */,
+				AC807D3B17F14F58000988D0 /* RAMS Client-Info.plist */,
 				AC807D3C17F14F58000988D0 /* InfoPlist.strings */,
 				AC807D3F17F14F58000988D0 /* main.m */,
-				AC807D4117F14F58000988D0 /* IMMS Manager-Prefix.pch */,
+				AC807D4117F14F58000988D0 /* RAMS Client-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		AC807D5617F14F58000988D0 /* IMMS ManagerTests */ = {
+		AC807D5617F14F58000988D0 /* RAMS ClientTests */ = {
 			isa = PBXGroup;
 			children = (
 				AC807D5C17F14F58000988D0 /* IMMS_ManagerTests.m */,
 				AC807D5717F14F58000988D0 /* Supporting Files */,
 			);
+			name = "RAMS ClientTests";
 			path = "IMMS ManagerTests";
 			sourceTree = "<group>";
 		};
 		AC807D5717F14F58000988D0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				AC807D5817F14F58000988D0 /* IMMS ManagerTests-Info.plist */,
+				AC807D5817F14F58000988D0 /* RAMS ClientTests-Info.plist */,
 				AC807D5917F14F58000988D0 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -1716,9 +1718,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AC807D2D17F14F58000988D0 /* IMMS Manager */ = {
+		AC807D2D17F14F58000988D0 /* RAMS Client */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AC807D6017F14F58000988D0 /* Build configuration list for PBXNativeTarget "IMMS Manager" */;
+			buildConfigurationList = AC807D6017F14F58000988D0 /* Build configuration list for PBXNativeTarget "RAMS Client" */;
 			buildPhases = (
 				AC807D2A17F14F58000988D0 /* Sources */,
 				AC807D2B17F14F58000988D0 /* Frameworks */,
@@ -1728,14 +1730,14 @@
 			);
 			dependencies = (
 			);
-			name = "IMMS Manager";
+			name = "RAMS Client";
 			productName = "IMMS Manager";
-			productReference = AC807D2E17F14F58000988D0 /* IMMS Manager.app */;
+			productReference = AC807D2E17F14F58000988D0 /* RAMS Client.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AC807D4D17F14F58000988D0 /* IMMS ManagerTests */ = {
+		AC807D4D17F14F58000988D0 /* RAMS ClientTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AC807D6317F14F58000988D0 /* Build configuration list for PBXNativeTarget "IMMS ManagerTests" */;
+			buildConfigurationList = AC807D6317F14F58000988D0 /* Build configuration list for PBXNativeTarget "RAMS ClientTests" */;
 			buildPhases = (
 				AC807D4A17F14F58000988D0 /* Sources */,
 				AC807D4B17F14F58000988D0 /* Frameworks */,
@@ -1746,9 +1748,9 @@
 			dependencies = (
 				AC807D5517F14F58000988D0 /* PBXTargetDependency */,
 			);
-			name = "IMMS ManagerTests";
+			name = "RAMS ClientTests";
 			productName = "IMMS ManagerTests";
-			productReference = AC807D4E17F14F58000988D0 /* IMMS ManagerTests.xctest */;
+			productReference = AC807D4E17F14F58000988D0 /* RAMS ClientTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1759,7 +1761,7 @@
 			attributes = {
 				CLASSPREFIX = IM;
 				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = "Mario Yohanes";
+				ORGANIZATIONNAME = "International Organization for Migration";
 				TargetAttributes = {
 					AC807D2D17F14F58000988D0 = {
 						DevelopmentTeam = C59V5LZ7A7;
@@ -1774,7 +1776,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AC807D2917F14F58000988D0 /* Build configuration list for PBXProject "IMMS Manager" */;
+			buildConfigurationList = AC807D2917F14F58000988D0 /* Build configuration list for PBXProject "RAMS Client" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1786,8 +1788,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AC807D2D17F14F58000988D0 /* IMMS Manager */,
-				AC807D4D17F14F58000988D0 /* IMMS ManagerTests */,
+				AC807D2D17F14F58000988D0 /* RAMS Client */,
+				AC807D4D17F14F58000988D0 /* RAMS ClientTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2024,7 +2026,7 @@
 /* Begin PBXTargetDependency section */
 		AC807D5517F14F58000988D0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AC807D2D17F14F58000988D0 /* IMMS Manager */;
+			target = AC807D2D17F14F58000988D0 /* RAMS Client */;
 			targetProxy = AC807D5417F14F58000988D0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -2147,12 +2149,12 @@
 					"$(PROJECT_DIR)/Libraries",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
+				GCC_PREFIX_HEADER = "IMMS Manager/RAMS Client-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "IMMS Manager/IMMS Manager-Info.plist";
+				INFOPLIST_FILE = "IMMS Manager/RAMS Client-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "RAMS Client";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2171,13 +2173,13 @@
 					"$(PROJECT_DIR)/Libraries",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
+				GCC_PREFIX_HEADER = "IMMS Manager/RAMS Client-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = "IMMS Manager/IMMS Manager-Info.plist";
+				INFOPLIST_FILE = "IMMS Manager/RAMS Client-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "RAMS Client";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2198,8 +2200,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "IMMS ManagerTests/IMMS ManagerTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "IMMS ManagerTests/RAMS ClientTests-Info.plist";
+				PRODUCT_NAME = "RAMS ClientTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -2216,8 +2218,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
-				INFOPLIST_FILE = "IMMS ManagerTests/IMMS ManagerTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "IMMS ManagerTests/RAMS ClientTests-Info.plist";
+				PRODUCT_NAME = "RAMS ClientTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -2226,7 +2228,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AC807D2917F14F58000988D0 /* Build configuration list for PBXProject "IMMS Manager" */ = {
+		AC807D2917F14F58000988D0 /* Build configuration list for PBXProject "RAMS Client" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AC807D5E17F14F58000988D0 /* Debug */,
@@ -2235,7 +2237,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AC807D6017F14F58000988D0 /* Build configuration list for PBXNativeTarget "IMMS Manager" */ = {
+		AC807D6017F14F58000988D0 /* Build configuration list for PBXNativeTarget "RAMS Client" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AC807D6117F14F58000988D0 /* Debug */,
@@ -2244,7 +2246,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AC807D6317F14F58000988D0 /* Build configuration list for PBXNativeTarget "IMMS ManagerTests" */ = {
+		AC807D6317F14F58000988D0 /* Build configuration list for PBXNativeTarget "RAMS ClientTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AC807D6417F14F58000988D0 /* Debug */,

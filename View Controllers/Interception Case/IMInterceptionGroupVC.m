@@ -120,7 +120,7 @@
     switch (section) {
         case 0: title = @"Group Details"; break;
         case 1: title = @"Migrants by Age Group"; break;
-        case 2: title = @"Migrants by Gender"; break;
+        case 2: title = @"Migrants by Sex"; break;
         case 3: title = @"Vulnerable Migrants"; break;
     }
     

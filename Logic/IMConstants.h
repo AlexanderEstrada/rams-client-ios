@@ -40,7 +40,7 @@ typedef enum
 
 #define CORE_DATA_OBJECT(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
 
-#define IMLocaDBName                    @"IMMS"
+#define IMLocaDBName                    @"RAMS"
 
 #define IMShowMigrantListNotification   @"IMShowMigrantListNotification"
 #define IMCancelNotification            @"IMCancelNotification"

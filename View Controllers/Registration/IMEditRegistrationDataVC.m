@@ -422,7 +422,8 @@ typedef enum : NSUInteger {
             cell.maxCharCount = 40;
         }else if (indexPath.row == 2) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = @"Gender";
+//            cell.labelTitle.text = @"Gender";
+             cell.labelTitle.text = @"Sex";
             cell.labelValue.text = self.registration.bioData.gender;
         }else if (indexPath.row == 3) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
