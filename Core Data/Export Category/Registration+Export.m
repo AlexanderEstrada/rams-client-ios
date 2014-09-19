@@ -114,7 +114,12 @@ NSString *const REG_MOVEMENT                 = @"movements";
         [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
-        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
+//        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
+//            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+//                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+//            [formatted setObject:transfer forKey:REG_TRANSFER];
+//        }
+        if (self.transferDate && self.transferDestination.accommodationId) {
             NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
                                        REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
             [formatted setObject:transfer forKey:REG_TRANSFER];
@@ -183,6 +188,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
          
          }
          */
+        NSLog(@"formatted : %@",[formatted description]);
         return formatted;
     }
     @catch (NSException *exception)
@@ -415,9 +421,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
             //add movement
             NSArray *movements = CORE_DATA_OBJECT(dictionary [REG_TRANSFER]);
             for (NSDictionary *movement in movements) {
+                NSMutableDictionary * dict = [movement mutableCopy];
                 //set movement type to Transfer as default
-                [movement setValue:@"Transfer" forKey:@"type"];
-                Movement *data = [Movement movementWithDictionary:movement inContext:context];
+                [dict setObject:@"Transfer" forKey:@"type"];
+
+                Movement *data = [Movement movementWithDictionary:dict inContext:context];
                 if (data) {
                     [migrant addMovementsObject:data];
                 }

@@ -134,7 +134,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y3M-sm-5Jl">
                                 <rect key="frame" x="128" y="184" width="768" height="400"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="MgD-wN-teP">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="MgD-wN-teP">
                                         <rect key="frame" x="91" y="132" width="175" height="134"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="134" id="G1M-9r-R4M"/>
@@ -825,13 +825,13 @@ Monitoring System</string>
                                     <action selector="cancel:" destination="ig9-du-wMI" eventType="touchUpInside" id="0AW-6K-DQM"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="e.g http:im.iom.or.id:10280" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qVq-wh-Y3V">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="center" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="e.g http:im.iom.or.id:10280" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qVq-wh-Y3V">
                                 <rect key="frame" x="276" y="357" width="216" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <imageView userInteractionEnabled="NO" contentMode="center" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="R2d-o0-gwr">
+                            <imageView userInteractionEnabled="NO" contentMode="center" ambiguous="YES" misplaced="YES" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="R2d-o0-gwr">
                                 <rect key="frame" x="297" y="145" width="175" height="134"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="134" id="y8Y-vj-2FX"/>

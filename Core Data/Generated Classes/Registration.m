@@ -25,6 +25,7 @@
 @dynamic captureDevice;
 @dynamic underIOMCare;
 @dynamic selfReporting;
+@dynamic skipFinger;
 @dynamic transferDate;
 @dynamic complete;
 @dynamic vulnerability;

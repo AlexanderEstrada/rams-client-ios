@@ -11,9 +11,10 @@
 #import "UIImage+ImageUtils.h"
 #import "IMBiometricEngine.h"
 #import "Biometric+Storage.h"
+#import "MBProgressHUD.h"
 
 
-@interface IMScanFingerprintViewController ()<FbFmobileOneDelegate>
+@interface IMScanFingerprintViewController ()<FbFmobileOneDelegate,MBProgressHUDDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *buttonRescan;
 @property (weak, nonatomic) IBOutlet UILabel *labelTitle;
@@ -29,6 +30,7 @@
 @property (strong, nonatomic) IMBiometricEngine *engine;
 //@property (strong, nonatomic) Biometric * biometric;
 @property (nonatomic) BOOL scanCompleted;
+@property (nonatomic,strong) MBProgressHUD *hud;
 
 @end
 
@@ -36,12 +38,20 @@
 
 @implementation IMScanFingerprintViewController
 
+#pragma mark -
+#pragma mark MBProgressHUDDelegate methods
+
+- (void)hudWasHidden {
+    // Remove HUD from screen when the HUD was hidded
+    [_hud removeFromSuperview];
+}
+
 - (void)setScanCompleted:(BOOL)scanCompleted
 {
     _scanCompleted = scanCompleted;
     if (_scanCompleted) {
+        //sleep for synchronization
         sleep(1);
-        [self hideLoadingView];
     }
     
     NSLog(@"call setScanCompleted");
@@ -63,10 +73,12 @@
     self.scanCompleted = NO;
     UIImage *grayscaleImage = [[UIImage imageWithData:data] grayscaleImage];
     self.scanningView.image = grayscaleImage;
-    [self showLoadingViewWithTitle:@"Just a moment please ..."];
+
+ 
+    
     [self.engine validateFingerprintImage:grayscaleImage onComplete:^(BOOL valid){
 
-        [self hideLoadingView];
+          [_hud hideUsingAnimation:YES];
     
         if (valid) {
             [self.data setObject:grayscaleImage forKey:@(self.currentFingerPosition)];
@@ -96,7 +108,27 @@
 {
     //TODO : add spin
     if (self.scanCompleted) return;
+    
+    // Show progress window
+    if (!_hud) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    
+    // Add HUD to screen
+    [self.view addSubview:_hud];
+    
+    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    _hud.delegate = self;
+    
+    _hud.labelText = @"Just a moment please ...";
+    
+    
     self.containerView.backgroundColor = [UIColor blueColor];
+
+    // Show the HUD while the provided method executes in a new thread
+    [_hud showUsingAnimation:YES];
+
     
 }
 

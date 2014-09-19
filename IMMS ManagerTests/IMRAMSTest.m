@@ -1,18 +1,18 @@
 //
-//  IMMS_ManagerTests.m
-//  IMMS ManagerTests
+//  IMRAMSTest.m
+//  RAMS Client
 //
-//  Created by Mario Yohanes on 9/24/13.
-//  Copyright (c) 2013 Mario Yohanes. All rights reserved.
+//  Created by IOM Jakarta on 9/15/14.
+//  Copyright (c) 2014 International Organization for Migration. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
 
-@interface RAMS_ClientTests : XCTestCase
+@interface IMRAMSTest : XCTestCase
 
 @end
 
-@implementation RAMS_ClientTests
+@implementation IMRAMSTest
 
 - (void)setUp
 {

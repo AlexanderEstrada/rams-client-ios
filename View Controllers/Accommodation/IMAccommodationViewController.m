@@ -139,7 +139,7 @@
 {
     //TODO : check if apps already competely synch, case not, then show alert to synch the apps
     if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Confirm Data Updates",Nil) message:NSLocalizedString(@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) otherButtonTitles:NSLocalizedString(@"Continue",Nil), nil];
         alert.tag = IMAlertNeedSynch_Tag;
         [alert show];
         return;

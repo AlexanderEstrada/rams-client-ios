@@ -16,7 +16,7 @@
 #import "Migrant+Extended.h"
 #import "DataProvider.h"
 #import "IMConstants.h"
-
+#import "Registration.h"
 #import "MBProgressHUD.h"
 
 

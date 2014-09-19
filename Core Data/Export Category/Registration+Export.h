@@ -18,12 +18,10 @@
 
 #import "NSDate+Relativity.h"
 
+
 @class Migrant,Interception;
 
 @interface Registration (Export)
-
-
-
 
 + (Registration *)newRegistrationInContext:(NSManagedObjectContext *)context;
 + (Registration *)registrationWithId:(NSString *)registrationId
@@ -47,4 +45,5 @@
 - (void) sendRegistrationUpdate:(NSDictionary *)params;
 - (void) setToLocal:(NSNumber *)value;
 - (void) setRegistrationToLocal;
+
 @end

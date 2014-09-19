@@ -135,7 +135,6 @@
 		ACE6931817F159AC0095F90C /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692E917F159AC0095F90C /* Photo.m */; };
 		ACE6931917F159AC0095F90C /* PoliceOfficer.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692EB17F159AC0095F90C /* PoliceOfficer.m */; };
 		ACE6931A17F159AC0095F90C /* Port.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692ED17F159AC0095F90C /* Port.m */; };
-		ACE6931B17F159AC0095F90C /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692EF17F159AC0095F90C /* Registration.m */; };
 		ACE6931C17F159AC0095F90C /* RegistrationInterception.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692F117F159AC0095F90C /* RegistrationInterception.m */; };
 		ACE6931D17F159AC0095F90C /* RegistrationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692F317F159AC0095F90C /* RegistrationProfile.m */; };
 		ACE6931E17F159AC0095F90C /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692F517F159AC0095F90C /* User.m */; };
@@ -216,11 +215,13 @@
 		ACE694ED17F198830095F90C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EC17F198830095F90C /* AVFoundation.framework */; };
 		ACE694EF17F199770095F90C /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EE17F199770095F90C /* GoogleMaps.framework */; };
 		ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = ACE694F017F199AE0095F90C /* GoogleMaps.bundle */; };
+		F210079919CC3F52007CA840 /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F210079819CC3F52007CA840 /* Registration.m */; };
 		F21278011988B63B006679AB /* IMMovementsReviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278001988B63B006679AB /* IMMovementsReviewVC.m */; };
 		F21278491989F7C6006679AB /* IMFamilyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278481989F7C6006679AB /* IMFamilyViewController.m */; };
 		F212784C198A0158006679AB /* IMSSCheckMark.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784B198A0158006679AB /* IMSSCheckMark.m */; };
 		F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784E198A3B8B006679AB /* IMFamilyListVC.m */; };
 		F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */; };
+		F2721EB219C6FD000009EE99 /* IMRAMSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2721EB119C6FD000009EE99 /* IMRAMSTest.m */; };
 		F288C34919B5761800EE7948 /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */; };
 		F288C34C19B5761900EE7948 /* FamilyData.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34B19B5761900EE7948 /* FamilyData.m */; };
 		F288C34F19B5761900EE7948 /* FamilyRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34E19B5761900EE7948 /* FamilyRegister.m */; };
@@ -527,8 +528,6 @@
 		ACE692EB17F159AC0095F90C /* PoliceOfficer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PoliceOfficer.m; sourceTree = "<group>"; };
 		ACE692EC17F159AC0095F90C /* Port.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Port.h; sourceTree = "<group>"; };
 		ACE692ED17F159AC0095F90C /* Port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Port.m; sourceTree = "<group>"; };
-		ACE692EE17F159AC0095F90C /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Registration.h; sourceTree = "<group>"; };
-		ACE692EF17F159AC0095F90C /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Registration.m; sourceTree = "<group>"; };
 		ACE692F017F159AC0095F90C /* RegistrationInterception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationInterception.h; sourceTree = "<group>"; };
 		ACE692F117F159AC0095F90C /* RegistrationInterception.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegistrationInterception.m; sourceTree = "<group>"; };
 		ACE692F217F159AC0095F90C /* RegistrationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationProfile.h; sourceTree = "<group>"; };
@@ -671,6 +670,8 @@
 		ACE694EC17F198830095F90C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		ACE694EE17F199770095F90C /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Libraries/GoogleMaps.framework; sourceTree = "<group>"; };
 		ACE694F017F199AE0095F90C /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = Libraries/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
+		F210079719CC3F52007CA840 /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Registration.h; sourceTree = "<group>"; };
+		F210079819CC3F52007CA840 /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Registration.m; sourceTree = "<group>"; };
 		F21277FF1988B63B006679AB /* IMMovementsReviewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementsReviewVC.h; sourceTree = "<group>"; };
 		F21278001988B63B006679AB /* IMMovementsReviewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementsReviewVC.m; sourceTree = "<group>"; };
 		F21278471989F7C6006679AB /* IMFamilyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyViewController.h; sourceTree = "<group>"; };
@@ -681,6 +682,10 @@
 		F212784E198A3B8B006679AB /* IMFamilyListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyListVC.m; sourceTree = "<group>"; };
 		F23DA50B19812D0100DDF0C1 /* IMMovementListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementListVC.h; sourceTree = "<group>"; };
 		F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementListVC.m; sourceTree = "<group>"; };
+		F2721EB119C6FD000009EE99 /* IMRAMSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMRAMSTest.m; sourceTree = "<group>"; };
+		F2721EB419C81D8F0009EE99 /* Helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
+		F279A65919CC295A00491B05 /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Registration.h; path = "Core Data/Generated Classes/Registration.h"; sourceTree = "<group>"; };
+		F279A65A19CC295B00491B05 /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Registration.m; path = "Core Data/Generated Classes/Registration.m"; sourceTree = "<group>"; };
 		F288C34719B5761800EE7948 /* FamilyRegisterEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegisterEntry.h; sourceTree = "<group>"; };
 		F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegisterEntry.m; sourceTree = "<group>"; };
 		F288C34A19B5761900EE7948 /* FamilyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyData.h; sourceTree = "<group>"; };
@@ -898,6 +903,8 @@
 			isa = PBXGroup;
 			children = (
 				F2B09A1E194E9FCE00289E8F /* 3rdparty */,
+				F279A65919CC295A00491B05 /* Registration.h */,
+				F279A65A19CC295B00491B05 /* Registration.m */,
 				ACE693F817F159E80095F90C /* View Controllers */,
 				ACE6926517F1599A0095F90C /* Logic */,
 				ACE692A117F159AC0095F90C /* Core Data */,
@@ -988,6 +995,8 @@
 		AC807D5617F14F58000988D0 /* RAMS ClientTests */ = {
 			isa = PBXGroup;
 			children = (
+				F2721EB319C81D5B0009EE99 /* Helper */,
+				F2721EB119C6FD000009EE99 /* IMRAMSTest.m */,
 				AC807D5C17F14F58000988D0 /* IMMS_ManagerTests.m */,
 				AC807D5717F14F58000988D0 /* Supporting Files */,
 			);
@@ -1287,6 +1296,8 @@
 		ACE692C317F159AC0095F90C /* Generated Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F210079719CC3F52007CA840 /* Registration.h */,
+				F210079819CC3F52007CA840 /* Registration.m */,
 				F288C34D19B5761900EE7948 /* FamilyRegister.h */,
 				F288C34E19B5761900EE7948 /* FamilyRegister.m */,
 				F288C34A19B5761900EE7948 /* FamilyData.h */,
@@ -1339,8 +1350,6 @@
 				ACE692EB17F159AC0095F90C /* PoliceOfficer.m */,
 				ACE692EC17F159AC0095F90C /* Port.h */,
 				ACE692ED17F159AC0095F90C /* Port.m */,
-				ACE692EE17F159AC0095F90C /* Registration.h */,
-				ACE692EF17F159AC0095F90C /* Registration.m */,
 				ACE692F017F159AC0095F90C /* RegistrationInterception.h */,
 				ACE692F117F159AC0095F90C /* RegistrationInterception.m */,
 				ACE692F217F159AC0095F90C /* RegistrationProfile.h */,
@@ -1692,6 +1701,14 @@
 			name = Movement;
 			sourceTree = "<group>";
 		};
+		F2721EB319C81D5B0009EE99 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				F2721EB419C81D8F0009EE99 /* Helper.h */,
+			);
+			name = Helper;
+			sourceTree = "<group>";
+		};
 		F2B09A1E194E9FCE00289E8F /* 3rdparty */ = {
 			isa = PBXGroup;
 			children = (
@@ -1905,7 +1922,6 @@
 				AC8A6B6E1820F646005A1C3C /* IMRegistrationViewController.m in Sources */,
 				ACE6931117F159AC0095F90C /* InterceptionLocation.m in Sources */,
 				F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */,
-				ACE6931B17F159AC0095F90C /* Registration.m in Sources */,
 				ACE692FA17F159AC0095F90C /* ImmigrationOfficer+Extended.m in Sources */,
 				ACE6929617F1599A0095F90C /* IMDataUpdater.m in Sources */,
 				ACE6944F17F159E80095F90C /* IMEditInterceptionMovementVC.m in Sources */,
@@ -1957,6 +1973,7 @@
 				ACA7C64C182162C100C560FD /* Interception+Extended.m in Sources */,
 				ACE6945E17F159E80095F90C /* IMLoginViewController.m in Sources */,
 				AC5DD1861804FD3700E3911C /* IMEditAccommodationVC.m in Sources */,
+				F210079919CC3F52007CA840 /* Registration.m in Sources */,
 				ACE692A017F1599A0095F90C /* IMHTTPClient.m in Sources */,
 				AC4092BC1816400B00FAA04E /* IMAccommodationInfoWindow.m in Sources */,
 				ACE693BD17F159E20095F90C /* AFXMLRequestOperation.m in Sources */,
@@ -2017,6 +2034,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2721EB219C6FD000009EE99 /* IMRAMSTest.m in Sources */,
 				AC807D5D17F14F58000988D0 /* IMMS_ManagerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2069,7 +2087,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2084,10 +2102,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/NBIS/lib",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
+					"$(PROJECT_DIR)/Libraries/NBIS/lib",
+					"$(PROJECT_DIR)/Libraries/FbF\\ mobileOne\\ Lib",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "";
@@ -2115,7 +2133,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = "/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries/";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2123,10 +2141,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/NBIS/lib",
-					"/Users/iomjakarta/Downloads/rams-client-ios-release_2.0/Libraries/FbF\\ mobileOne\\ Lib",
+					"$(PROJECT_DIR)/Libraries/NBIS/lib",
+					"$(PROJECT_DIR)/Libraries/FbF\\ mobileOne\\ Lib",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "";
@@ -2167,7 +2185,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries",
@@ -2188,19 +2206,26 @@
 		AC807D6417F14F58000988D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/IMMS Manager.app/IMMS Manager";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RAMS Client.app/RAMS Client";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
+				GCC_PREFIX_HEADER = "IMMS Manager/RAMS Client-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "IMMS ManagerTests/RAMS ClientTests-Info.plist";
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
 				PRODUCT_NAME = "RAMS ClientTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -2210,15 +2235,22 @@
 		AC807D6517F14F58000988D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/IMMS Manager.app/IMMS Manager";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RAMS Client.app/RAMS Client";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "IMMS Manager/IMMS Manager-Prefix.pch";
+				GCC_PREFIX_HEADER = "IMMS Manager/RAMS Client-Prefix.pch";
 				INFOPLIST_FILE = "IMMS ManagerTests/RAMS ClientTests-Info.plist";
+				MACH_O_TYPE = mh_bundle;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
 				PRODUCT_NAME = "RAMS ClientTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

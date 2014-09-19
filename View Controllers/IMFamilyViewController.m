@@ -23,14 +23,14 @@
 
 typedef enum : NSUInteger {
     section_family_information = 0,
-    section_head_of_family,
-    section_spouse,
-    section_guadian,
-    section_childs,
-    section_grand_father,
-    section_grand_mother,
-    section_other_extended_member
-    
+//    section_head_of_family,
+//    section_spouse,
+//    section_guadian,
+//    section_childs,
+//    section_grand_father,
+//    section_grand_mother,
+//    section_other_extended_member
+//    
 } section_type;
 
 #define TOTAL_SECTION 8
@@ -173,7 +173,7 @@ typedef enum : NSUInteger {
     // Regisete for HUD callbacks so we can remove it from the window at the right time
     _HUD.delegate = self;
     
-    _HUD.labelText = @"Reloading Data...";
+    _HUD.labelText = NSLocalizedString(@"Reloading Data...",Nil);
     
     // Show the HUD while the provided method executes in a new thread
     [_HUD showUsingAnimation:YES];
@@ -286,7 +286,7 @@ typedef enum : NSUInteger {
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellName forIndexPath:indexPath];
     if (![self.familyRegister count]) {
-        cell.textLabel.text = @"No Data";
+        cell.textLabel.text = NSLocalizedString(@"No Data",Nil);
         cell.imageView.image = Nil;
     }else {
         if (indexPath.section == 0 ) {
@@ -294,7 +294,7 @@ typedef enum : NSUInteger {
             if (familyRegister) {
                 
                 
-                NSString * mesage = [NSString stringWithFormat:@"Family of %@ (%@)",familyRegister.headOfFamilyName,familyRegister.headOfFamilyId];
+                NSString * mesage = [NSString stringWithFormat:NSLocalizedString(@"Family of %@ (%@)",Nil),familyRegister.headOfFamilyName,familyRegister.headOfFamilyId];
                 cell.textLabel.text = mesage;
                 if (familyRegister.photographThumbnail) {
                     cell.imageView.image = familyRegister.photographImageThumbnail;
@@ -315,8 +315,6 @@ typedef enum : NSUInteger {
     return cell;
     
 }
-
-
 
 - (void)singleTap:(NSIndexPath *)indexPath {
     if ([self.familyRegister count]) {
@@ -339,7 +337,7 @@ typedef enum : NSUInteger {
             _tapCount =0;
             
         }
-    }else NSLog(@"indexPath.row : %i -- do nothing",indexPath.row);
+    }else NSLog(@"indexPath.row : %li -- do nothing",(long)indexPath.row);
     
     
 }
@@ -348,7 +346,7 @@ typedef enum : NSUInteger {
     if ([self.familyRegister count]) {
         [self performSelector:@selector(showPhotoPreview:) withObject: indexPath];
     }else{
-        NSLog(@"indexPath.row : %i -- do nothing",indexPath.row);
+        NSLog(@"indexPath.row : %li -- do nothing",(long)indexPath.row);
     }
     
 }

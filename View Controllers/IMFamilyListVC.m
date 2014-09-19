@@ -118,11 +118,11 @@
 {
     if (self.useStaticData) {
         //show warning alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete Data"
-                                                        message:@"Are you sure to delete this items?"
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Delete Data",Nil)
+                                                        message:NSLocalizedString(@"Are you sure to delete this items?",Nil)
                                                        delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                              otherButtonTitles:@"Yes", nil];
+                                              cancelButtonTitle:NSLocalizedString(@"Cancel",Nil)
+                                              otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
         alert.tag = IMDeleteItems_Tag;
         [alert show];
         
@@ -159,7 +159,7 @@
     }
     
     if ([self.dataProvider.dataObjects count]) {
-        [self showLoadingViewWithTitle:@"Loading ..."];
+        [self showLoadingViewWithTitle:NSLocalizedString(@"Loading ...",Nil)];
     }
     
 }
@@ -511,7 +511,7 @@
         [self.migrants addObject:migrant];
         
         }else{
-            [self showAlertWithTitle:@"Maximum Selection" message:[NSString stringWithFormat:@"You only can select %i for this section",self.maxSelection]];
+            [self showAlertWithTitle:NSLocalizedString(@"Maximum Selection",Nil) message:[NSString stringWithFormat:NSLocalizedString(@"You only can select %i for this section",Nil),self.maxSelection]];
             [collectionView deselectItemAtIndexPath:indexPath animated:NO];
         }
         

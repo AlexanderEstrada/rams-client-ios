@@ -29,6 +29,7 @@ typedef void (^IMRegistrationUploadOnProgress)(void);
 @property (nonatomic, retain) NSNumber * underIOMCare;
 @property (nonatomic, retain) NSDate * transferDate;
 @property (nonatomic, retain) NSNumber * complete;
+@property (nonatomic, retain) NSNumber * skipFinger;
 @property (nonatomic, retain) NSString * vulnerability;
 @property (nonatomic, retain) IomOffice *associatedOffice;
 @property (nonatomic, retain) NSNumber * selfReporting;

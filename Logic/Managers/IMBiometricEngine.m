@@ -18,7 +18,8 @@
 {
     if (!onComplete) return;
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+     dispatch_async(dispatch_get_main_queue(), ^{
         NSData *imageData = UIImageJPEGRepresentation(grayscaleFingerprintImage, 1);
         NSString *imageFileName = [NSString stringWithFormat:@"%f", [[NSDate date] timeIntervalSince1970]];
         NSString *imagePath = [[IMBiometricEngine dirNFIQ] stringByAppendingPathComponent:imageFileName];

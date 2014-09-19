@@ -344,6 +344,17 @@ typedef enum : NSUInteger {
             
         }
         
+        //check location and transfer date
+        if ((self.registration.transferDate && !self.registration.transferDestination.name) || (self.registration.transferDestination.name && !self.registration.transferDate)) {
+            //show alert
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Location Data" message:@"Please check your input on Location" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            
+            [alert show];
+            [_hud hideUsingAnimation:YES];
+            return;
+
+        }
+        
         //validate Biodata value
         if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
             //show alert
