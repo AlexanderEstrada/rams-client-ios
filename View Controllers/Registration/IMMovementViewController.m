@@ -492,8 +492,7 @@
     }
 }
 -(void)showMigrantList:(IMMovementReviewTableVC *)view shouldShowMigrantList:(BOOL)bShowMigrantList{
-    NSLog(@"============= get notification ============= ");
-    if (bShowMigrantList) {
+      if (bShowMigrantList) {
         [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
     }
 }

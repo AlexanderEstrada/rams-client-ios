@@ -143,9 +143,9 @@ typedef enum : NSUInteger {
         //check if there is image to preview
         if (self.registration.biometric.photograph || self.registration.biometric.rightIndex || self.registration.biometric.rightThumb || self.registration.biometric.leftIndex || self.registration.biometric.leftThumb) {
             
-            actionSheet = [[UIActionSheet alloc] initWithTitle:@"Choose Photo Source" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Camera" otherButtonTitles:@"Photo Library", @"Photo Preview",nil];
+            actionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"Choose Photo Source",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) destructiveButtonTitle:NSLocalizedString(@"Camera",Nil) otherButtonTitles:NSLocalizedString(@"Photo Library",Nil), NSLocalizedString(@"Photo Preview",Nil),nil];
             
-        }else actionSheet = [[UIActionSheet alloc] initWithTitle:@"Choose Photo Source" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Camera" otherButtonTitles:@"Photo Library",nil];
+        }else actionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"Choose Photo Source",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) destructiveButtonTitle:NSLocalizedString(@"Camera",Nil) otherButtonTitles:NSLocalizedString(@"Photo Library",Nil),nil];
         
         CGPoint location = [gesture locationInView:self.view];
         CGRect rect = CGRectMake(location.x, location.y, self.imagePhotograph.frame.size.width, self.imagePhotograph.frame.size.height);
@@ -153,8 +153,8 @@ typedef enum : NSUInteger {
     }else if (library) {
         [self showPhotoLibrary];
     }else {
-        [self showAlertWithTitle:@"Photo Library Not Available"
-                         message:@"RAMS requires access to your Photo Library. Go to Settings > Privacy > Photos and turn on access for RAMS Manager."];
+        [self showAlertWithTitle:NSLocalizedString(@"Photo Library Not Available",Nil)
+                         message:NSLocalizedString(@"RAMS requires access to your Photo Library. Go to Settings > Privacy > Photos and turn on access for RAMS Manager.",Nil)];
     }
 }
 
@@ -242,16 +242,33 @@ typedef enum : NSUInteger {
     CGRect bounds = self.imagePhotograph.bounds;
     CGRect rect = CGRectMake(center.x - 50, center.y - 50, bounds.size.width, bounds.size.height);
     rect = [self.view convertRect:rect fromView:self.imagePhotograph];
+    
+    if (self.popover) {
+        //close to avoid memory leaks
+        [self.popover dismissPopoverAnimated:YES];
+        self.popover = nil;
+    }
+    
     self.popover = [[UIPopoverController alloc] initWithContentViewController:imagePickerController];
     [self.popover presentPopoverFromRect:rect inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    
 }
 
 
 #pragma mark UIImagePickerControllerDelegate
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [self.popover dismissPopoverAnimated:YES];
-    self.popover = nil;
+    if (self.popover) {
+        [self.popover dismissPopoverAnimated:YES];
+        self.popover = nil;
+    }
+    
+    
+    if (picker) {
+        [picker dismissViewControllerAnimated:YES completion:Nil];
+        picker = Nil;
+    }
+
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -269,8 +286,10 @@ typedef enum : NSUInteger {
     if (self.popover) {
         [self.popover dismissPopoverAnimated:YES];
         self.popover = nil;
-    }else {
-        [picker dismissViewControllerAnimated:YES completion:nil];
+    }
+    
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+          [picker dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -306,7 +325,7 @@ typedef enum : NSUInteger {
             //            [self dismissViewControllerAnimated:YES completion:nil];
         }];
     }
-    [self.context reset];
+//    [self.context reset];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     
@@ -326,7 +345,7 @@ typedef enum : NSUInteger {
         //checking the value
         if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
             //show alert
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input" message:@"Please input UNHCR Document" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Input",Nil) message:NSLocalizedString(@"Please input UNHCR Document",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
             
             [alert show];
             [_hud hideUsingAnimation:YES];
@@ -336,7 +355,7 @@ typedef enum : NSUInteger {
         //check interception date and date of entry
         if ([self.registration.interceptionData.dateOfEntry compare:self.registration.interceptionData.interceptionDate] == NSOrderedDescending) {
             //show alert
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Interception Data" message:@"Date Of Entry can not be more than interception date" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Input on Interception Data",Nil) message:NSLocalizedString(@"Date Of Entry can not be more than interception date",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
             
             [alert show];
             [_hud hideUsingAnimation:YES];
@@ -347,7 +366,7 @@ typedef enum : NSUInteger {
         //check location and transfer date
         if ((self.registration.transferDate && !self.registration.transferDestination.name) || (self.registration.transferDestination.name && !self.registration.transferDate)) {
             //show alert
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Location Data" message:@"Please check your input on Location" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Input on Location Data",Nil) message:NSLocalizedString(@"Please check your input on Location",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
             
             [alert show];
             [_hud hideUsingAnimation:YES];
@@ -355,10 +374,12 @@ typedef enum : NSUInteger {
 
         }
         
+//        //validate Biodata value
+//        if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
         //validate Biodata value
-        if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
+        if (!self.registration.bioData.firstName) {
             //show alert
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Invalid Input on Personal Information" message:@"Please input all of Personal Information Data" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Input on Personal Information",Nil) message:NSLocalizedString(@"Please input First Name",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
             
             [alert show];
             [_hud hideUsingAnimation:YES];
@@ -399,7 +420,7 @@ typedef enum : NSUInteger {
         
         if (![workingContext save:&error]) {
             NSLog(@"Error saving context: %@", [error description]);
-            [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
+            [self showAlertWithTitle:NSLocalizedString(@"Failed Saving Registration",Nil) message:NSLocalizedString(@"Please try again. If problem persist, please cancel and consult with administrator.",Nil)];
         }else {
             //save database
             [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
@@ -418,13 +439,17 @@ typedef enum : NSUInteger {
                 self.registrationSave(needRemove);
             }
             
-            [self dismissViewControllerAnimated:YES completion:nil];
+            if (self.registrationLast) {
+                self.registrationLast(self.registration);
+            }
         }
-        
-        [_hud hideUsingAnimation:YES];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception on saving : %@",[exception description]);
+    }
+    @finally {
+          [self dismissViewControllerAnimated:YES completion:nil];
+         [_hud hideUsingAnimation:YES];
     }
     
     
@@ -456,7 +481,7 @@ typedef enum : NSUInteger {
     // Regisete for HUD callbacks so we can remove it from the window at the right time
     _hud.delegate = self;
     
-    _hud.labelText = @"Saving...";
+    _hud.labelText = NSLocalizedString(@"Saving...",Nil);
     
     // Show the HUD while the provided method executes in a new thread
     [_hud showUsingAnimation:YES];
@@ -484,11 +509,11 @@ typedef enum : NSUInteger {
     self.context.parentContext = [IMDBManager sharedManager].localDatabase.managedObjectContext;
     
     if (self.registration) {
-        self.title = @"Edit Registration";
+        self.title = NSLocalizedString(@"Edit Registration",Nil);
         self.editingMode = YES;
         [self updateBiometricImages];
     }else {
-        self.title = @"New Registration";
+        self.title = NSLocalizedString(@"New Registration",Nil);
         self.editingMode = NO;
         self.registration = [Registration newRegistrationInContext:self.context];
     }
@@ -524,6 +549,7 @@ typedef enum : NSUInteger {
     if ([vc isKindOfClass:[IMEditRegistrationDataVC class]]) {
         IMEditRegistrationDataVC *regVC = (IMEditRegistrationDataVC *)vc;
         regVC.registration = self.registration;
+        regVC.lastReg = self.LastReg;
     }
     
     if (!_hud) {
@@ -599,7 +625,7 @@ typedef enum : NSUInteger {
             NSError *error;
             if (![workingContext save:&error]) {
                 NSLog(@"Error saving context: %@", [error description]);
-                [self showAlertWithTitle:@"Failed Saving Registration" message:@"Please try again. If problem persist, please cancel and consult with administrator."];
+                [self showAlertWithTitle:NSLocalizedString(@"Failed Saving Registration",Nil) message:NSLocalizedString(@"Please try again. If problem persist, please cancel and consult with administrator.",Nil)];
             }
         }
         

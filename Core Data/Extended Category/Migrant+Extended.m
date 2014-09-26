@@ -15,6 +15,8 @@
 #import "RegistrationBioData.h"
 #import "RegistrationBiometric.h"
 #import "RegistrationInterception.h"
+#import "Accommodation+Extended.h"
+#import "NSDate+Relativity.h"
 
 
 @implementation Migrant (Extended)
@@ -127,8 +129,11 @@
             [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_RIGHT_INDEX_IMAGE]) forFingerPosition:RightIndex];
             [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_THUMB_IMAGE]) forFingerPosition:LeftThumb];
             [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_INDEX_IMAGE]) forFingerPosition:LeftIndex];
+            
+//            migrant.skipFinger = @(NO);
         }else {
             migrant.biometric = Nil;
+//            migrant.skipFinger = @(YES);
         }
         
         //Bio data
@@ -326,6 +331,33 @@
         
         migrant.dateCreated = reg.dateCreated;
         
+        //transfer destination
+        if (reg.transferDestination.name) {
+            //sort Accommodation by date
+            if ([migrant.movements count] > 1) {
+                //sort interceptions
+                [migrant.movements sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"date" ascending:YES]]];
+            }
+            //check if place and date are same, then do nothing, but if not the save as new movement
+            
+            BOOL flag = NO;
+            for (Movement * move in migrant.movements) {
+                if ([move.type isEqualToString:MOVEMENT_TYPE_TRANSFER] && [move.transferLocation.name isEqualToString:reg.transferDestination.name] && [move.date isEqualToDate:reg.transferDate]) {
+                        flag = YES;
+                        break;
+                }
+            }
+            if (!flag) {
+                //this is new movement, then add this to database
+                Movement * movement = [Movement newMovementInContext:context];
+                movement.transferLocation = [Accommodation accommodationWithId:reg.transferDestination.accommodationId inManagedObjectContext:context];
+                movement.date = reg.transferDate;
+                movement.type = MOVEMENT_TYPE_TRANSFER;
+                
+                [migrant addMovementsObject:movement];
+            }
+        }
+        
         //biodata
         migrant.bioData.firstName = reg.bioData.firstName;
         migrant.bioData.familyName = reg.bioData.familyName;
@@ -400,6 +432,9 @@
         }else {
             migrant.biometric = Nil;
         }
+        
+        //save skip finger flag
+//        migrant.skipFinger = reg.skipFinger;
         
         //save flag to complete
         migrant.complete = @(FALSE);

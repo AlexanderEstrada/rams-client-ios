@@ -31,6 +31,7 @@ NSString *const REG_BIO_DATA                    = @"bioData";
 NSString *const REG_FIRST_NAME                  = @"firstName";
 NSString *const REG_FAMILY_NAME                 = @"familyName";
 NSString *const REG_GENDER                      = @"gender";
+NSString *const  REG_SKIP_FINGER                = @"skipFinger";
 NSString *const REG_MARITAL_STATUS              = @"maritalStatus";
 NSString *const REG_NATIONALITY                 = @"nationality";
 NSString *const REG_COUNTRY_OF_BIRTH            = @"countryOfBirth";
@@ -83,7 +84,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         [formatted setObject:self.underIOMCare.intValue?@"true":@"false" forKey:REG_IOM_CARE];
         
         //    [formatted setObject:self.underIOMCare forKey:REG_IOM_CARE];
-        [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
+        if (self.underIOMCare.boolValue) [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
         if (self.unhcrDocument) [formatted setObject:self.unhcrDocument forKey:REG_UNHCR_DOCUMENT];
         if (self.unhcrNumber) [formatted setObject:self.unhcrNumber forKey:REG_UNHCR_DOCUMENT_NUMBER];
         if (self.vulnerability) [formatted setObject:self.vulnerability forKey:REG_VULNERABILITY];
@@ -102,16 +103,18 @@ NSString *const REG_MOVEMENT                 = @"movements";
         [formatted setObject:bioData forKey:REG_BIO_DATA];
         
         //Interception
-        NSMutableDictionary *interception = [NSMutableDictionary dictionary];
-        if (self.interceptionData.dateOfEntry == Nil) {
-            self.interceptionData.dateOfEntry =self.dateCreated;
+        if (self.interceptionData.interceptionDate) {
+            NSMutableDictionary *interception = [NSMutableDictionary dictionary];
+            if (self.interceptionData.dateOfEntry == Nil) {
+                self.interceptionData.dateOfEntry =self.dateCreated;
+            }
+            [interception setObject:[self.interceptionData.dateOfEntry toUTCString] forKey:REG_DATE_OF_ENTRY];
+            
+            [interception setObject:[self.interceptionData.interceptionDate toUTCString] forKey:REG_INTERCEPTION_DATE];
+            [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
+            [interception setObject:self.selfReporting.intValue?@"true":@"false" forKey:REG_SELF_REPORT];
+            [formatted setObject:interception forKey:REG_INTERCEPTION];
         }
-        [interception setObject:[self.interceptionData.dateOfEntry toUTCString] forKey:REG_DATE_OF_ENTRY];
-        
-        [interception setObject:[self.interceptionData.interceptionDate toUTCString] forKey:REG_INTERCEPTION_DATE];
-        [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
-        [interception setObject:self.selfReporting.intValue?@"true":@"false" forKey:REG_SELF_REPORT];
-        [formatted setObject:interception forKey:REG_INTERCEPTION];
         
         //Under IOM care
 //        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
@@ -125,6 +128,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
             [formatted setObject:transfer forKey:REG_TRANSFER];
         }
         
+        //check for sending finger image flag
+//         [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
+        
+//        if (!self.skipFinger.boolValue) {
+        //case not skip sending finger image
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         NSString * base64Str;
         [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
@@ -158,6 +166,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
         
+//        }
         /*
          //Movement
          
@@ -188,7 +197,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
          
          }
          */
-        NSLog(@"formatted : %@",[formatted description]);
+//        NSLog(@"formatted : %@",[formatted description]);
         return formatted;
     }
     @catch (NSException *exception)
@@ -295,7 +304,11 @@ NSString *const REG_MOVEMENT                 = @"movements";
     [client postJSONWithPath:@"migrant/save"
                   parameters:params
                      success:^(NSDictionary *jsonData, int statusCode){
+                         
                          if ([self saveRegistrationData:params withId:[jsonData objectForKey:REG_ID]] && self.successHandler) {
+                             
+                             //save returned ID to Registration Data
+                                 self.registrationId = [jsonData objectForKey:REG_ID];
                              
                              //set status to local
                              self.complete = @(REG_STATUS_LOCAL);
@@ -575,12 +588,17 @@ NSString *const REG_MOVEMENT                 = @"movements";
 - (void)validateCompletion
 {
     BOOL stat = [self.bioData.firstName length] && self.bioData.gender && self.bioData.maritalStatus && self.bioData.dateOfBirth && [self.bioData.placeOfBirth length] && self.bioData.countryOfBirth && self.bioData.nationality;
-    if (self.interceptionData) {
-         stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length];
+    if (self.interceptionData.interceptionDate) {
+         stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length] && self.interceptionData.dateOfEntry;
     }
-   
     
-    if (self.unhcrDocument) stat &= self.unhcrDocument && [self.unhcrNumber length];
+    //check photo and finger print
+    stat &= [self.biometric.photograph length] > 0?YES:NO;
+
+    stat &= ([self.biometric.leftIndex length]> 0?YES:NO) || ([self.biometric.leftThumb length]> 0?YES:NO) || ([self.biometric.rightIndex length]> 0?YES:NO) || ([self.biometric.rightThumb length]> 0?YES:NO);
+    
+
+    if (self.unhcrDocument) stat &= self.unhcrDocument && ([self.unhcrNumber length]> 0?YES:NO);
 //    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
     self.complete = @(stat);
 }
@@ -707,6 +725,9 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //self reporting
         data.selfReporting = migrant.selfReporting;
         
+        //skip finger flag
+//        data.skipFinger = migrant.skipFinger;
+        
         return data;
     }
     @catch (NSException *exception) {
@@ -798,8 +819,10 @@ NSString *const REG_MOVEMENT                 = @"movements";
                     //get newest movement data && have same location with detention location
                     if ([movement.transferLocation.accommodationId isEqualToString:migrant.detentionLocation]) {
                         //Accommodation
-                        data.transferDestination = movement.transferLocation;
+                        data.transferDestination = [Accommodation accommodationWithId:movement.transferLocation.accommodationId inManagedObjectContext:context];
                         data.transferDate = movement.date;
+                        break;
+//                        data.transferId = movement.movementId;
                     }
                 }
                 
@@ -811,6 +834,9 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 data.transferDestination = Nil;
             }
         }
+        
+        //skip finger flag
+//        data.skipFinger = migrant.skipFinger;
         
         //self Reporting
         data.selfReporting = migrant.selfReporting;

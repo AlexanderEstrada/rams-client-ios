@@ -47,6 +47,8 @@
                                                                                                 completion(status, nil);
                                                                                             }else {
                                                                                                 completion(status, NSLocalizedString(@"Authentication Failed", @"Authentication Failed"));
+                                                                                                //reset connection
+                                                                                                 [self logout];
                                                                                             }
                                                                                         }
                                                                                         failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id json){
@@ -55,6 +57,8 @@
                                                                                             
                                                                                             if (response.statusCode == 401) {
                                                                                                 message = NSLocalizedString(@"Authentication Failed", @"Authentication Failed");
+                                                                                                 //reset connection
+                                                                                                 [self logout];
                                                                                             }else if (response.statusCode == 403) {
                                                                                                 message = NSLocalizedString(@"Forbidden Access", @"Forbidden Access");
                                                                                             }else {
@@ -103,6 +107,7 @@
 - (void)logout
 {
     [self.activeUser deleteFromKeychain];
+    self.activeUser = Nil;
     [[IMHTTPClient sharedClient] clearAuthorizationHeader];
     [[NSNotificationCenter defaultCenter] postNotificationName:IMAccessExpiredNotification object:nil userInfo:nil];
 }

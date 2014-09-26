@@ -11,6 +11,7 @@
 #import "IMConstants.h"
 #import "IMHTTPClient.h"
 #import "IMBackgroundFetcher.h"
+#import "IMAuthManager.h"
 
 
 @implementation IMDBManager
@@ -35,34 +36,76 @@
         url = [url URLByAppendingPathComponent:IMLocaDBName];
         _localDatabase = [[UIManagedDocument alloc] initWithFileURL:url];
         
-        NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @(YES), 
-                                  NSInferMappingModelAutomaticallyOption: @(YES),
-                                  NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen};
+//                NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @(YES),
+//                                          NSInferMappingModelAutomaticallyOption: @(YES),
+//                                          NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen};
+        // Set our document up for automatic migrations
+        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                                 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+        //        self.document.persistentStoreOptions = options;
+        
         _localDatabase.persistentStoreOptions = options;
+//        NSError * error;
+        
+//        [[ _localDatabase.managedObjectContext persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:options error:&error];//recreates the persistent store
     }
     
     return _localDatabase;
 }
 
-- (void)openDatabase:(void (^)(BOOL success))successBlock
+- (void)performWithDocument:(OnDocumentReady)onDocumentReady
 {
- 
+    void (^OnDocumentDidLoad)(BOOL) = ^(BOOL success) {
+        onDocumentReady(self.localDatabase);
+    };
+    
     if (![[NSFileManager defaultManager] fileExistsAtPath:[self.localDatabase.fileURL path]]) {
         [self.localDatabase saveToURL:self.localDatabase.fileURL
                      forSaveOperation:UIDocumentSaveForCreating
-                    completionHandler:^(BOOL success){
-            [self.localDatabase openWithCompletionHandler:successBlock];
-        }];
-    }else if (self.localDatabase.documentState == UIDocumentStateClosed){
-        [self.localDatabase openWithCompletionHandler:^(BOOL success){
-            if (!success) {
-                [[NSFileManager defaultManager] removeItemAtURL:self.localDatabase.fileURL error:nil];
-                [IMDBManager resetDBPreferences];
-                [self openDatabase:successBlock];
-            }
-        }];
+                    completionHandler:OnDocumentDidLoad];
+    } else if (self.localDatabase.documentState == UIDocumentStateClosed) {
+        [self.localDatabase openWithCompletionHandler:OnDocumentDidLoad];
+    } else if (self.localDatabase.documentState == UIDocumentStateNormal) {
+        OnDocumentDidLoad(YES);
     }
 }
+
+- (void)openDatabase:(void (^)(BOOL success))successBlock
+{
+    @try {
+        if (![[NSFileManager defaultManager] fileExistsAtPath:[self.localDatabase.fileURL path]]) {
+            [self.localDatabase saveToURL:self.localDatabase.fileURL
+                         forSaveOperation:UIDocumentSaveForCreating
+                        completionHandler:^(BOOL success){
+                            [self.localDatabase openWithCompletionHandler:successBlock];
+                        }];
+        }else if (self.localDatabase.documentState == UIDocumentStateClosed){
+            [self.localDatabase openWithCompletionHandler:successBlock];
+//            [self.localDatabase openWithCompletionHandler:^(BOOL success){
+//                if (!success) {
+//                                [[NSFileManager defaultManager] removeItemAtURL:self.localDatabase.fileURL error:nil];
+//                                    [IMDBManager resetDBPreferences];
+//                                    [self openDatabase:successBlock];
+//                    //to avoid deleting database
+//                    //                [[IMAuthManager sharedManager] logout];
+//                }
+//                if (successBlock) {
+//                    successBlock(success);
+//                }
+//            }];
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"exeption while openDatabase : %@",[exception description]);
+    }
+    //    @finally {
+    //        <#Code that gets executed whether or not an exception is thrown#>
+    //    }
+    
+}
+
+
 
 - (void)closeDatabase
 {
@@ -89,6 +132,11 @@
         if (self.onProgress) {
             self.onProgress();
         }
+        NSDictionary *options = @{
+                                  NSMigratePersistentStoresAutomaticallyOption : @YES,
+                                  NSInferMappingModelAutomaticallyOption : @YES
+                                  };
+        
         NSManagedObjectContext *managedObjectContext = self.localDatabase.managedObjectContext;
         NSError * error;
         // retrieve the store URL
@@ -102,7 +150,7 @@
             // remove the file containing the data
             [[NSFileManager defaultManager] removeItemAtURL:storeURL error:&error];
             //recreate the store like in the  appDelegate method
-            [[managedObjectContext persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];//recreates the persistent store
+            [[managedObjectContext persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];//recreates the persistent store
         }
         [managedObjectContext unlock];
         [IMDBManager resetDBPreferences];
@@ -121,7 +169,7 @@
 
 - (void)checkForUpdates
 {
-    NSDate *lastSyncDate = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];    
+    NSDate *lastSyncDate = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     if (lastSyncDate) [params setObject:[lastSyncDate toUTCString] forKey:@"since"];
     

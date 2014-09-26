@@ -58,24 +58,31 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    if ([[IMAuthManager sharedManager] isLoggedOn]) {
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+    @try {
+        if ([[IMAuthManager sharedManager] isLoggedOn]) {
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
+                //TODO : comment for testing
+                [[IMDBManager sharedManager] checkForUpdates];
+            }else {
+                [[NSNotificationCenter defaultCenter] postNotificationName:IMSyncShouldStartedNotification object:nil userInfo:nil];
+            }
             //TODO : comment for testing
-            [[IMDBManager sharedManager] checkForUpdates];
-        }else {
-            [[NSNotificationCenter defaultCenter] postNotificationName:IMSyncShouldStartedNotification object:nil userInfo:nil];
+            [self checkAppUpdates];
         }
-        //TODO : comment for testing
-        [self checkAppUpdates];
+        
+        [[IMDBManager sharedManager] openDatabase:^(BOOL success){
+            if (!success) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failed Opening Database" message:@"Local database may corrupt, please relaunch the application or reset local database from Settings." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
+        }];
+
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception on applicationDidBecomeActive : %@",[exception description]);
     }
     
-    [[IMDBManager sharedManager] openDatabase:^(BOOL success){
-        if (!success) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failed Opening Database" message:@"Local database may corrupt, please relaunch the application or reset local database from Settings." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-        }
-    }];
-}
+    }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {

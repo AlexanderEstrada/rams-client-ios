@@ -195,19 +195,20 @@
             return;
         }
         cell.labelTitle.text = migrant.fullname;
-        cell.labelSubtitle.text = migrant.registrationNumber;
+        cell.labelSubtitle.text = [migrant.registrationNumber length]?[NSString stringWithFormat:@"Reg. Number %@",migrant.registrationNumber]:Nil;
         cell.labelDetail1.text = migrant.bioDataSummary;
-        cell.labelDetail2.text = migrant.unhcrSummary;
-        cell.labelDetail3.text = migrant.interceptionSummary;
+        cell.labelDetail2.text = migrant.unhcrDocument;
+        cell.labelDetail3.text = [migrant.unhcrNumber length]?[NSString stringWithFormat:@"Doc. Number %@",migrant.unhcrNumber]:Nil;
+        cell.labelDetail4.text = migrant.interceptionSummary;
         
         NSManagedObjectContext *workingContext = migrant.managedObjectContext;
         NSError *error;
         
         if (migrant.detentionLocationName) {
-            cell.labelDetail4.text = migrant.detentionLocationName;
+            cell.labelDetail5.text = migrant.detentionLocationName;
         }else if (migrant.detentionLocation) {
             Accommodation * place = [Accommodation accommodationWithId:migrant.detentionLocation inManagedObjectContext:workingContext];
-            cell.labelDetail4.text = place.name;
+            cell.labelDetail5.text = place.name;
             
             //save detention location name
             migrant.detentionLocationName = place.name;
@@ -218,9 +219,8 @@
             }
             
         }else {
-            cell.labelDetail4.text = Nil;
+            cell.labelDetail5.text = Nil;
         }
-        cell.labelDetail5.text = Nil;
         
         UIImage *image = migrant.biometric.photographImageThumbnail;
         if (image) {
@@ -288,8 +288,14 @@
     editVC.registrationSave  = ^(BOOL remove)
     {
         //TODO : reload Data
-                           
+        
+        NSError * err;
                            if (remove) {
+                               //save on database
+                               [context save:&err];
+                               if (err) {
+                                   NSLog(@"Error saving : %@",[err description]);
+                               }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
                                //delete data on data source
                                [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
                                [self.collectionView reloadData];

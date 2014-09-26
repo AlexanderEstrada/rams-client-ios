@@ -16,6 +16,7 @@
 #import "Registration+Export.h"
 #import "MBProgressHUD.h"
 #import "DataProvider.h"
+#import "Registration.h"
 
 
 
@@ -25,6 +26,7 @@
 @property (nonatomic, strong) IMRegistrationFilterDataVC * filterChooser;
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic,strong) UIBarButtonItem *itemUploadAll;
+@property (nonatomic, strong) Registration *lastReg;
 @property (nonatomic) BOOL flag;
 @property (nonatomic) BOOL next;
 @property (nonatomic) BOOL upload_finish;
@@ -148,13 +150,16 @@
 {
     //TODO : check if apps already competely synch, case not, then show alert to synch the apps
     if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Confirm Data Updates",Nil) message:NSLocalizedString(@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) otherButtonTitles:NSLocalizedString(@"Continue",Nil), nil];
         alert.tag = IMAlertNeedSynch_Tag;
         [alert show];
         return;
     };
     
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
+    //set last registration
+    vc.LastReg = self.lastReg;
+    
     vc.registrationSave = ^(BOOL remove)
     {
         //TODO : reload Data
@@ -165,6 +170,13 @@
         }
     };
     
+    vc.registrationLast = ^(Registration *reg)
+    {
+        if (reg) {
+            //save last registration
+            self.lastReg = reg;
+        }
+    };
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
     navCon.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;
@@ -182,16 +194,16 @@
 {
     switch ([self.viewControllers indexOfObject:viewController]) {
         case 0:
-            self.title = @"Incomplete Registration";
+            self.title = NSLocalizedString(@"Incomplete Registration",Nil);
             break;
         case 1:
-            self.title = @"Pending Registration";
+            self.title = NSLocalizedString(@"Pending Registration",Nil);
             break;
         case 2:
-            self.title = @"Local Migrant Data";
+            self.title = NSLocalizedString(@"Local Migrant Data",Nil);
             break;
         default:
-             self.title = @"Incomplete Registration";
+             self.title = NSLocalizedString(@"Incomplete Registration",Nil);
             break;
     }
     
@@ -211,7 +223,7 @@
     [super viewDidLoad];
     
     
-    self.title = @"Incomplete Registration";
+    self.title = NSLocalizedString(@"Incomplete Registration",Nil);
     self.navigationController.navigationBar.tintColor = [UIColor IMMagenta];
     self.view.tintColor = [UIColor IMMagenta];
     self.tabBar.tintColor = [UIColor IMMagenta];
@@ -223,6 +235,7 @@
     
     UIBarButtonItem *itemFilter = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                                 target:self action:@selector(showFilterOptions:)];
+
     //add upload icon
     self.itemUploadAll= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon-upload-small"] style:UIBarButtonItemStylePlain target:self action:@selector(uploadAll:)];
     self.itemUploadAll.enabled = FALSE;

@@ -183,7 +183,7 @@
         self.scanCompleted = TRUE;
          self.itemDone.enabled = TRUE;
     }else {
-       
+        self.scanningView.image = Nil;
         self.containerView.backgroundColor = [UIColor grayColor];
         self.buttonRescan.hidden = TRUE;
         self.scanCompleted = FALSE;

@@ -12,5 +12,5 @@
 @interface IMEditRegistrationDataVC : IMTableViewController
 
 @property (nonatomic, strong) Registration *registration;
-
+@property (nonatomic, strong) Registration *lastReg;
 @end

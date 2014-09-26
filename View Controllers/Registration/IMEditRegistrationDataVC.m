@@ -24,6 +24,7 @@
 //#import "IMMovementVC.h"
 #import "NSDate+Relativity.h"
 #import "UIImage+ImageUtils.h"
+#import "Accommodation+Extended.h"
 
 
 typedef enum : NSUInteger {
@@ -35,6 +36,21 @@ typedef enum : NSUInteger {
     table_location
 } tablePosition;
 
+typedef enum : NSUInteger {
+    row_use_last_data = 0,
+    row_first_name,
+    row_family_name,
+    row_sex,
+    row_status,
+    row_date_of_birth,
+    row_city_of_birth,
+    row_country_of_birth,
+    row_nationality,
+    row_vulnerability,
+    row_skip_finger
+} table_personal_info_row;
+
+static NSInteger total_row_table_personal_info = 10;
 #define MAGIC_NUMBER 666
 
 #define TOTAL_SECTION (5) // we remove table_location
@@ -43,6 +59,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic) BOOL underIOMCare;
 @property (nonatomic) BOOL skipFinger;
+@property (nonatomic) BOOL useLastData;
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic, strong) Migrant *migrant;
 @property (nonatomic, strong) NSMutableArray *movementData;
@@ -60,6 +77,10 @@ typedef enum : NSUInteger {
     
     [self reloadData];
     
+}
+- (void)setLastReg:(Registration *)lastReg
+{
+    _lastReg = lastReg;
 }
 
 - (void) reloadData
@@ -102,6 +123,19 @@ typedef enum : NSUInteger {
     [self.tableView reloadData];
 }
 
+- (void)setUseLastData:(BOOL)useLastData{
+    _useLastData = useLastData;
+    
+    if(_useLastData == YES) {
+        //show alert
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Use Last Registration Data",Nil) message:NSLocalizedString(@"Are you sure want to last Registration Data ?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"NO",Nil) otherButtonTitles:NSLocalizedString(@"YES",Nil), nil];
+        alert.tag = IMUseLastRegistrationData_Tag;
+        [alert show];
+    }else {
+        //reset data to empty
+    }
+
+}
 
 - (void)setUnderIOMCare:(BOOL)underIOMCare
 {
@@ -115,7 +149,7 @@ typedef enum : NSUInteger {
 
 - (void)setSkipFinger:(BOOL)skipFinger{
     _skipFinger = skipFinger;
-    self.registration.skipFinger = @(_skipFinger);
+//    self.registration.skipFinger = @(_skipFinger);
     
     if(_skipFinger == YES) {
         //show alert
@@ -259,7 +293,7 @@ typedef enum : NSUInteger {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == table_personal_info) {
-        return 10;
+        return total_row_table_personal_info;
     }else if (section == table_unhcr_data || section == table_migrant_location){
         return 2;
     }else if (section == table_interception_data){
@@ -467,7 +501,13 @@ typedef enum : NSUInteger {
     IMFormCell *cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
     
     if (indexPath.section == table_personal_info) {
-        if (indexPath.row == 0) {
+        if (indexPath.row == row_use_last_data) {
+            cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
+            cell.labelTitle.text = NSLocalizedString(@"Use Last Data",Nil);
+            cell.switcher.on = _useLastData;
+            cell.onSwitcherValueChanged = ^(BOOL value){ self.useLastData = value;
+            };
+        }else if (indexPath.row == row_first_name) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"First Name",Nil);
             cell.textValue.placeholder = NSLocalizedString(@"e.g Jafar",Nil);
@@ -477,7 +517,7 @@ typedef enum : NSUInteger {
             };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
             cell.maxCharCount = 40;
-        }else if (indexPath.row == 1) {
+        }else if (indexPath.row == row_family_name) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Family Name",Nil);
             cell.labelTitle.textColor = [UIColor grayColor];
@@ -486,42 +526,42 @@ typedef enum : NSUInteger {
             cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.familyName = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
             cell.maxCharCount = 40;
-        }else if (indexPath.row == 2) {
+        }else if (indexPath.row == row_sex) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             //            cell.labelTitle.text = @"Gender";
             cell.labelTitle.text = NSLocalizedString(@"Sex",Nil);
             cell.labelValue.text = self.registration.bioData.gender;
-        }else if (indexPath.row == 3) {
+        }else if (indexPath.row == row_status) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Marital Status",Nil);
             cell.labelValue.text = self.registration.bioData.maritalStatus;
-        }else if (indexPath.row == 4) {
+        }else if (indexPath.row == row_date_of_birth) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Date of Birth",Nil);
             cell.labelValue.text = [self.registration.bioData.dateOfBirth mediumFormatted];
-        }else if (indexPath.row == 5) {
+        }else if (indexPath.row == row_city_of_birth) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"City of Birth",Nil);
             cell.textValue.placeholder = NSLocalizedString(@"e.g Kabul",Nil);
             cell.textValue.text = self.registration.bioData.placeOfBirth;
             cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.placeOfBirth = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet], [NSCharacterSet characterSetWithCharactersInString:@",-"]];
-        }else if (indexPath.row == 6) {
+        }else if (indexPath.row == row_country_of_birth) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Country of Birth",Nil);
             cell.labelValue.text = self.registration.bioData.countryOfBirth.name;
-        }else if (indexPath.row == 7) {
+        }else if (indexPath.row == row_nationality) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Nationality",Nil);
             cell.labelValue.text = self.registration.bioData.nationality.name;
-        }else if (indexPath.row == 8) {
+        }else if (indexPath.row == row_vulnerability) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Vulnerability",Nil);
             cell.labelValue.text = self.registration.vulnerability;
-        }else if (indexPath.row == 9) {
+        }else if (indexPath.row == row_skip_finger) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Skip Finger Image",Nil);
-            cell.switcher.on = self.registration.skipFinger.boolValue;
+//            cell.switcher.on = self.registration.skipFinger.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.skipFinger = value;
             };
 
@@ -655,6 +695,14 @@ typedef enum : NSUInteger {
         if (indexPath.row == 0) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Latest Location",Nil);
+            if (!self.registration.transferDestination.name && self.registration.transferDate) {
+                self.registration.transferDestination = [Accommodation accommodationWithName:self.registration.detentionLocationName inManagedObjectContext:self.registration.managedObjectContext];
+                NSError * err;
+                [self.registration.managedObjectContext save:&err];
+                if (err) {
+                    NSLog(@"Error while saving : %@",[err description]);
+                }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+            }
             cell.labelValue.text = self.registration.transferDestination.name;
         }else if (indexPath.row == 1) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
@@ -677,9 +725,60 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _useLastData = NO;
 }
 
-
+- (void)saveData:(BOOL)flag
+{
+    if (flag) {
+        //deep copy all data
+        // Nationality, Country of Birth, UNHCR Document, Associated IOM Office
+        /*
+         For Nationality and Country of Birth —> Display migrant nationalities which exists on the local database on top of the list, so user wouldn’t need to do much searching (except for inputting a migrant which nationality is not yet exist in the local data).
+         For associated IOM office, get the info from the current user information.
+         For UNHCR Document —> The dropdown should default to ’No Document’ and the text field for UNHCR Number is disabled, then store last document type which is used by previous migrant registration. If you must do hundreds and hundreds of people who’s document type mostly the same this can be a great time saver and reducing fatigue. Re-use the UNHCR Document number field.
+         Re-use interception data field like Date of Entry, Interception Date, Interception Location, Self Reporting, Under IOM Care.
+         Re-use the Transfer Location and Transfer Date field from previous registration.
+         In essence – Reuse input field as much as you can, reduce the amount of tapping the user must do.
+         */
+        
+//        self.registration = self.lastReg;
+        //personal information
+        self.registration.bioData.countryOfBirth = self.lastReg.bioData.countryOfBirth;
+        self.registration.bioData.nationality =   self.lastReg.bioData.nationality;
+        
+        //unhcr document
+        self.registration.unhcrDocument =  self.lastReg.unhcrDocument;
+        self.registration.unhcrNumber =  self.lastReg.unhcrNumber;
+        
+        
+        //interception data
+        self.registration.associatedOffice =  self.lastReg.associatedOffice;
+        self.registration.underIOMCare =  self.lastReg.underIOMCare;
+        self.underIOMCare = self.registration.underIOMCare.boolValue;
+        self.registration.selfReporting =  self.lastReg.selfReporting;
+        self.registration.interceptionData.dateOfEntry =  self.lastReg.interceptionData.dateOfEntry;
+        self.registration.interceptionData.interceptionDate =  self.lastReg.interceptionData.interceptionDate;
+        self.registration.interceptionData.interceptionLocation =  self.lastReg.interceptionData.interceptionLocation;
+        
+        //location
+        self.registration.transferDestination =  self.lastReg.transferDestination;
+        self.registration.transferDate =  self.lastReg.transferDate;
+    }else {
+        self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = Nil;
+        self.registration.unhcrNumber = Nil;
+        self.registration.associatedOffice = Nil;
+        self.registration.underIOMCare = Nil;
+        self.registration.selfReporting = Nil;
+        self.registration.interceptionData.dateOfEntry = Nil;
+        self.registration.interceptionData.interceptionDate = Nil;
+        self.registration.interceptionData.interceptionLocation = Nil;
+        self.registration.transferDestination = Nil;
+        self.registration.transferDate = Nil;
+    }
+    
+    [self.tableView reloadData];
+}
 
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -689,9 +788,22 @@ typedef enum : NSUInteger {
         self.registration.unhcrNumber = Nil;
     }else if (alertView.tag == IMSkipFinger_Tag && buttonIndex == [alertView cancelButtonIndex]){
             _skipFinger = NO;
-        self.registration.skipFinger = @(_skipFinger);
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:9 inSection:table_personal_info]]
+//        self.registration.skipFinger = @(_skipFinger);
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_skip_finger inSection:table_personal_info]]
                               withRowAnimation:UITableViewRowAnimationNone];
+    }else if (alertView.tag == IMUseLastRegistrationData_Tag){
+        
+        if (buttonIndex == [alertView cancelButtonIndex]) {
+            _useLastData = NO;
+            [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_use_last_data inSection:table_personal_info]]
+                                  withRowAnimation:UITableViewRowAnimationNone];
+            //reset data
+            [self saveData:NO];
+        }else{
+            [self saveData:YES];
+        }
+      
+        
     }
     
     
@@ -700,15 +812,15 @@ typedef enum : NSUInteger {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == table_personal_info) {
-        if (indexPath.row == 2) {
+        if (indexPath.row == row_sex) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_GENDER delegate:self];
             vc.selectedValue = self.registration.bioData.gender;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
-        }else if (indexPath.row == 3) {
+        }else if (indexPath.row == row_status) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_MARITAL_STATUS delegate:self];
             vc.selectedValue = self.registration.bioData.maritalStatus;
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
-        }else if (indexPath.row == 4) {
+        }else if (indexPath.row == row_date_of_birth) {
             IMDatePickerVC *datePicker = [[IMDatePickerVC alloc] initWithAction:^(NSDate *date){
                 self.registration.bioData.dateOfBirth = date;
                 IMFormCell *cell = (IMFormCell *)[self.tableView cellForRowAtIndexPath:indexPath];
@@ -719,7 +831,7 @@ typedef enum : NSUInteger {
             datePicker.maximumDate = [NSDate date];
             datePicker.date = self.registration.bioData.dateOfBirth;
             [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:datePicker navigationController:NO];
-        }else if (indexPath.row == 6) {
+        }else if (indexPath.row == row_country_of_birth) {
             IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES];
             vc.onSelected = ^(Country *country){
                 Country *selectedCountry = [Country countryWithCode:country.code inManagedObjectContext:self.registration.managedObjectContext];
@@ -728,10 +840,10 @@ typedef enum : NSUInteger {
                 
                 [self.popover dismissPopoverAnimated:YES];
                 self.popover = nil;
-                [self.tableView reloadRowsAtIndexPaths:@[indexPath, [NSIndexPath indexPathForRow:7 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+                [self.tableView reloadRowsAtIndexPaths:@[indexPath, [NSIndexPath indexPathForRow:row_nationality inSection:table_personal_info]] withRowAnimation:UITableViewRowAnimationAutomatic];
             };
             [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
-        }else if (indexPath.row == 7) {
+        }else if (indexPath.row == row_nationality) {
             IMCountryListVC *vc = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:YES];
             vc.onSelected = ^(Country *country){
                 self.registration.bioData.nationality = [Country countryWithCode:country.code inManagedObjectContext:self.registration.managedObjectContext];
@@ -740,7 +852,7 @@ typedef enum : NSUInteger {
                 [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             };
             [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:NO];
-        }else if (indexPath.row == 8) {
+        }else if (indexPath.row == row_vulnerability) {
             IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithOptions:[self vulnerabilityOptions] delegate:self];
             vc.selectedValue = self.registration.vulnerability;
             vc.firstRowIsSpecial = NO;
@@ -916,10 +1028,10 @@ typedef enum : NSUInteger {
     }else if (optionChooser.constantsKey == CONST_GENDER) {
         self.registration.bioData.gender = value;
         [self updateVulnerability];
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:2 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_sex inSection:table_personal_info]] withRowAnimation:UITableViewRowAnimationAutomatic];
     }else if (optionChooser.constantsKey == CONST_MARITAL_STATUS) {
         self.registration.bioData.maritalStatus = value;
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:3 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_status inSection:table_personal_info]] withRowAnimation:UITableViewRowAnimationAutomatic];
     }else if (optionChooser.constantsKey == CONST_TRAVEL_MODE){
         //get the index based on total movement, so we can add section header for every movement history
         NSUInteger index = (([optionChooser getSelectedIndexPath].section - table_location));
@@ -931,7 +1043,7 @@ typedef enum : NSUInteger {
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:4 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     }else if (!optionChooser.constantsKey) {
         self.registration.vulnerability = selectedIndex == 0 ? nil : value;
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:8 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_vulnerability inSection:table_personal_info]] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     
     [self.popover dismissPopoverAnimated:YES];

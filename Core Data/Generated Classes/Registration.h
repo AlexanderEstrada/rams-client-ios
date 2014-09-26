@@ -29,7 +29,7 @@ typedef void (^IMRegistrationUploadOnProgress)(void);
 @property (nonatomic, retain) NSNumber * underIOMCare;
 @property (nonatomic, retain) NSDate * transferDate;
 @property (nonatomic, retain) NSNumber * complete;
-@property (nonatomic, retain) NSNumber * skipFinger;
+//@property (nonatomic, retain) NSNumber * skipFinger;
 @property (nonatomic, retain) NSString * vulnerability;
 @property (nonatomic, retain) IomOffice *associatedOffice;
 @property (nonatomic, retain) NSNumber * selfReporting;
@@ -37,6 +37,7 @@ typedef void (^IMRegistrationUploadOnProgress)(void);
 @property (nonatomic, retain) RegistrationBioData *bioData;
 @property (nonatomic, retain) RegistrationBiometric *biometric;
 @property (nonatomic, retain) Accommodation *transferDestination;
+//@property (nonatomic, retain) NSString *transferId;
 @property (nonatomic, retain) NSString *detentionLocation;
 @property (nonatomic, retain) NSString *detentionLocationName;
 

@@ -7,9 +7,12 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "Registration+Export.h"
+#import "Migrant+Extended.h"
 
 @interface IMRAMSTest : XCTestCase
-
+@property (nonatomic, strong) Registration *registration;
+@property (nonatomic, strong) Migrant *migrant;
 @end
 
 @implementation IMRAMSTest
@@ -18,12 +21,17 @@
 {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    self.registration.bioData.firstName =@"Testing";
+    
+    
 }
 
 - (void)tearDown
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+    self.registration = Nil;
+    self.migrant = nil;
 }
 
 - (void)testExample

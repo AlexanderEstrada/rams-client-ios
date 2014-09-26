@@ -35,6 +35,7 @@
 @property (nonatomic, retain) NSString *detentionLocation;
 @property (nonatomic, retain) NSString *detentionLocationName;
 @property (nonatomic, retain) NSNumber * complete;
+//@property (nonatomic, retain) NSNumber * skipFinger;
 @end
 
 @interface Migrant (CoreDataGeneratedAccessors)

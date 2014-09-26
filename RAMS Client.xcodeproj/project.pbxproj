@@ -680,6 +680,7 @@
 		F212784B198A0158006679AB /* IMSSCheckMark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMSSCheckMark.m; sourceTree = "<group>"; };
 		F212784D198A3B8A006679AB /* IMFamilyListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyListVC.h; sourceTree = "<group>"; };
 		F212784E198A3B8B006679AB /* IMFamilyListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMFamilyListVC.m; sourceTree = "<group>"; };
+		F2190A7319D2A546006A77F2 /* IMMS 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "IMMS 2.xcdatamodel"; sourceTree = "<group>"; };
 		F23DA50B19812D0100DDF0C1 /* IMMovementListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementListVC.h; sourceTree = "<group>"; };
 		F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementListVC.m; sourceTree = "<group>"; };
 		F2721EB119C6FD000009EE99 /* IMRAMSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMRAMSTest.m; sourceTree = "<group>"; };
@@ -2293,6 +2294,7 @@
 		ACE6926217F158E90095F90C /* IMMS.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				F2190A7319D2A546006A77F2 /* IMMS 2.xcdatamodel */,
 				ACE6926317F158E90095F90C /* IMMS.xcdatamodel */,
 			);
 			currentVersion = ACE6926317F158E90095F90C /* IMMS.xcdatamodel */;

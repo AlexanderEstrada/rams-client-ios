@@ -164,9 +164,10 @@
     //    {
     if(!self.reloadingData){
         self.reloadingData = YES;
-        if (!self.context) {
+//        if (!self.context) {
+        self.context = Nil;
             self.context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        }
+//        }
         
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
         if (self.basePredicate) {

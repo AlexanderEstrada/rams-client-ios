@@ -39,5 +39,5 @@
 @dynamic uploader;
 @dynamic lastUploader;
 @dynamic detentionLocationName;
-
+//@dynamic skipFinger;
 @end

@@ -25,7 +25,7 @@
 @dynamic captureDevice;
 @dynamic underIOMCare;
 @dynamic selfReporting;
-@dynamic skipFinger;
+//@dynamic skipFinger;
 @dynamic transferDate;
 @dynamic complete;
 @dynamic vulnerability;
@@ -36,5 +36,6 @@
 @dynamic transferDestination;
 @dynamic detentionLocation;
 @dynamic detentionLocationName;
+//@dynamic transferId;
 
 @end

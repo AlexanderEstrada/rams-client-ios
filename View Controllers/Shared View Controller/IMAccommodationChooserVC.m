@@ -111,7 +111,7 @@
         
         NSArray *cities = [tmp valueForKeyPath:@"@distinctUnionOfObjects.city"];
         for (NSString *city in cities) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"city = %@ AND type = %@", city,[[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"city = %@ AND type like[cd] %@", city,[[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
             if (![dictionary objectForKey:city]) {
                 [dictionary setObject:[tmp filteredArrayUsingPredicate:predicate] forKey:city];
             }
@@ -306,7 +306,7 @@
 {
     if (self.entity) {
         return Nil;
-    }else return [NSPredicate predicateWithFormat:@"active = YES AND type = %@", [[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
+    }else return [NSPredicate predicateWithFormat:@"active = YES AND type like[cd] %@", [[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
     //    return [NSPredicate predicateWithFormat:@"active = YES AND type = %@", [[self accommodationTypes] objectAtIndex:self.segmentedControl.selectedSegmentIndex]];
 }
 

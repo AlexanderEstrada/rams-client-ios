@@ -51,7 +51,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
         }
         
         
-        if (![self.type isEqual:@"Escape"] && ![self.type isEqual:@"Release"] && ![self.type isEqual:@"Decease"]) {
+        if (![self.type isEqual:MOVEMENT_TYPE_ESCAPE] && ![self.type isEqual:MOVEMENT_TYPE_RELEASE] && ![self.type isEqual:MOVEMENT_TYPE_DECEASE]) {
             //document number
             if (self.documentNumber) {
                 [formatted setObject:self.documentNumber forKey:MOVEMENT_DOCUMENT_NUMBER];
@@ -77,7 +77,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
                 [formatted setObject:self.departurePort.name forKey:MOVEMENT_DEPARTURE_PORT];
             }
             
-            if ([self.type isEqual:@"Transfer"]) {
+            if ([self.type isEqual:MOVEMENT_TYPE_TRANSFER]) {
                 //origin
                 if (self.originLocation.accommodationId) {
                     [formatted setObject:self.originLocation.accommodationId forKey:MOVEMENT_ORIGINAL_LOCATION];
@@ -90,7 +90,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
                 
             }
             
-            if ([self.type isEqual:@"AVR"] || [self.type isEqual:@"Deportation"] || [self.type isEqual:@"Resettlement"]) {
+            if ([self.type isEqual:MOVEMENT_TYPE_AVR] || [self.type isEqual:MOVEMENT_TYPE_DEPORTATION] || [self.type isEqual:MOVEMENT_TYPE_RESETTLEMENT]) {
                 //destination country
                 if (self.destinationCountry.code) {
                     [formatted setObject:self.destinationCountry.code forKey:MOVEMENT_DESTINATION_COUNTRY];
@@ -121,26 +121,26 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
             data = [Movement newMovementInContext:context];
             data.movementId = Id;
         }
-        data.type = [dictionary objectForKey:@"type"];
-        data.date = [NSDate dateFromUTCString:[dictionary objectForKey:@"date"]];
-        if (![data.type isEqual:@"Escape"] && ![data.type isEqual:@"Release"] && ![data.type isEqual:@"Decease"]) {
-            data.documentNumber = CORE_DATA_OBJECT([dictionary objectForKey:@"documentNumber"]);
-            data.proposedDate = [NSDate dateFromUTCString:[dictionary objectForKey:@"proposedDate"]];
-            data.travelMode = CORE_DATA_OBJECT([dictionary objectForKey:@"travelMode"]);
-            data.referenceCode = CORE_DATA_OBJECT([dictionary objectForKey:@"referenceCode"]);
-            data.departurePort = [Port portWithName:[dictionary objectForKey:@"departurePort"] inManagedObjectContext:context];
-            if ([data.type isEqual:@"Transfer"]) {
-                data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:@"origin"] inManagedObjectContext:context];
-                data.transferLocation = [Accommodation accommodationWithId:[dictionary objectForKey:@"destination"] inManagedObjectContext:context];
+        data.type = [dictionary objectForKey:MOVEMENT_TYPE];
+        data.date = [NSDate dateFromUTCString:[dictionary objectForKey:MOVEMENT_DATE]];
+        if (![data.type isEqual:MOVEMENT_TYPE_ESCAPE] && ![data.type isEqual:MOVEMENT_TYPE_RELEASE] && ![data.type isEqual:MOVEMENT_TYPE_DECEASE]) {
+            data.documentNumber = CORE_DATA_OBJECT([dictionary objectForKey:MOVEMENT_DOCUMENT_NUMBER]);
+            data.proposedDate = [NSDate dateFromUTCString:[dictionary objectForKey:MOVEMENT_PROPOSED_DATE]];
+            data.travelMode = CORE_DATA_OBJECT([dictionary objectForKey:MOVEMENT_TRAVEL_MODE]);
+            data.referenceCode = CORE_DATA_OBJECT([dictionary objectForKey:MOVEMENT_REFERENCE_CODE]);
+            data.departurePort = [Port portWithName:[dictionary objectForKey:MOVEMENT_DEPARTURE_PORT] inManagedObjectContext:context];
+            if ([data.type isEqual:MOVEMENT_TYPE_TRANSFER]) {
+                data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:MOVEMENT_ORIGINAL_LOCATION] inManagedObjectContext:context];
+                data.transferLocation = [Accommodation accommodationWithId:[dictionary objectForKey:MOVEMENT_TRANSFER_LOCATION] inManagedObjectContext:context];
             }else{
                 data.originLocation = Nil;
                 data.transferLocation = Nil;
             }
             
-            if ([data.type isEqual:@"AVR"] || [data.type isEqual:@"Deportation"] || [data.type isEqual:@"Resettlement"]) {
+            if ([data.type isEqual:MOVEMENT_TYPE_AVR] || [data.type isEqual:MOVEMENT_TYPE_DEPORTATION] || [data.type isEqual:MOVEMENT_TYPE_RESETTLEMENT]) {
                 
-                data.destinationCountry = [Country countryWithCode:[dictionary objectForKey:@"destinationCountry"] inManagedObjectContext:context];
-            }else if ([data.type isEqual:@"Release"] && [dictionary objectForKey:MOVEMENT_DETENTION_LOCATION]){
+                data.destinationCountry = [Country countryWithCode:[dictionary objectForKey:MOVEMENT_DESTINATION_COUNTRY] inManagedObjectContext:context];
+            }else if ([data.type isEqual:MOVEMENT_TYPE_RELEASE] && [dictionary objectForKey:MOVEMENT_DETENTION_LOCATION]){
                  data.originLocation = [Accommodation accommodationWithId:[dictionary objectForKey:MOVEMENT_DETENTION_LOCATION] inManagedObjectContext:context];
             }else{
                 data.destinationCountry = nil;
@@ -176,7 +176,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
 + (Movement *)movementWithId:(NSString *)movementId inContext:(NSManagedObjectContext *)context
 {
     @try {
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Movement"];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:MOVEMENT_ENTITY_NAME];
         request.predicate = [NSPredicate predicateWithFormat:@"movementId = %@", movementId];
         NSError *error;
         NSArray *results = [context executeFetchRequest:request error:&error];
@@ -189,7 +189,7 @@ NSString *const MOVEMENT_DETENTION_LOCATION                    = @"detentionLoca
 + (Movement *)newMovementInContext:(NSManagedObjectContext *)context
 {
     @try {
-        Movement *data = [NSEntityDescription insertNewObjectForEntityForName:@"Movement" inManagedObjectContext:context];
+        Movement *data = [NSEntityDescription insertNewObjectForEntityForName:MOVEMENT_ENTITY_NAME inManagedObjectContext:context];
         //        Port *port = [NSEntityDescription insertNewObjectForEntityForName:@"Port" inManagedObjectContext:context];
         //        Country * country = [NSEntityDescription insertNewObjectForEntityForName:@"Country" inManagedObjectContext:context];
         //        Accommodation * origin= [NSEntityDescription insertNewObjectForEntityForName:@"Accommodation" inManagedObjectContext:context];

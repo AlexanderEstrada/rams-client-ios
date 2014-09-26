@@ -83,6 +83,7 @@ typedef enum
 #define IMDeleteItems_Tag                   11
 #define IMForgotPassword_Tag                   12
 #define IMSkipFinger_Tag                   13
+#define IMUseLastRegistrationData_Tag                   14
 
 
 

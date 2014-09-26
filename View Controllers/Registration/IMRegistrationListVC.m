@@ -18,13 +18,21 @@
 #import "IMConstants.h"
 #import "Registration.h"
 #import "MBProgressHUD.h"
+#import "IMSSCheckMark.h"
 
 
+typedef enum : NSUInteger {
+    option_delete = 0,
+    option_edit
+    
+} recognizer_option;
 
-@interface IMRegistrationListVC () <DataProviderDelegate,MBProgressHUDDelegate>
+@interface IMRegistrationListVC () <DataProviderDelegate,MBProgressHUDDelegate,UIGestureRecognizerDelegate,UIActionSheetDelegate>
 
 @property (nonatomic,strong) MBProgressHUD *HUD;
-
+@property (nonatomic,strong) NSIndexPath * selectedIndexPath;
+@property (nonatomic) NSInteger currentTag;
+@property (nonatomic, strong) Registration *lastReg;
 @end
 
 @implementation IMRegistrationListVC
@@ -66,12 +74,12 @@
 
 - (void)executing
 {
-    @synchronized(self)
-    {
+//    @synchronized(self)
+//    {
         if(!self.reloadingData){
             self.reloadingData = YES;
             
-            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+
             NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
             if (self.basePredicate) {
                 request.predicate = self.basePredicate;
@@ -82,18 +90,18 @@
             request.returnsObjectsAsFaults = YES;
             
             NSError *error;
-            
+             NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
             NSUInteger total = [context countForFetchRequest:request error:&error];
             DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:request.predicate];
             self.dataProvider = Nil;
             [self setDataProvider:dataProvider];
             
             [_HUD hideUsingAnimation:YES];
-//            [self hideLoadingView];
+            //            [self hideLoadingView];
             
             self.reloadingData = NO;
         }
-    };
+//    };
 }
 
 - (void)reloadData
@@ -127,40 +135,46 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-//    [self hideLoadingView];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    [self.collectionView reloadData];
+    if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+//        if (!_HUD) {
+//            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+//            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+//            
+//        }
+//        
+//        // Back to indeterminate mode
+//        _HUD.mode = MBProgressHUDModeIndeterminate;
+//        
+//        // Regisete for HUD callbacks so we can remove it from the window at the right time
+//        _HUD.delegate = self;
+//        
+//        _HUD.labelText = @"Just a moment please...";
+//        
+//        // Add HUD to screen
+//        [self.navigationController.view addSubview:_HUD];
+//        
+//        // Show the HUD while the provided method executes in a new thread
+////        [_HUD showWhileExecuting:@selector(uploading:) onTarget:self withObject:nil animated:YES];
+//        [_HUD show:YES];
+        [self showLoadingViewWithTitle:@"Just a moment please..."];
+        [self uploading:Nil];
+        
+    }else {
+        //    [self hideLoadingView];
+        [self dismissViewControllerAnimated:YES completion:nil];
+        [self.collectionView reloadData];
+    }
     
 }
 
-- (void)upload:(UIButton *)sender
+- (void)uploading:(UIButton *)sender
 {
-    //TODO: upload individual registration here
     
-    if (!_HUD) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    
-    // Back to indeterminate mode
-    _HUD.mode = MBProgressHUDModeIndeterminate;
-    
-    // Add HUD to screen
-    [self.view addSubview:_HUD];
-    
-    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    _HUD.delegate = self;
-    
-    
-    _HUD.labelText = @"Just a moment please...";
-    [_HUD showUsingAnimation:YES];
-    
-    Registration * registration = self.dataProvider.dataObjects[sender.tag];
+    Registration * registration = self.dataProvider.dataObjects[self.currentTag];
     
     //implement success and failure handler
-    
+    __weak typeof(self) weakSelf = self;
     registration.successHandler = ^{
-        
         
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
         [self dismissViewControllerAnimated:YES completion:nil];
@@ -168,21 +182,21 @@
         //TODO : reload Data
         
         //delete data on data source
-        [self.dataProvider.dataObjects removeObjectAtIndex:sender.tag];
+        [self.dataProvider.dataObjects removeObjectAtIndex:weakSelf.currentTag];
         [self.collectionView reloadData];
         
         //sleep for synchcronize
         sleep(5);
-        //        [self hideLoadingView];
-        [_HUD hideUsingAnimation:YES];
+                [self hideLoadingView];
+//        [_HUD hide:YES];
         [self showAlertWithTitle:@"Upload Success" message:nil];
         
     };
     
     registration.failureHandler = ^(NSError *error){
         [self dismissViewControllerAnimated:YES completion:nil];
-        //        [self hideLoadingView];
-        [_HUD hideUsingAnimation:YES];
+                [self hideLoadingView];
+//        [_HUD hide:YES];
         NSLog(@"error : %@",[error description]);
         [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
         
@@ -201,6 +215,21 @@
     
     //send the json data to server
     [registration sendRegistration:params];
+    
+}
+- (void)upload:(UIButton *)sender
+{
+    //TODO: upload individual registration here
+    //show confirmation
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Upload Registration data"
+                                                    message:@"Registration data will be uploaded and you need internet connection to do this.\nContinue upload Registration data?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"Yes", nil];
+    alert.tag = IMAlertUpload_Tag;
+    //save current Tag
+    self.currentTag = sender.tag;
+    [alert show];
     
 }
 
@@ -248,7 +277,7 @@
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
     
-//    [self hideLoadingView];
+    //    [self hideLoadingView];
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
@@ -271,20 +300,20 @@
             return;
         }
         cell.labelTitle.text = registration.fullname;
-        cell.labelSubtitle.text = registration.registrationId;
+        cell.labelSubtitle.text = [registration.registrationId length]?[NSString stringWithFormat:@"Reg. Number %@",registration.registrationId]:Nil;
         //        cell.labelDetail1.text = registration.bioData.nationality.name;
         cell.labelDetail1.text = registration.bioDataSummary;
-        cell.labelDetail2.text = registration.unhcrSummary;
-        cell.labelDetail3.text = registration.interceptionSummary;
-        
+        cell.labelDetail2.text = registration.unhcrDocument;
+        cell.labelDetail3.text = [registration.unhcrNumber length]?[NSString stringWithFormat:@"Doc. Number %@",registration.unhcrNumber]:Nil;
+        cell.labelDetail4.text = registration.interceptionSummary;
         NSManagedObjectContext *workingContext = registration.managedObjectContext;
         NSError *error;
         
         if (registration.detentionLocationName) {
-            cell.labelDetail4.text = registration.detentionLocationName;
+            cell.labelDetail5.text = registration.detentionLocationName;
         }else if (registration.detentionLocation) {
             Accommodation * place = [Accommodation accommodationWithId:registration.detentionLocation inManagedObjectContext:workingContext];
-            cell.labelDetail4.text = place.name;
+            cell.labelDetail5.text = place.name;
             //save detention location name
             registration.detentionLocationName = place.name;
             
@@ -294,9 +323,9 @@
             }
             
         }else {
-            cell.labelDetail4.text = Nil;
+            registration.detentionLocationName = cell.labelDetail5.text = [registration.transferDestination.name length]?registration.transferDestination.name:Nil;
+            registration.detentionLocation = [registration.detentionLocationName length]?registration.transferDestination.accommodationId:Nil;
         }
-        cell.labelDetail5.text = Nil;
         
         UIImage *image = registration.biometric.photographImageThumbnail;
         if (image) {
@@ -325,6 +354,16 @@
         [cell.buttonUpload removeTarget:self action:@selector(upload:) forControlEvents:UIControlEventTouchUpInside];
         [cell.buttonUpload addTarget:self action:@selector(upload:) forControlEvents:UIControlEventTouchUpInside];
         
+        if (self.tabBarController.selectedIndex != 2){
+            //implement long press gesture recognizer
+            UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
+            longPress.minimumPressDuration = .5; //seconds
+            longPress.delegate = self;
+            longPress.delaysTouchesBegan = YES;
+            
+            [cell addGestureRecognizer:longPress];
+        }
+        
         if (animated) {
             cell.photoView.alpha = 0;
             cell.labelTitle.alpha = 0;
@@ -350,14 +389,79 @@
     }
 }
 
+- (void)longPress:(UILongPressGestureRecognizer*)gesture
+{
+    if ( gesture.state == UIGestureRecognizerStateEnded ) {
+        
+        CGPoint location = [gesture locationInView:self.collectionView];
+        
+        NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:location];
+        if (indexPath == nil){
+            NSLog(@"couldn't find index path");
+        } else {
+            //set selected index
+            self.selectedIndexPath = indexPath;
+            
+            //check if there is image to preview
+            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"Choose Action",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) destructiveButtonTitle:NSLocalizedString(@"Delete",Nil) otherButtonTitles:NSLocalizedString(@"Edit",Nil),nil];
+            
+            CGRect rect = CGRectMake(location.x, location.y,30, 30);
+            [actionSheet showFromRect:rect inView:self.view animated:YES];
+            
+            
+        }
+        
+    }
+}
 
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    @try {
+        if (buttonIndex == option_delete) {
+            // get the cell at indexPath (the one you long pressed)
+            // do stuff with the cell
+            Registration *registration = self.dataProvider.dataObjects[self.selectedIndexPath.row];
+            
+            //delete on data base and datasource
+            NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+            [context deleteObject:registration];
+            NSError * err;
+            [context save:&err];
+            if (err) {
+                NSLog(@"error : %@",[err description]);
+            }else {
+                [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+                [self.dataProvider.dataObjects removeObjectAtIndex:self.selectedIndexPath.row];
+                [self.collectionView reloadData];
+//                registration= Nil;
+            }
+        }else if (buttonIndex == option_edit) {
+            //show edit
+            [self collectionView:self.collectionView didSelectItemAtIndexPath:self.selectedIndexPath];
+        }else {
+            NSLog(@"Not implement yet");
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"exeption : %@",[exception description]);
+    }
+}
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    Registration *registration = self.dataProvider.dataObjects[indexPath.row];
     
+    Registration *registration = self.dataProvider.dataObjects[indexPath.row];
     IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
+    
+    if (registration.registrationId) {
+        //get the latest data from database
+        NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        registration = [Registration registrationWithId:registration.registrationId inManagedObjectContext:context];
+    }
+    
     editVC.registration = registration;
+    //set last registration
+    editVC.LastReg = self.lastReg;
     
     editVC.registrationSave = ^(BOOL remove)
     {
@@ -369,6 +473,14 @@
         }else {
             //reload Data
             [self reloadData];
+        }
+    };
+    
+    editVC.registrationLast = ^(Registration *reg)
+    {
+        if (reg) {
+            //save last registration
+            self.lastReg = reg;
         }
     };
     
@@ -409,8 +521,15 @@
     self.thumbnailQueue = [[NSOperationQueue alloc] init];
     self.thumbnailQueue.maxConcurrentOperationCount = 3;
     self.firstLaunch = YES;
+    
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
+    }
+    
+    
     //hide loading view
-//     [self hideLoadingView];
+    //     [self hideLoadingView];
     
 }
 
@@ -422,7 +541,7 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -431,9 +550,9 @@
     if (!self.dataProvider.dataObjects && !self.reloadingData){
         [self reloadData];
     }
-//    else {
-//        [self hideLoadingView];
-//    }
+    //    else {
+    //        [self hideLoadingView];
+    //    }
     
 }
 

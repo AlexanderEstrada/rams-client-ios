@@ -69,6 +69,24 @@ NSString *const ACC_PHOTOS               = @"photos";
     return nil;
 }
 
++ (Accommodation *)accommodationWithName:(NSString *)locationName inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    @try {
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:ACC_ENTITY_NAME];
+        request.predicate = [NSPredicate predicateWithFormat:@"name = %@", locationName];
+        
+        NSError *error = nil;
+        NSArray *results = [context executeFetchRequest:request error:&error];
+        //        NSLog(@"error : %@",[error description]);
+        return [results lastObject];
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while accommodationWithId : %@", [exception description]);
+    }
+    
+    return nil;
+}
 + (Accommodation *)accommodationWithId:(NSString *)locationId
                inManagedObjectContext:(NSManagedObjectContext *)context
 {

@@ -10,6 +10,7 @@
 #import <CoreData/CoreData.h>
 
 typedef void (^IMDBManagerOnProgressHandler)(void);
+typedef void (^OnDocumentReady) (UIManagedDocument *document);
 
 @interface IMDBManager : NSObject
 
@@ -23,6 +24,7 @@ typedef void (^IMDBManagerOnProgressHandler)(void);
 - (void)openDatabase:(void (^)(BOOL success))success;
 - (void)saveDatabase:(void (^)(BOOL success))success;
 - (void)removeDatabase:(void (^)(BOOL success))success;
+- (void)performWithDocument:(OnDocumentReady)onDocumentReady;
 @property (nonatomic, copy) IMDBManagerOnProgressHandler onProgress;
 
 //Updates
