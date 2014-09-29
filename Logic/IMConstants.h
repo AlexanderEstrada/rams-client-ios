@@ -19,7 +19,8 @@ typedef enum
 {
     REG_STATUS_UNCOMPLETE = 0,
     REG_STATUS_PENDING= 1,
-    REG_STATUS_LOCAL = 2
+    REG_STATUS_LOCAL = 2,
+    REG_STATUS_BACKUP = 3
     
 }Registration_Status;
 
@@ -66,6 +67,7 @@ typedef enum
 #define IMBaseURLKey                    @"IMBaseURL"
 #define IMAPIKeyConstant                @"IMAPIKey"
 #define IMAPISecretKey                  @"IMAPISecret"
+#define IMBackupKey                     @"IMBackupKey"
 
 
 // Tag value

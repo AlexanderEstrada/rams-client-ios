@@ -26,7 +26,7 @@
 @property (nonatomic, strong) IMRegistrationFilterDataVC * filterChooser;
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic,strong) UIBarButtonItem *itemUploadAll;
-@property (nonatomic, strong) Registration *lastReg;
+
 @property (nonatomic) BOOL flag;
 @property (nonatomic) BOOL next;
 @property (nonatomic) BOOL upload_finish;
@@ -157,8 +157,7 @@
     };
     
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
-    //set last registration
-    vc.LastReg = self.lastReg;
+
     
     vc.registrationSave = ^(BOOL remove)
     {
@@ -172,10 +171,10 @@
     
     vc.registrationLast = ^(Registration *reg)
     {
-        if (reg) {
-            //save last registration
-            self.lastReg = reg;
-        }
+//        if (reg) {
+//            //save last registration
+//            self.lastReg = reg;
+//        }
     };
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];

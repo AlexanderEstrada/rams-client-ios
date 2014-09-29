@@ -608,6 +608,57 @@ NSString *const REG_MOVEMENT                 = @"movements";
     self.complete = @(REG_STATUS_LOCAL);
 }
 
++ (Registration *)createBackupReg:(Registration *)registration inManagedObjectContext:(NSManagedObjectContext *)context;
+{
+    @try {
+        Registration * backup = [Registration registrationWithId:IMBackupKey inManagedObjectContext:context];
+        
+        if (!backup) {
+            backup = [Registration newRegistrationInContext:context];
+            backup.registrationId = IMBackupKey;
+        }
+        //set flag as backup
+        backup.complete = @(REG_STATUS_BACKUP);
+        
+        //change value to latest
+        backup.bioData.countryOfBirth = registration.bioData.countryOfBirth;
+        backup.bioData.nationality =   registration.bioData.nationality;
+        
+        //unhcr document
+       backup.unhcrDocument =  registration.unhcrDocument;
+        backup.unhcrNumber =  registration.unhcrNumber;
+        
+        
+        //interception data
+        backup.associatedOffice =  registration.associatedOffice;
+        backup.underIOMCare =  registration.underIOMCare;
+      
+        backup.selfReporting =  registration.selfReporting;
+        backup.interceptionData.dateOfEntry =  registration.interceptionData.dateOfEntry;
+        backup.interceptionData.interceptionDate =  registration.interceptionData.interceptionDate;
+        backup.interceptionData.interceptionLocation =  registration.interceptionData.interceptionLocation;
+        
+        //location
+        backup.transferDestination =  registration.transferDestination;
+        backup.transferDate =  registration.transferDate;
+        
+         NSError *error;
+        if (![context save:&error]) {
+            NSLog(@"Error saving context: %@", [error description]);
+            return Nil;
+        }else {
+            //save database
+            [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
+            return backup;
+        }
+    }
+    @catch (NSException *exception)
+    {
+        NSLog(@"Exception while registrationWithId : %@", [exception description]);
+    }
+    
+    return nil;
+}
 
 + (Registration *)registrationWithId:(NSString *)registrationId
               inManagedObjectContext:(NSManagedObjectContext *)context

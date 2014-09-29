@@ -78,10 +78,11 @@ static NSInteger total_row_table_personal_info = 10;
     [self reloadData];
     
 }
-- (void)setLastReg:(Registration *)lastReg
-{
-    _lastReg = lastReg;
-}
+
+//- (void)setLastReg:(Registration *)lastReg
+//{
+//    _lastReg = lastReg;
+//}
 
 - (void) reloadData
 {
@@ -133,6 +134,7 @@ static NSInteger total_row_table_personal_info = 10;
         [alert show];
     }else {
         //reset data to empty
+        [self saveData:NO];
     }
 
 }
@@ -730,54 +732,59 @@ static NSInteger total_row_table_personal_info = 10;
 
 - (void)saveData:(BOOL)flag
 {
-    if (flag) {
-        //deep copy all data
-        // Nationality, Country of Birth, UNHCR Document, Associated IOM Office
-        /*
-         For Nationality and Country of Birth —> Display migrant nationalities which exists on the local database on top of the list, so user wouldn’t need to do much searching (except for inputting a migrant which nationality is not yet exist in the local data).
-         For associated IOM office, get the info from the current user information.
-         For UNHCR Document —> The dropdown should default to ’No Document’ and the text field for UNHCR Number is disabled, then store last document type which is used by previous migrant registration. If you must do hundreds and hundreds of people who’s document type mostly the same this can be a great time saver and reducing fatigue. Re-use the UNHCR Document number field.
-         Re-use interception data field like Date of Entry, Interception Date, Interception Location, Self Reporting, Under IOM Care.
-         Re-use the Transfer Location and Transfer Date field from previous registration.
-         In essence – Reuse input field as much as you can, reduce the amount of tapping the user must do.
-         */
-        
-//        self.registration = self.lastReg;
-        //personal information
-        self.registration.bioData.countryOfBirth = self.lastReg.bioData.countryOfBirth;
-        self.registration.bioData.nationality =   self.lastReg.bioData.nationality;
-        
-        //unhcr document
-        self.registration.unhcrDocument =  self.lastReg.unhcrDocument;
-        self.registration.unhcrNumber =  self.lastReg.unhcrNumber;
-        
-        
-        //interception data
-        self.registration.associatedOffice =  self.lastReg.associatedOffice;
-        self.registration.underIOMCare =  self.lastReg.underIOMCare;
-        self.underIOMCare = self.registration.underIOMCare.boolValue;
-        self.registration.selfReporting =  self.lastReg.selfReporting;
-        self.registration.interceptionData.dateOfEntry =  self.lastReg.interceptionData.dateOfEntry;
-        self.registration.interceptionData.interceptionDate =  self.lastReg.interceptionData.interceptionDate;
-        self.registration.interceptionData.interceptionLocation =  self.lastReg.interceptionData.interceptionLocation;
-        
-        //location
-        self.registration.transferDestination =  self.lastReg.transferDestination;
-        self.registration.transferDate =  self.lastReg.transferDate;
-    }else {
-        self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = Nil;
-        self.registration.unhcrNumber = Nil;
-        self.registration.associatedOffice = Nil;
-        self.registration.underIOMCare = Nil;
-        self.registration.selfReporting = Nil;
-        self.registration.interceptionData.dateOfEntry = Nil;
-        self.registration.interceptionData.interceptionDate = Nil;
-        self.registration.interceptionData.interceptionLocation = Nil;
-        self.registration.transferDestination = Nil;
-        self.registration.transferDate = Nil;
+    @try {
+        if (flag) {
+            //deep copy all data
+            //        self.registration = self.lastReg;
+            NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
+            Registration * lastReg = [Registration registrationWithId:IMBackupKey inManagedObjectContext:workingContext];
+            if (lastReg) {
+                
+                //personal information
+                self.registration.bioData.countryOfBirth = [Country countryWithName:lastReg.bioData.countryOfBirth.name inManagedObjectContext:workingContext];
+                self.registration.bioData.nationality =   [Country countryWithName:lastReg.bioData.nationality.name inManagedObjectContext:workingContext];
+                
+                //unhcr document
+                self.registration.unhcrDocument = lastReg.unhcrDocument;
+                self.registration.unhcrNumber =  lastReg.unhcrNumber;
+                
+                
+                //interception data
+                
+                self.registration.associatedOffice = [IomOffice officeWithName:lastReg.associatedOffice.name inManagedObjectContext:workingContext];
+                self.registration.underIOMCare = lastReg.underIOMCare;
+                self.underIOMCare = self.registration.underIOMCare.boolValue;
+                self.registration.selfReporting =  lastReg.selfReporting;
+                self.registration.interceptionData.dateOfEntry =  lastReg.interceptionData.dateOfEntry;
+                self.registration.interceptionData.interceptionDate =  lastReg.interceptionData.interceptionDate;
+                self.registration.interceptionData.interceptionLocation =  lastReg.interceptionData.interceptionLocation;
+                
+                //location
+                self.registration.transferDestination =  [Accommodation accommodationWithId:lastReg.transferDestination.accommodationId inManagedObjectContext:workingContext];
+                self.registration.transferDate =  lastReg.transferDate;
+            }
+        }else {
+            self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = Nil;
+            self.registration.unhcrNumber = Nil;
+            self.registration.associatedOffice = Nil;
+            self.registration.underIOMCare = Nil;
+            self.registration.selfReporting = Nil;
+            self.registration.interceptionData.dateOfEntry = Nil;
+            self.registration.interceptionData.interceptionDate = Nil;
+            self.registration.interceptionData.interceptionLocation = Nil;
+            self.registration.transferDestination = Nil;
+            self.registration.transferDate = Nil;
+        }
     }
+    @catch (NSException *exception) {
+        NSLog(@"Exception with flag : %@ on saveData : %@",flag?@"Yes":@"No",[exception description]);
+    }
+    @finally {
+         [self.tableView reloadData];
+    }
+   
     
-    [self.tableView reloadData];
+   
 }
 
 #pragma mark UIAlertViewDelegate

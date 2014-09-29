@@ -18,7 +18,7 @@
 #import "Migrant.h"
 #import <QuickLook/QuickLook.h>
 #import "Migrant+Extended.h"
-
+#import "IMConstants.h"
 #import "IMCollectionViewController.h"
 
 #import "MBProgressHUD.h"
@@ -268,7 +268,7 @@ typedef enum : NSUInteger {
         [picker dismissViewControllerAnimated:YES completion:Nil];
         picker = Nil;
     }
-
+    
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -289,7 +289,7 @@ typedef enum : NSUInteger {
     }
     
     if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
-          [picker dismissViewControllerAnimated:YES completion:nil];
+        [picker dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -325,7 +325,7 @@ typedef enum : NSUInteger {
             //            [self dismissViewControllerAnimated:YES completion:nil];
         }];
     }
-//    [self.context reset];
+    //    [self.context reset];
     
     [self dismissViewControllerAnimated:YES completion:nil];
     
@@ -371,11 +371,11 @@ typedef enum : NSUInteger {
             [alert show];
             [_hud hideUsingAnimation:YES];
             return;
-
+            
         }
         
-//        //validate Biodata value
-//        if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
+        //        //validate Biodata value
+        //        if (!self.registration.bioData.firstName || !self.registration.bioData.familyName || !self.registration.bioData.gender || !self.registration.bioData.maritalStatus || !self.registration.bioData.placeOfBirth || !self.registration.bioData.dateOfBirth || !self.registration.bioData.nationality || !self.registration.bioData.countryOfBirth) {
         //validate Biodata value
         if (!self.registration.bioData.firstName) {
             //show alert
@@ -439,8 +439,17 @@ typedef enum : NSUInteger {
                 self.registrationSave(needRemove);
             }
             
+            //save to backup for template next data
+            
             if (self.registrationLast) {
-                self.registrationLast(self.registration);
+                //                self.registrationLast(self.registration);
+                
+                //get last registration data on backup
+                if (![Registration createBackupReg:self.registration inManagedObjectContext:[IMDBManager sharedManager].localDatabase.managedObjectContext]) {
+                    NSLog(@"Fail to create backup");
+                }
+                
+                sleep(1);
             }
         }
     }
@@ -448,8 +457,8 @@ typedef enum : NSUInteger {
         NSLog(@"Exception on saving : %@",[exception description]);
     }
     @finally {
-          [self dismissViewControllerAnimated:YES completion:nil];
-         [_hud hideUsingAnimation:YES];
+        [self dismissViewControllerAnimated:YES completion:nil];
+        [_hud hideUsingAnimation:YES];
     }
     
     
@@ -549,7 +558,7 @@ typedef enum : NSUInteger {
     if ([vc isKindOfClass:[IMEditRegistrationDataVC class]]) {
         IMEditRegistrationDataVC *regVC = (IMEditRegistrationDataVC *)vc;
         regVC.registration = self.registration;
-        regVC.lastReg = self.LastReg;
+//        regVC.lastReg = self.LastReg;
     }
     
     if (!_hud) {

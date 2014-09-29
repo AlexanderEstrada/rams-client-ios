@@ -26,6 +26,7 @@
 + (Registration *)newRegistrationInContext:(NSManagedObjectContext *)context;
 + (Registration *)registrationWithId:(NSString *)registrationId
               inManagedObjectContext:(NSManagedObjectContext *)context;
++ (Registration *)createBackupReg:(Registration *)registration inManagedObjectContext:(NSManagedObjectContext *)context;
 + (BOOL)validateRegistrationDictionary:(NSDictionary *)dictionary;
 + (Registration *)registrationWithDictionary:(NSDictionary *)dictionary
                       inManagedObjectContext:(NSManagedObjectContext *)context;

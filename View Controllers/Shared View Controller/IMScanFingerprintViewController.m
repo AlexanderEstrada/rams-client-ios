@@ -106,6 +106,8 @@
 
 - (void)mobileOneAccessoryController:(FbFAccessoryController *)mobileOne didReceiveDataSpin:(BOOL)started
 {
+    NSLog(@"started : %@",started?@"Yes":@"No");
+    if (started) {
     //TODO : add spin
     if (self.scanCompleted) return;
     
@@ -128,7 +130,8 @@
 
     // Show the HUD while the provided method executes in a new thread
     [_hud showUsingAnimation:YES];
-
+    
+    }
     
 }
 

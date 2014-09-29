@@ -16,41 +16,49 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
 
 - (instancetype)initWithIndexes:(NSIndexSet *)indexes withEntity:(NSString *)entity sortDescriptorWithKey:(NSString *)sort basePredicate:(NSPredicate *) basePredicate
 {
-    
-    self = [super init];
-    
-    if (self) {
+    @try {
+        self = [super init];
         
-        _indexes = indexes;
+        if (self) {
+            
+            _indexes = indexes;
+            
+            typeof(self) weakSelf = self;
+            [self addExecutionBlock:^{
+                
+                NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+                NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
+                
+                
+                if(sort) request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:sort ascending:YES]];
+                request.returnsObjectsAsFaults = YES;
+                request.fetchOffset = [indexes firstIndex];
+                request.fetchLimit = Default_Page_Size;
+                if (basePredicate) request.predicate = basePredicate;
+                
+                // Generate data
+                NSError *error;
+                weakSelf->_dataPage = [context executeFetchRequest:request error:&error];
+                if (error) NSLog(@"Error Loading Data : %@",[error description]);
+            }];
+        }
         
-        typeof(self) weakSelf = self;
-        [self addExecutionBlock:^{
-            
-            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
-            
-            
-            if(sort) request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:sort ascending:YES]];
-            request.returnsObjectsAsFaults = YES;
-            request.fetchOffset = [indexes firstIndex];
-            request.fetchLimit = Default_Page_Size;
-            if (basePredicate) request.predicate = basePredicate;
-
-            // Generate data
-            NSError *error;
-            weakSelf->_dataPage = [context executeFetchRequest:request error:&error];
-            if (error) NSLog(@"Error Loading Data : %@",[error description]);
-        }];
+        
+        
     }
-    
-    return self;
+    @catch (NSException *exception) {
+        NSLog(@"Exception on initWithIndexes : %@",[exception description]);
+    }
+    @finally {
+        return self;
+    }
 }
 - (instancetype)initWithIndexes:(NSIndexSet *)indexes{
-
+    
     self = [super init];
     
     if (self) {
-    
+        
         _indexes = indexes;
         
         typeof(self) weakSelf = self;
@@ -60,18 +68,18 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
             
             NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
             NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
-
+            
             
             request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"dateCreated" ascending:NO]];
             request.returnsObjectsAsFaults = YES;
-                    request.fetchOffset = [indexes firstIndex];
-                    request.fetchLimit = Default_Page_Size;
+            request.fetchOffset = [indexes firstIndex];
+            request.fetchLimit = Default_Page_Size;
             
             
             // Generate data
             NSError *error;
-           weakSelf->_dataPage = [context executeFetchRequest:request error:&error];
-             if (error) NSLog(@"Error Loading Data : %@",[error description]);
+            weakSelf->_dataPage = [context executeFetchRequest:request error:&error];
+            if (error) NSLog(@"Error Loading Data : %@",[error description]);
         }];
     }
     
