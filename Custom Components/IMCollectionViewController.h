@@ -22,6 +22,7 @@
 @property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) UIView *loadingView;
 @property (nonatomic) BOOL loading;
+@property (nonatomic) BOOL useBackground;
 
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
 - (void)showLoadingView;

@@ -16,7 +16,9 @@
 
 @implementation Registration
 @synthesize failureHandler;
+@synthesize failureHandlerAndCode;
 @synthesize successHandler;
+@synthesize successHandlerAndCode;
 @synthesize onProgress;
 @dynamic registrationId;
 @dynamic dateCreated;

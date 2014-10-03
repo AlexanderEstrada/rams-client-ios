@@ -63,7 +63,7 @@
             //default is indext 0
             self.basePredicate = vc.basePredicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
             self.itemUploadAll.enabled = FALSE;
-
+            
         }
         
         if (self.filterChooser) {
@@ -150,14 +150,14 @@
 {
     //TODO : check if apps already competely synch, case not, then show alert to synch the apps
     if (![[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Confirm Data Updates",Nil) message:NSLocalizedString(@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) otherButtonTitles:NSLocalizedString(@"Continue",Nil), nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Confirm Data Updates"   message:  @"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?"   delegate:self cancelButtonTitle:  @"Cancel"   otherButtonTitles:  @"Continue"  , nil];
         alert.tag = IMAlertNeedSynch_Tag;
         [alert show];
         return;
     };
     
     IMEditRegistrationVC *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
-
+    
     
     vc.registrationSave = ^(BOOL remove)
     {
@@ -171,10 +171,10 @@
     
     vc.registrationLast = ^(Registration *reg)
     {
-//        if (reg) {
-//            //save last registration
-//            self.lastReg = reg;
-//        }
+        //        if (reg) {
+        //            //save last registration
+        //            self.lastReg = reg;
+        //        }
     };
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -186,23 +186,23 @@
 #pragma mark UITabBarControllerDelegate
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
-        [self updateBasePredicateForSelectedIndex];
+    [self updateBasePredicateForSelectedIndex];
 }
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
 {
     switch ([self.viewControllers indexOfObject:viewController]) {
         case 0:
-            self.title = NSLocalizedString(@"Incomplete Registration",Nil);
+            self.title =   @"Incomplete Registration"  ;
             break;
         case 1:
-            self.title = NSLocalizedString(@"Pending Registration",Nil);
+            self.title =   @"Pending Registration"  ;
             break;
         case 2:
-            self.title = NSLocalizedString(@"Local Migrant Data",Nil);
+            self.title =   @"Local Migrant Data"  ;
             break;
         default:
-             self.title = NSLocalizedString(@"Incomplete Registration",Nil);
+            self.title =   @"Incomplete Registration"  ;
             break;
     }
     
@@ -222,7 +222,7 @@
     [super viewDidLoad];
     
     
-    self.title = NSLocalizedString(@"Incomplete Registration",Nil);
+    self.title =   @"Incomplete Registration"  ;
     self.navigationController.navigationBar.tintColor = [UIColor IMMagenta];
     self.view.tintColor = [UIColor IMMagenta];
     self.tabBar.tintColor = [UIColor IMMagenta];
@@ -234,7 +234,7 @@
     
     UIBarButtonItem *itemFilter = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                                 target:self action:@selector(showFilterOptions:)];
-
+    
     //add upload icon
     self.itemUploadAll= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon-upload-small"] style:UIBarButtonItemStylePlain target:self action:@selector(uploadAll:)];
     self.itemUploadAll.enabled = FALSE;
@@ -243,27 +243,29 @@
     self.receive_warning = FALSE;
     //reset top layout
     self.edgesForExtendedLayout=UIRectEdgeNone;
-      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
+    //      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
 }
 
-- (void)reloadData
-{
-    if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
-        //reload data
-        IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
-        [vc reloadData];
-    }
-    
-}
+//- (void)reloadData
+//{
+//    if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
+//        //reload data
+//        IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
+//        [vc reloadData];
+//    }
+//
+//}
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
-//        if (!_HUD) {
-            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-//        }
+        //        if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        //        }
+        // Regisete for HUD callbacks so we can remove it from the window at the right time
+        _HUD.delegate = self;
         
         // Back to indeterminate mode
         _HUD.mode = MBProgressHUDModeDeterminate;
@@ -273,10 +275,9 @@
         
         
         
-        // Regisete for HUD callbacks so we can remove it from the window at the right time
-        _HUD.delegate = self;
+    
         
-        _HUD.labelText = NSLocalizedString(@"Uploading Data",Nil);
+        _HUD.labelText =   @"Uploading Data"  ;
         
         
         // Show the HUD while the provided method executes in a new thread
@@ -337,6 +338,7 @@
                 
             }
             
+            __weak typeof(registration) weakRegistration = registration;
             registration.successHandler = ^{
                 
                 //do something if success
@@ -345,17 +347,27 @@
                 success++;
                 [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
                 [self dismissViewControllerAnimated:YES completion:nil];
-//                [self updateBasePredicateForSelectedIndex];
-                 if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
-                //reload data
-                 IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
-                [vc reloadData];
-                 }
+                //                [self updateBasePredicateForSelectedIndex];
+                if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
+                    //reload data
+                    IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
+                    //                [vc reloadData];
+                    
+                    //                      [vc.dataProvider.dataObjects removeObjectAtIndex:weakSelf.currentTag];
+                    for (Registration * tmp in vc.dataProvider.dataObjects) {
+                        if([tmp.registrationId isEqualToString:weakRegistration.registrationId]){
+                            [vc.dataProvider.dataObjects removeObject:tmp];
+                            [vc.collectionView reloadData];
+                            break;
+                        }
+                    }
+                    
+                }
                 if(self.progress < self.total ){
                     self.progress += 1;
                     _HUD.progress = self.progress/self.total;
-                    _HUD.labelText = [NSString stringWithFormat:NSLocalizedString(@"Uploaded %i of %lu",Nil),(int)self.progress,(unsigned long)[results count]];
-                     _HUD.detailsLabelText = [NSString stringWithFormat:NSLocalizedString(@"Success : %i and Fail : %i",Nil),success,fail];
+                    _HUD.labelText = [NSString stringWithFormat:  @"Uploaded %i of %lu"  ,(int)self.progress,(unsigned long)[results count]];
+                    _HUD.detailsLabelText = [NSString stringWithFormat:  @"Success : %i and Fail : %i"  ,success,fail];
                     NSLog(@"Upload : %f from %lu",self.progress,(unsigned long)[results count]);
                     
                 }else self.upload_finish = TRUE;
@@ -363,23 +375,24 @@
                 self.next = TRUE;
             };
             
-            registration.failureHandler = ^(NSError *error){
+            registration.failureHandlerAndCode = ^(NSError *error,int statusCode){
                 fail++;
-//                if (!self.flag) {
-                
-//                    [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
-//                    self.flag = TRUE;
-                
-                if(self.progress < self.total ){
-                    self.progress += 1;
-                    _HUD.progress = self.progress/self.total;
-                    _HUD.labelText = [NSString stringWithFormat:NSLocalizedString(@"Uploaded %i of %lu",Nil),(int)self.progress,(unsigned long)[results count]];
-                    _HUD.detailsLabelText = [NSString stringWithFormat:NSLocalizedString(@"Success : %i and Fail : %i",Nil),success,fail];
-                   NSLog(@"Upload Fail : %@",[error description]);
+                self.next = TRUE;
+                if (!self.flag && !statusCode) {
+                    [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
+                    self.flag = TRUE;
                     
-                }else self.upload_finish = TRUE;
-                    self.next = TRUE;
-//                }
+                }else{
+                    if(self.progress < self.total ){
+                        self.progress += 1;
+                        _HUD.progress = self.progress/self.total;
+                        _HUD.labelText = [NSString stringWithFormat:  @"Uploaded %i of %lu"  ,(int)self.progress,(unsigned long)[results count]];
+                        _HUD.detailsLabelText = [NSString stringWithFormat:  @"Success : %i and Fail : %i"  ,success,fail];
+                        NSLog(@"Upload Fail : %@",[error description]);
+                        
+                    }else self.upload_finish = TRUE;
+                }
+                
                 
             };
             
@@ -437,9 +450,9 @@
             
         }
         
-        [self showAlertWithTitle:NSLocalizedString(@"Upload status",Nil) message:[NSString stringWithFormat:NSLocalizedString(@"Success : %i and Fail : %i",Nil),success,fail]];
+        [self showAlertWithTitle:  @"Upload status"   message:[NSString stringWithFormat:  @"Success : %i and Fail : %i"  ,success,fail]];
         
-       
+        
         
         //save database
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
@@ -455,14 +468,15 @@
         _HUD.mode = MBProgressHUDModeIndeterminate;
         
         //synchronize data
-         _HUD.labelText = NSLocalizedString(@"Synchronizing...",Nil);
+        _HUD.labelText =   @"Synchronizing..."  ;
+        _HUD.detailsLabelText = @"";
         sleep(5);
         
     }else{
         NSLog(@"There is no data to upload");
         
         //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"There is no data to upload",Nil) message:Nil delegate:Nil cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"There is no data to upload"   message:Nil delegate:Nil cancelButtonTitle:  @"OK"   otherButtonTitles:nil];
         [alert show];
     }
     
@@ -474,11 +488,11 @@
 - (void) uploadAll:(UIBarButtonItem *)sender
 {
     //show confirmation
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Upload all pending Registration",Nil)
-                                                    message:NSLocalizedString(@"All your pending Registration will be uploaded and you need internet connection to do this.\nContinue upload all pending Registration?",Nil)
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Upload all pending Registration"
+                                                    message:  @"All your pending Registration will be uploaded and you need internet connection to do this.\nContinue upload all pending Registration?"
                                                    delegate:self
-                                          cancelButtonTitle:NSLocalizedString(@"Cancel",Nil)
-                                          otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
+                                          cancelButtonTitle:  @"Cancel"
+                                          otherButtonTitles:  @"Yes"  , nil];
     alert.tag = IMAlertUpload_Tag;
     [alert show];
     
@@ -486,7 +500,7 @@
 
 #pragma mark Specific Custom Implementation
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:  @"OK"   otherButtonTitles:nil];
     [alert show];
 }
 
@@ -500,6 +514,12 @@
     [_HUD removeFromSuperview];
 }
 
+- (void)onCancel {
+    if (!self.flag) {
+        //user click cancel
+        self.flag = YES;
+    }
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

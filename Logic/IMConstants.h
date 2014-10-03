@@ -49,6 +49,7 @@ typedef enum
 
 #define IMDatabaseChangedNotification   @"IMDatabaseChangedNotification"
 #define IMAccessExpiredNotification     @"IMAccessExpiredNotification"
+#define IMLogoutNotification            @"IMLogoutNotification"
 #define IMAccessExpiredCloseNotification     @"IMAccessExpiredCloseNotification"
 #define IMSyncShouldStartedNotification @"IMSyncShouldStartedNotification"
 #define IMUserChangedNotification       @"IMUserChangedNotification"

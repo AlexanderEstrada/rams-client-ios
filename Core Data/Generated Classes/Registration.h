@@ -14,7 +14,9 @@
 
 
 typedef void (^IMRegistrationUploadSuccessHandler)(void);
+typedef void (^IMRegistrationUploadSuccessHandlerAndCode)(int statusCode);
 typedef void (^IMRegistrationUploadFailureHandler)(NSError *error);
+typedef void (^IMRegistrationUploadFailureHandlerAndErrCode)(NSError *error,int statusCode);
 typedef void (^IMRegistrationUploadOnProgress)(void);
 
 @class Accommodation, IomOffice, RegistrationBioData, RegistrationBiometric, RegistrationInterception;
@@ -42,7 +44,9 @@ typedef void (^IMRegistrationUploadOnProgress)(void);
 @property (nonatomic, retain) NSString *detentionLocationName;
 
 @property (nonatomic, copy) IMRegistrationUploadSuccessHandler successHandler;
+@property (nonatomic, copy) IMRegistrationUploadSuccessHandlerAndCode successHandlerAndCode;
 @property (nonatomic, copy) IMRegistrationUploadFailureHandler failureHandler;
+@property (nonatomic, copy) IMRegistrationUploadFailureHandlerAndErrCode failureHandlerAndCode;
 @property (nonatomic, copy) IMRegistrationUploadOnProgress onProgress;
 
 @end

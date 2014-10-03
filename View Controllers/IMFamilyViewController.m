@@ -173,7 +173,7 @@ typedef enum : NSUInteger {
     // Regisete for HUD callbacks so we can remove it from the window at the right time
     _HUD.delegate = self;
     
-    _HUD.labelText = NSLocalizedString(@"Reloading Data...",Nil);
+    _HUD.labelText =   @"Reloading Data..."  ;
     
     // Show the HUD while the provided method executes in a new thread
     [_HUD showUsingAnimation:YES];
@@ -286,7 +286,7 @@ typedef enum : NSUInteger {
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellName forIndexPath:indexPath];
     if (![self.familyRegister count]) {
-        cell.textLabel.text = NSLocalizedString(@"No Data",Nil);
+        cell.textLabel.text =   @"No Data"  ;
         cell.imageView.image = Nil;
     }else {
         if (indexPath.section == 0 ) {
@@ -294,7 +294,7 @@ typedef enum : NSUInteger {
             if (familyRegister) {
                 
                 
-                NSString * mesage = [NSString stringWithFormat:NSLocalizedString(@"Family of %@ (%@)",Nil),familyRegister.headOfFamilyName,familyRegister.headOfFamilyId];
+                NSString * mesage = [NSString stringWithFormat:  @"Family of %@ (%@)"  ,familyRegister.headOfFamilyName,familyRegister.headOfFamilyId];
                 cell.textLabel.text = mesage;
                 if (familyRegister.photographThumbnail) {
                     cell.imageView.image = familyRegister.photographImageThumbnail;

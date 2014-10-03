@@ -46,7 +46,7 @@
                                                                                                 [[IMHTTPClient sharedClient] setupAuthenticationHeader];
                                                                                                 completion(status, nil);
                                                                                             }else {
-                                                                                                completion(status, NSLocalizedString(@"Authentication Failed", @"Authentication Failed"));
+                                                                                                completion(status,@"Authentication Failed");
                                                                                                 //reset connection
                                                                                                  [self logout];
                                                                                             }
@@ -56,11 +56,11 @@
                                                                                             NSString *message;
                                                                                             
                                                                                             if (response.statusCode == 401) {
-                                                                                                message = NSLocalizedString(@"Authentication Failed", @"Authentication Failed");
+                                                                                                message = @"Authentication Failed";
                                                                                                  //reset connection
                                                                                                  [self logout];
                                                                                             }else if (response.statusCode == 403) {
-                                                                                                message = NSLocalizedString(@"Forbidden Access", @"Forbidden Access");
+                                                                                                message = @"Forbidden Access";
                                                                                             }else {
                                                                                                 message = @"Connection Error";
                                                                                             }
@@ -109,7 +109,7 @@
     [self.activeUser deleteFromKeychain];
     self.activeUser = Nil;
     [[IMHTTPClient sharedClient] clearAuthorizationHeader];
-    [[NSNotificationCenter defaultCenter] postNotificationName:IMAccessExpiredNotification object:nil userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IMLogoutNotification object:nil userInfo:nil];
 }
 
 @end

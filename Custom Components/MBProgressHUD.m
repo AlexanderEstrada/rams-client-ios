@@ -23,6 +23,7 @@
 - (void)setTransformForCurrentOrientation:(BOOL)animated;
 
 @property (strong) UIView *indicator;
+@property (strong) UIButton * cancelButton;
 @property (assign) float width;
 @property (assign) float height;
 @property (strong) NSTimer *graceTimer;
@@ -45,6 +46,7 @@
 @synthesize detailsLabelFont;
 
 @synthesize indicator;
+@synthesize cancelButton;
 
 @synthesize width;
 @synthesize height;
@@ -83,6 +85,15 @@
 
 - (MBProgressHUDMode)mode {
 	return mode;
+}
+
+- (void)onClick:(UIButton*)button
+{
+    if(delegate != nil && [delegate conformsToProtocol:@protocol(MBProgressHUDDelegate)]) {
+		if([delegate respondsToSelector:@selector(onCancel)]) {
+			[delegate performSelector:@selector(onCancel)];
+		}
+    }
 }
 
 - (void)setLabelText:(NSString *)newText {
@@ -150,6 +161,14 @@
     if (detailsLabelText != newText) {
         detailsLabelText = [newText copy];
     }
+    
+    if (!detailsLabelText && cancelButton) {
+        cancelButton.hidden = YES;
+    }else if (detailsLabelText && cancelButton){
+        if (cancelButton.hidden) {
+            cancelButton.hidden = NO;
+        }
+    }
 }
 
 - (void)updateProgress {
@@ -167,9 +186,22 @@
     if (indicator) {
         [indicator removeFromSuperview];
     }
+    if (cancelButton) {
+        [cancelButton removeFromSuperview];
+    }
 	
     if (mode == MBProgressHUDModeDeterminate) {
         self.indicator = [[MBRoundProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleBar];
+        
+        if(delegate != nil && [delegate conformsToProtocol:@protocol(MBProgressHUDDelegate)]) {
+            if([delegate respondsToSelector:@selector(onCancel)]) {
+                self.cancelButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+                [self.cancelButton addTarget:self
+                           action:@selector(onClick:) forControlEvents:UIControlEventTouchUpInside];
+                  [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
+            }
+        }
+      
     }
     else if (mode == MBProgressHUDModeCustomView && self.customView != nil){
         self.indicator = self.customView;
@@ -188,6 +220,7 @@
 
 #define MARGIN 20.0
 #define PADDING 4.0
+
 
 #define LABELFONTSIZE 16.0
 #define LABELDETAILSFONTSIZE 12.0
@@ -254,6 +287,7 @@
         self.mode = MBProgressHUDModeIndeterminate;
         self.labelText = nil;
         self.detailsLabelText = nil;
+        self.cancelButton = Nil;
         self.opacity = 0.8;
         self.labelFont = [UIFont boldSystemFontOfSize:LABELFONTSIZE];
         self.detailsLabelFont = [UIFont boldSystemFontOfSize:LABELDETAILSFONTSIZE];
@@ -350,6 +384,8 @@
         label.frame = lFrame;
 		
         [self addSubview:label];
+        
+        
 		
         // Add details label delatils text was set
         if (nil != self.detailsLabelText) {
@@ -393,8 +429,15 @@
             CGRect lFrameD = CGRectMake(floor((frame.size.width - lWidth) / 2) + xOffset,
                                         lFrame.origin.y + lFrame.size.height + PADDING, lWidth, lHeight);
             detailsLabel.frame = lFrameD;
-			
             [self addSubview:detailsLabel];
+        }
+        
+        //add cancel button if exist
+        if (self.cancelButton && self.detailsLabelText) {
+            CGRect lFrameB = CGRectMake(floor((frame.size.width - lWidth) / 2) + xOffset,
+                                        lFrame.origin.y + lFrame.size.height + PADDING + MARGIN,lWidth, lHeight); // x,y,width,height
+            self.cancelButton.frame = lFrameB;
+            [self addSubview:self.cancelButton];
         }
     }
 }
@@ -508,7 +551,9 @@
 	
 	self.indicator = nil;
 	
-	
+	if (self.cancelButton) {
+        self.cancelButton = Nil;
+    }
     [self hide:useAnimation];
 }
 

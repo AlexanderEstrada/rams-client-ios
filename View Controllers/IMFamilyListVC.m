@@ -120,11 +120,11 @@
 {
     if (self.useStaticData) {
         //show warning alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Delete Data",Nil)
-                                                        message:NSLocalizedString(@"Are you sure to delete this items?",Nil)
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Delete Data"  
+                                                        message:  @"Are you sure to delete this items?"  
                                                        delegate:self
-                                              cancelButtonTitle:NSLocalizedString(@"Cancel",Nil)
-                                              otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
+                                              cancelButtonTitle:  @"Cancel"  
+                                              otherButtonTitles:  @"Yes"  , nil];
         alert.tag = IMDeleteItems_Tag;
         [alert show];
         
@@ -161,7 +161,7 @@
     }
     
     if ([self.dataProvider.dataObjects count]) {
-        [self showLoadingViewWithTitle:NSLocalizedString(@"Loading ...",Nil)];
+        [self showLoadingViewWithTitle:  @"Loading ..."  ];
     }
     
 }
@@ -460,6 +460,79 @@
     }
 }
 
+- (void)showLoadingViewWithTitle:(NSString *)title
+{
+//    if (self.loading) return;
+//    
+//    self.useBackground = NO;
+//    self.loadingView.alpha = 0;
+//    self.loadingView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+//    self.labelLoading.text = title;
+//    self.labelLoading.textColor = self.view.tintColor;
+//    self.loadingIndicator.color = self.view.tintColor;
+//    
+//    [self.view addSubview:self.loadingView];
+//    self.loadingView.transform = CGAffineTransformMakeScale(0, 0);
+//    
+//    [UIView animateWithDuration:.25 animations:^{
+//        self.loadingView.transform = CGAffineTransformMakeScale(1, 1);
+//        self.loadingView.alpha = 1;
+//    } completion:^(BOOL finished){
+//        [self.loadingIndicator startAnimating];
+//        self.view.userInteractionEnabled = NO;
+//        self.loading = YES;
+//    }];
+    
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    }
+    
+    // Back to indeterminate mode
+    _HUD.mode = MBProgressHUDModeIndeterminate;
+    
+    // Add HUD to screen
+    [self.navigationController.view addSubview:_HUD];
+    
+    
+    
+    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    _HUD.delegate = self;
+    
+    _HUD.labelText =   title;
+    
+    
+    // Show the HUD while the provided method executes in a new thread
+    [_HUD showUsingAnimation:YES];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    
+    [super viewWillDisappear:animated];
+    
+    [_HUD hideUsingAnimation:animated];
+}
+
+
+- (void)hideLoadingView
+{
+//    [UIView animateWithDuration:.25
+//                     animations:Nil
+//                     completion:^(BOOL finished){
+//                         [self.loadingIndicator stopAnimating];
+//                         [self.loadingView removeFromSuperview];
+//                         self.view.userInteractionEnabled = YES;
+//                         
+//                         self.labelLoading = nil;
+//                         self.loadingIndicator = nil;
+//                         self.loadingView = nil;
+//                         self.loading = NO;
+//                     }];
+    
+     [_HUD hideUsingAnimation:YES];
+}
+
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.collectionView.allowsMultipleSelection) {
@@ -513,7 +586,7 @@
         [self.migrants addObject:migrant];
         
         }else{
-            [self showAlertWithTitle:NSLocalizedString(@"Maximum Selection",Nil) message:[NSString stringWithFormat:NSLocalizedString(@"You only can select %i for this section",Nil),self.maxSelection]];
+            [self showAlertWithTitle:  @"Maximum Selection"   message:[NSString stringWithFormat:  @"You only can select %i for this section"  ,self.maxSelection]];
             [collectionView deselectItemAtIndexPath:indexPath animated:NO];
         }
         
@@ -728,7 +801,9 @@
 
 - (void)hudWasHidden {
     // Remove HUD from screen when the HUD was hidded
-    [_HUD removeFromSuperview];
+    if (_HUD) {
+        [_HUD removeFromSuperview];
+    }
 }
 
 

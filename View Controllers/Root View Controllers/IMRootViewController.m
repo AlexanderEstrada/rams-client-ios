@@ -90,6 +90,14 @@
     [self showAlertWithTitle:@"Token Expired" message:@"Please Relogin."];
     
 }
+
+- (void)Logout
+{
+    //show alert to let user know that token has expired
+    [self showAlertWithTitle:@"Logout" message:@"Please Relogin."];
+    
+}
+
 #pragma mark UIAlertViewDelegate
 
 
@@ -228,6 +236,7 @@
     self.menuDisable = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ExpiredToken) name:IMAccessExpiredNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Logout) name:IMLogoutNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(openSynchronizationDialog:) name:IMSyncShouldStartedNotification object:nil];
 }
 

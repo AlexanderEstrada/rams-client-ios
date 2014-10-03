@@ -128,11 +128,11 @@ static NSInteger total_row_table_personal_info = 10;
     _useLastData = useLastData;
     
     if(_useLastData == YES) {
-//        //show alert
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Use Last Registration Data",Nil) message:NSLocalizedString(@"Are you sure want to last Registration Data ?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"NO",Nil) otherButtonTitles:NSLocalizedString(@"YES",Nil), nil];
-//        alert.tag = IMUseLastRegistrationData_Tag;
-//        [alert show];
-         [self saveData:YES];
+        //        //show alert
+        //        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Use Last Registration Data",Nil) message:NSLocalizedString(@"Are you sure want to last Registration Data ?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"NO",Nil) otherButtonTitles:NSLocalizedString(@"YES",Nil), nil];
+        //        alert.tag = IMUseLastRegistrationData_Tag;
+        //        [alert show];
+        [self saveData:YES];
     }else {
         //reset data to empty
         [self saveData:NO];
@@ -157,7 +157,7 @@ static NSInteger total_row_table_personal_info = 10;
     if(_skipFinger == YES) {
         //show alert
         //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Warning !!!",Nil) message:NSLocalizedString(@"Are you sure want to skip finger image ?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"NO",Nil) otherButtonTitles:NSLocalizedString(@"YES",Nil), nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Warning !!!" message:@"Are you sure want to skip finger image ?" delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];
         alert.tag = IMSkipFinger_Tag;
         [alert show];
     }
@@ -359,7 +359,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView.labelTitle.textColor = [UIColor blackColor];
         headerView.backgroundView = [[UIView alloc] init];
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
-        headerView.labelTitle.text = NSLocalizedString(@"Personal Information",Nil);
+        headerView.labelTitle.text = @"Personal Information";
         
     }else if (section == table_unhcr_data){
         headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:headerIdentifier];
@@ -368,7 +368,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView.labelTitle.textColor = [UIColor blackColor];
         headerView.backgroundView = [[UIView alloc] init];
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
-        headerView.labelTitle.text = NSLocalizedString(@"UNHCR Data",Nil);
+        headerView.labelTitle.text = @"UNHCR Data";
     }else if (section == table_interception_data){
         headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:headerIdentifier];
         headerView.labelTitle.font = [UIFont thinFontWithSize:28];
@@ -376,7 +376,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView.labelTitle.textColor = [UIColor blackColor];
         headerView.backgroundView = [[UIView alloc] init];
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
-        headerView.labelTitle.text = NSLocalizedString(@"Interception Data",Nil);
+        headerView.labelTitle.text = @"Interception Data";
     }else if (section == table_migrant_location){
         headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:headerIdentifier];
         headerView.labelTitle.font = [UIFont thinFontWithSize:28];
@@ -384,7 +384,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView.labelTitle.textColor = [UIColor blackColor];
         headerView.backgroundView = [[UIView alloc] init];
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
-        headerView.labelTitle.text = NSLocalizedString(@"Location",Nil);
+        headerView.labelTitle.text = @"Location";
         
         //add clear button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -415,7 +415,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView.backgroundView = [[UIView alloc] init];
         headerView.backgroundView.backgroundColor = [UIColor whiteColor];
         // implement Add button for movement
-        headerView.labelTitle.text = NSLocalizedString(@"Movements",Nil);
+        headerView.labelTitle.text =@"Movements";
         //
         //        headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         //        [headerView.buttonAction setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
@@ -435,7 +435,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:@"movementHeader"];
         headerView.labelTitle.font = [UIFont boldFontWithSize:20];
         headerView.labelTitle.textAlignment = NSTextAlignmentLeft;
-        headerView.labelTitle.text = [NSString stringWithFormat:NSLocalizedString(@"Movement Detail # %i",Nil),(section - table_location)+1];
+        headerView.labelTitle.text = [NSString stringWithFormat:@"Movement Detail # %i",(section - table_location)+1];
     }
     
     return headerView;
@@ -506,15 +506,15 @@ static NSInteger total_row_table_personal_info = 10;
     if (indexPath.section == table_personal_info) {
         if (indexPath.row == row_use_last_data) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Use Last Data",Nil);
+            cell.labelTitle.text = @"Use Last Data";
             cell.switcher.on = _useLastData;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.useLastData = value;
             };
             cell.hidden= YES;
         }else if (indexPath.row == row_first_name) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"First Name",Nil);
-            cell.textValue.placeholder = NSLocalizedString(@"e.g Jafar",Nil);
+            cell.labelTitle.text = @"First Name";
+            cell.textValue.placeholder = @"e.g Jafar";
             cell.textValue.text = self.registration.bioData.firstName;
             cell.onTextValueReturn = ^(NSString *value){
                 self.registration.bioData.firstName = value;
@@ -523,9 +523,9 @@ static NSInteger total_row_table_personal_info = 10;
             cell.maxCharCount = 40;
         }else if (indexPath.row == row_family_name) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Family Name",Nil);
+            cell.labelTitle.text = @"Family Name";
             cell.labelTitle.textColor = [UIColor grayColor];
-            cell.textValue.placeholder = NSLocalizedString(@"e.g Muhammad",Nil);
+            cell.textValue.placeholder = @"e.g Muhammad";
             cell.textValue.text = self.registration.bioData.familyName;
             cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.familyName = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
@@ -533,40 +533,40 @@ static NSInteger total_row_table_personal_info = 10;
         }else if (indexPath.row == row_sex) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             //            cell.labelTitle.text = @"Gender";
-            cell.labelTitle.text = NSLocalizedString(@"Sex",Nil);
+            cell.labelTitle.text = @"Sex";
             cell.labelValue.text = self.registration.bioData.gender;
         }else if (indexPath.row == row_status) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Marital Status",Nil);
+            cell.labelTitle.text = @"Marital Status";
             cell.labelValue.text = self.registration.bioData.maritalStatus;
         }else if (indexPath.row == row_date_of_birth) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Date of Birth",Nil);
+            cell.labelTitle.text =  @"Date of Birth" ;
             cell.labelValue.text = [self.registration.bioData.dateOfBirth mediumFormatted];
         }else if (indexPath.row == row_city_of_birth) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"City of Birth",Nil);
-            cell.textValue.placeholder = NSLocalizedString(@"e.g Kabul",Nil);
+            cell.labelTitle.text =  @"City of Birth" ;
+            cell.textValue.placeholder =  @"e.g Kabul" ;
             cell.textValue.text = self.registration.bioData.placeOfBirth;
             cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.placeOfBirth = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet], [NSCharacterSet characterSetWithCharactersInString:@",-"]];
         }else if (indexPath.row == row_country_of_birth) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Country of Birth",Nil);
+            cell.labelTitle.text =  @"Country of Birth" ;
             cell.labelValue.text = self.registration.bioData.countryOfBirth.name;
         }else if (indexPath.row == row_nationality) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Nationality",Nil);
+            cell.labelTitle.text =  @"Nationality" ;
             cell.labelValue.text = self.registration.bioData.nationality.name;
         }else if (indexPath.row == row_vulnerability) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Vulnerability",Nil);
+            cell.labelTitle.text =  @"Vulnerability" ;
             cell.labelValue.text = self.registration.vulnerability;
             //hidden as requested
             cell.hidden = YES;
         }else if (indexPath.row == row_skip_finger) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Skip Finger Image",Nil);
+            cell.labelTitle.text =  @"Skip Finger Image" ;
             //            cell.switcher.on = self.registration.skipFinger.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.skipFinger = value;
             };
@@ -575,18 +575,18 @@ static NSInteger total_row_table_personal_info = 10;
     }else if (indexPath.section == table_unhcr_data) {
         if (indexPath.row == 0) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"UNHCR Document",Nil);
-            cell.labelValue.text = [self.registration.unhcrDocument length]?self.registration.unhcrDocument:NSLocalizedString(@"No Document",Nil);
+            cell.labelTitle.text =  @"UNHCR Document" ;
+            cell.labelValue.text = [self.registration.unhcrDocument length]?self.registration.unhcrDocument: @"No Document" ;
         }else if (indexPath.row == 1) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"UNHCR Document Number",Nil);
-            cell.textValue.placeholder = NSLocalizedString(@"e.g 186-09C02429",Nil);
+            cell.labelTitle.text =  @"UNHCR Document Number" ;
+            cell.textValue.placeholder =  @"e.g 186-09C02429" ;
             
             cell.textValue.text = self.registration.unhcrNumber;
             cell.onTextValueReturn = ^(NSString *value){
                 if (!self.registration.unhcrDocument){
                     //show alert
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Input",Nil) message:NSLocalizedString(@"Please input UNHCR Document",Nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid Input"  message: @"Please input UNHCR Document"  delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     alert.tag = IMAlertNOUNHCR_Tag;
                     [alert show];
                     self.registration.unhcrNumber = value = Nil;
@@ -598,17 +598,17 @@ static NSInteger total_row_table_personal_info = 10;
     }else if (indexPath.section == table_interception_data) {
         if (indexPath.row == 0) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Date Of Entry",Nil);
+            cell.labelTitle.text =  @"Date Of Entry" ;
             cell.labelValue.text = [self.registration.interceptionData.dateOfEntry mediumFormatted];
         } else if (indexPath.row == 1) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Interception Date",Nil);
+            cell.labelTitle.text =  @"Interception Date" ;
             cell.labelValue.text = [self.registration.interceptionData.interceptionDate mediumFormatted];
         }else if (indexPath.row == 2) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Interception Location",Nil);
+            cell.labelTitle.text =  @"Interception Location" ;
             cell.textValue.text = self.registration.interceptionData.interceptionLocation;
-            cell.textValue.placeholder = NSLocalizedString(@"e.g Pelabuhan Ratu, Banten, Jawa Barat",Nil);
+            cell.textValue.placeholder =  @"e.g Pelabuhan Ratu, Banten, Jawa Barat" ;
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet], [NSCharacterSet characterSetWithCharactersInString:@"-,"]];
             cell.onTextValueReturn = ^(NSString *value){ self.registration.interceptionData.interceptionLocation = value; };
             cell.maxCharCount = 50;
@@ -617,7 +617,7 @@ static NSInteger total_row_table_personal_info = 10;
         else if (indexPath.row == 3){
             
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Assosiate IOM Office",Nil);
+            cell.labelTitle.text =  @"Assosiate IOM Office" ;
             
             if (!self.registration.associatedOffice.name) {
                 self.registration.associatedOffice = [IomOffice officeWithName:[IMAuthManager sharedManager].activeUser.officeName inManagedObjectContext:self.registration.managedObjectContext];
@@ -627,7 +627,7 @@ static NSInteger total_row_table_personal_info = 10;
         }
         else if (indexPath.row == 4){
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Self Reporting",Nil);
+            cell.labelTitle.text =  @"Self Reporting" ;
             cell.switcher.on = self.registration.selfReporting.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.registration.selfReporting = @(value);
                 self.registration.interceptionData.selfReporting = @(value);
@@ -635,7 +635,7 @@ static NSInteger total_row_table_personal_info = 10;
         }
         else {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Under IOM Care",Nil);
+            cell.labelTitle.text =  @"Under IOM Care" ;
             cell.switcher.on = self.registration.underIOMCare.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.underIOMCare = value; };
         }
@@ -649,48 +649,48 @@ static NSInteger total_row_table_personal_info = 10;
         
         if (indexPath.row == 0) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Movement Type",Nil);
+            cell.labelTitle.text =  @"Movement Type" ;
             cell.labelValue.text = movement.type;
         } else if (indexPath.row == 1) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Movement Date",Nil);
+            cell.labelTitle.text =  @"Movement Date" ;
             cell.labelValue.text = [movement.date mediumFormatted];
         }else if (indexPath.row == 2) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Document Number",Nil);
-            cell.textValue.placeholder = NSLocalizedString(@"e.g LSD-09C02429",Nil);
+            cell.labelTitle.text =  @"Document Number" ;
+            cell.textValue.placeholder =  @"e.g LSD-09C02429" ;
             cell.textValue.text = movement.documentNumber;
             cell.onTextValueReturn = ^(NSString *value){ movement.documentNumber = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
         }else if (indexPath.row == 3) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Proposed Date",Nil);
+            cell.labelTitle.text =  @"Proposed Date" ;
             cell.labelValue.text = [movement.proposedDate mediumFormatted];
         }else if (indexPath.row == 4) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Travel Mode",Nil);
+            cell.labelTitle.text =  @"Travel Mode" ;
             cell.labelValue.text = movement.travelMode;
         }else if (indexPath.row == 5) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Reference Code",Nil);
-            cell.textValue.placeholder = NSLocalizedString(@"e.g travel/vehicle/flight number",Nil);
+            cell.labelTitle.text =  @"Reference Code" ;
+            cell.textValue.placeholder =  @"e.g travel/vehicle/flight number" ;
             cell.textValue.text = movement.referenceCode;
             cell.onTextValueReturn = ^(NSString *value){ movement.referenceCode = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
         }else if (indexPath.row == 6) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Departure Port",Nil);
+            cell.labelTitle.text =  @"Departure Port" ;
             cell.labelValue.text = movement.departurePort.name;
         }else if (indexPath.row == 7) {
             switch ([self numberOfRow:movement orWithMovementType:Nil]) {
                 case 8:
                     cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-                    cell.labelTitle.text = NSLocalizedString(@"Destination Country",Nil);
+                    cell.labelTitle.text =  @"Destination Country" ;
                     cell.labelValue.text = movement.destinationCountry.name;
                     break;
                 case 9:
                     cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-                    cell.labelTitle.text = NSLocalizedString(@"Origin Location",Nil);
+                    cell.labelTitle.text =  @"Origin Location" ;
                     cell.labelValue.text = movement.originLocation.name;
                     break;
                 default:
@@ -698,7 +698,7 @@ static NSInteger total_row_table_personal_info = 10;
             }
         }else if (indexPath.row == 8) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Transfer Location",Nil);
+            cell.labelTitle.text =  @"Transfer Location" ;
             cell.labelValue.text = movement.transferLocation.name;
         }
         
@@ -706,7 +706,7 @@ static NSInteger total_row_table_personal_info = 10;
     }else if (indexPath.section == table_migrant_location) {
         if (indexPath.row == 0) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Latest Location",Nil);
+            cell.labelTitle.text =  @"Latest Location" ;
             if (!self.registration.transferDestination.name && self.registration.transferDate) {
                 self.registration.transferDestination = [Accommodation accommodationWithName:self.registration.detentionLocationName inManagedObjectContext:self.registration.managedObjectContext];
                 NSError * err;
@@ -718,7 +718,7 @@ static NSInteger total_row_table_personal_info = 10;
             cell.labelValue.text = self.registration.transferDestination.name;
         }else if (indexPath.row == 1) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
-            cell.labelTitle.text = NSLocalizedString(@"Transfer Date to Latest Location",Nil);
+            cell.labelTitle.text =  @"Transfer Date to Latest Location" ;
             cell.labelValue.text = [self.registration.transferDate mediumFormatted];
         }
         //case not under IOM care, then hide cell
@@ -737,7 +737,7 @@ static NSInteger total_row_table_personal_info = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//    _useLastData = NO;
+    //    _useLastData = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -752,7 +752,7 @@ static NSInteger total_row_table_personal_info = 10;
             NSLog(@"Error while saving : %@",[err description]);
         }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
     }
-
+    
 }
 
 - (void)saveData:(BOOL)flag
@@ -904,7 +904,7 @@ static NSInteger total_row_table_personal_info = 10;
         }else if (indexPath.row == 1){
             if (!self.registration.unhcrDocument) {
                 //show alert
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Input",Nil) message:NSLocalizedString(@"Please input UNHCR Document",Nil) delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid Input"  message: @"Please input UNHCR Document"  delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 alert.tag = IMAlertNOUNHCR_Tag;
                 [alert show];
                 
@@ -946,7 +946,7 @@ static NSInteger total_row_table_personal_info = 10;
                 [self.popover dismissPopoverAnimated:YES];
                 [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
             }];
-            vc.title = NSLocalizedString(@"Select IOM Office",Nil);
+            vc.title =  @"Select IOM Office" ;
             
             [self showPopoverFromRect:[self.tableView rectForRowAtIndexPath:indexPath] withViewController:vc navigationController:YES];
             

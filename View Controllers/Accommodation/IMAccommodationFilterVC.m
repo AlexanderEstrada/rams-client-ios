@@ -231,7 +231,7 @@
     label.font = [UIFont boldFontWithSize:16];
     label.backgroundColor = [UIColor clearColor];
     label.textAlignment = NSTextAlignmentLeft;
-    label.text = NSLocalizedString(@"Inactive Accommodation",Nil);
+    label.text = @"Inactive Accommodation";
     label.textColor = [UIColor IMLightBlue];
     [headerView addSubview:label];
     
@@ -247,7 +247,7 @@
     label2.font = [UIFont boldFontWithSize:16];
     label2.backgroundColor = [UIColor clearColor];
     label2.textAlignment = NSTextAlignmentLeft;
-    label2.text = NSLocalizedString(@"Occupied",Nil);
+    label2.text = @"Occupied";
     label2.textColor = [UIColor IMLightBlue];
     [headerView_2 addSubview:label2];
     
@@ -296,7 +296,7 @@
 {
     [super viewDidLoad];
     
-    self.title = NSLocalizedString(@"View Options",Nil);
+    self.title = @"View Options";
     self.tableView.separatorColor = [UIColor IMBorderColor];
     [self loadCities];
 }

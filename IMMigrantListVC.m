@@ -284,29 +284,83 @@
     }
 }
 
+- (void)showLoadingViewWithTitle:(NSString *)title
+{
+//    if (self.loading) return;
+//    
+//    self.useBackground = NO;
+//    self.loadingView.alpha = 0;
+//  self.loadingView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+//    self.labelLoading.text = title;
+//    self.labelLoading.textColor = self.view.tintColor;
+//    self.loadingIndicator.color = self.view.tintColor;
+//    
+//    [self.view addSubview:self.loadingView];
+//    self.loadingView.transform = CGAffineTransformMakeScale(0, 0);
+//    
+//    [UIView animateWithDuration:.25 animations:^{
+//        self.loadingView.transform = CGAffineTransformMakeScale(1, 1);
+//            self.loadingView.alpha = 1;
+//    } completion:^(BOOL finished){
+//        [self.loadingIndicator startAnimating];
+//        self.view.userInteractionEnabled = NO;
+//        self.loading = YES;
+//    }];
+    
+    if (!_HUD) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    }
+    
+    // Back to indeterminate mode
+    _HUD.mode = MBProgressHUDModeIndeterminate;
+    
+    // Add HUD to screen
+    [self.navigationController.view addSubview:_HUD];
+    
+    
+    
+    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    _HUD.delegate = self;
+    
+    _HUD.labelText = title;
+    
+    
+    // Show the HUD while the provided method executes in a new thread
+    [_HUD showUsingAnimation:YES];
+    
+}
 
 - (void)hideLoadingView
 {
     
-    if (!self.loading && [self.dataProvider.dataObjects count]) return;
+//    if (!self.loading && [self.dataProvider.dataObjects count]) return;
+//    
+//    [UIView animateWithDuration:.25
+//                     animations:Nil
+//                     completion:^(BOOL finished){
+//                         [self.loadingIndicator stopAnimating];
+//                         [self.loadingView removeFromSuperview];
+//                         self.view.userInteractionEnabled = YES;
+//                         
+//                         self.labelLoading = nil;
+//                         self.loadingIndicator = nil;
+//                         self.loadingView = nil;
+//                         self.loading = NO;
+//                     }];
     
-    [UIView animateWithDuration:.25
-                     animations:^{
-                         self.loadingView.alpha = 0;
-                         self.loadingView.transform = CGAffineTransformMakeScale(0, 0);
-                     }
-                     completion:^(BOOL finished){
-                         [self.loadingIndicator stopAnimating];
-                         [self.loadingView removeFromSuperview];
-                         self.view.userInteractionEnabled = YES;
-                         
-                         self.labelLoading = nil;
-                         self.loadingIndicator = nil;
-                         self.loadingView = nil;
-                         self.loading = NO;
-                     }];
+     [_HUD hideUsingAnimation:YES];
     
 }
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    
+    [super viewWillDisappear:animated];
+    
+    [_HUD hideUsingAnimation:animated];
+}
+
 
 #pragma mark View Lifecycle
 - (void)viewDidLoad
@@ -325,13 +379,6 @@
     //hide loading view
     [self hideLoadingView];
     
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    
-    [super viewWillDisappear:animated];
-    //    self.dataProvider = Nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -433,7 +480,9 @@
 
 - (void)hudWasHidden {
     // Remove HUD from screen when the HUD was hidded
-    [_HUD removeFromSuperview];
+    if (_HUD) {
+        [_HUD removeFromSuperview];
+    }
 }
 
 @end

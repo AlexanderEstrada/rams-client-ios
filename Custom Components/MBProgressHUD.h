@@ -50,6 +50,10 @@ typedef enum {
 
 @protocol MBProgressHUDDelegate <NSObject>
 
+@optional
+//on cancel implementation
+- (void)onCancel;
+
 @required
 
 /** 
@@ -57,7 +61,11 @@ typedef enum {
  */
 - (void)hudWasHidden;
 
+
+
+
 @end
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -118,6 +126,7 @@ typedef enum {
 	NSDate *showStarted;
 	
 	UIView *indicator;
+    UIButton * cancelButton;
 	UILabel *label;
 	UILabel *detailsLabel;
 	

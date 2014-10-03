@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
     
-    self.title = NSLocalizedString(@"Statistic", @"Statistic");
+    self.title = @"Statistic";
 }
 
 - (void)didReceiveMemoryWarning

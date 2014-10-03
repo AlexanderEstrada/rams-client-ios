@@ -126,7 +126,7 @@ static int section_other_extended_member;
     section_head_of_family = section_spouse = section_guadian = section_grand_father = section_grand_mother = section_childs = section_other_extended_member = 1000;
     
     if (self.familyRegister) {
-        self.title = NSLocalizedString(@"Edit Family Data",Nil);
+        self.title =   @"Edit Family Data"  ;
         self.editingMode = YES;
         
         if (self.familyRegister.headOfFamilyId) {
@@ -156,7 +156,7 @@ static int section_other_extended_member;
         }
         
     }else {
-        self.title = NSLocalizedString(@"New Family Data",Nil);
+        self.title =   @"New Family Data"  ;
         self.editingMode = NO;
         //create new family register
         self.familyRegister = [FamilyRegister newFamilyRegisterInContext:self.context];
@@ -282,11 +282,11 @@ static int section_other_extended_member;
 - (void) uploadAll:(UIBarButtonItem *)sender
 {
     //show confirmation
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: NSLocalizedString(@"Upload all Family Data",Nil)
-                                                    message: NSLocalizedString(@"All your Family Data will be uploaded and you need internet connection to do this.\nContinue upload all Family Data?",Nil)
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:   @"Upload all Family Data"
+                                                    message:   @"All your Family Data will be uploaded and you need internet connection to do this.\nContinue upload all Family Data?"
                                                    delegate:self
-                                          cancelButtonTitle: NSLocalizedString(@"Cancel",Nil)
-                                          otherButtonTitles: NSLocalizedString(@"Yes", nil),Nil];
+                                          cancelButtonTitle:   @"Cancel"
+                                          otherButtonTitles:   @"Yes",Nil];
     alert.tag = IMAlertUpload_Tag;
     [alert show];
     
@@ -297,10 +297,10 @@ static int section_other_extended_member;
 {
     if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
-//        if (!_hud) {
-            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-            _hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-//        }
+        //        if (!_hud) {
+        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+        _hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        //        }
         
         // Back to indeterminate mode
         _hud.mode = MBProgressHUDModeDeterminate;
@@ -311,7 +311,7 @@ static int section_other_extended_member;
         // Regisete for HUD callbacks so we can remove it from the window at the right time
         _hud.delegate = self;
         
-        _hud.labelText =  NSLocalizedString(@"Uploading Data",Nil);
+        _hud.labelText =    @"Uploading Data"  ;
         
         
         // Show the HUD while the provided method executes in a new thread
@@ -400,7 +400,7 @@ static int section_other_extended_member;
                   parameters:params
                      success:^(NSDictionary *jsonData, int statusCode){
                          //                         [self showAlertWithTitle:@"Upload Success" message:nil];
-                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: NSLocalizedString(@"Upload Success",Nil) message:Nil delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:   @"Upload Success"   message:Nil delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
                          alert.tag = IMAlertUploadSuccess_Tag;
                          [alert show];
                          NSLog(@"Upload Success");
@@ -408,7 +408,7 @@ static int section_other_extended_member;
                          self.uploadStatus = self.next = YES;
                      }
                      failure:^(NSDictionary *jsonData, NSError *error, int statusCode){
-                         [self showAlertWithTitle: NSLocalizedString(@"Upload Failed",Nil) message: NSLocalizedString(@"Please check your network connection and try again. If problem persist, contact administrator.",Nil)];
+                         [self showAlertWithTitle:   @"Upload Failed"   message:   @"Please check your network connection and try again. If problem persist, contact administrator."  ];
                          NSLog(@"Upload Fail : %@",[error description]);
                          NSLog(@"return JSON : %@",[jsonData description]);
                          self.next = YES;
@@ -592,7 +592,7 @@ static int section_other_extended_member;
     headerView.backgroundView = [[UIView alloc] init];
     headerView.backgroundView.backgroundColor = [UIColor whiteColor];
     if (section == section_adding){
-        headerView.labelTitle.text =  NSLocalizedString(@"Type Of Family",Nil);
+        headerView.labelTitle.text =    @"Type Of Family"  ;
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = section_adding;
@@ -609,20 +609,20 @@ static int section_other_extended_member;
         [headerView.buttonAction addTarget:self action:@selector(addMoreType:) forControlEvents:UIControlEventTouchUpInside];
         
     }else if (section == section_head_of_family){
-        headerView.labelTitle.text =  NSLocalizedString(@"Head Of Family",Nil);
+        headerView.labelTitle.text =    @"Head Of Family"  ;
         headerView.hidden = ![self.selectedFamilyTypes containsObject:FAMILY_TYPE_HEAD_OF_FAMILY];
         
     }else if (section == section_spouse){
         if (self.isHeadOfFamilyFemale) {
             return Nil;
         }
-        headerView.labelTitle.text =  NSLocalizedString(@"Spouse",Nil);
+        headerView.labelTitle.text =    @"Spouse"  ;
         headerView.hidden = ![self.selectedFamilyTypes containsObject:FAMILY_TYPE_SPOUSE];
     }else if (section == section_guadian){
-        headerView.labelTitle.text =  NSLocalizedString(@"Guardian",Nil);
+        headerView.labelTitle.text =    @"Guardian"  ;
         headerView.hidden = ![self.selectedFamilyTypes containsObject:FAMILY_TYPE_GUARDIAN];
     }else if (section == section_childs){
-        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:([self.childData count] > 1)? NSLocalizedString(@"Childrens (%lu)",Nil) :  NSLocalizedString(@"Children (%lu)",Nil),(unsigned long)[self.childData count]]: NSLocalizedString(@"Children",Nil);
+        headerView.labelTitle.text = [self.childData count]?[NSString stringWithFormat:([self.childData count] > 1)?   @"Childrens (%lu)"   :    @"Children (%lu)"  ,(unsigned long)[self.childData count]]:   @"Children"  ;
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -657,7 +657,7 @@ static int section_other_extended_member;
         
         headerView.hidden = ![self.selectedFamilyTypes containsObject:FAMILY_TYPE_CHILD];
     }else if (section == section_grand_father){
-        headerView.labelTitle.text = [self.grandFather count]?[NSString stringWithFormat: NSLocalizedString(@"Grand Father (%lu)",Nil),(unsigned long)[self.grandFather count]]: NSLocalizedString(@"Grand Father",Nil);
+        headerView.labelTitle.text = [self.grandFather count]?[NSString stringWithFormat:   @"Grand Father (%lu)"  ,(unsigned long)[self.grandFather count]]:   @"Grand Father"  ;
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = section_grand_father;
@@ -686,7 +686,7 @@ static int section_other_extended_member;
         }
         headerView.hidden = ![self.selectedFamilyTypes containsObject:FAMILY_TYPE_GRAND_FATHER];
     }else if (section == section_grand_mother){
-        headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat: NSLocalizedString(@"Grand Mother (%lu)",Nil),(unsigned long)[self.grandMother count]]: NSLocalizedString(@"Grand Mother",Nil);
+        headerView.labelTitle.text = [self.grandMother count]?[NSString stringWithFormat:   @"Grand Mother (%lu)"  ,(unsigned long)[self.grandMother count]]:   @"Grand Mother"  ;
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         headerView.buttonAction.tag = section_grand_mother;
@@ -715,7 +715,7 @@ static int section_other_extended_member;
         }
         headerView.hidden = ![self.selectedFamilyTypes containsObject:FAMILY_TYPE_GRAND_MOTHER];
     }else if (section == section_other_extended_member){
-        headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat: NSLocalizedString(@"Other Extended Member (%lu)",Nil),(unsigned long)[self.others count]]: NSLocalizedString(@"Other Extended Member",Nil);
+        headerView.labelTitle.text = [self.others count]?[NSString stringWithFormat:   @"Other Extended Member (%lu)"  ,(unsigned long)[self.others count]]:   @"Other Extended Member"  ;
         //implement action button
         headerView.buttonAction = [UIButton buttonWithType:UIButtonTypeContactAdd];
         
@@ -944,10 +944,10 @@ static int section_other_extended_member;
     if (indexPath.section == section_head_of_family) {
         
         if (indexPath.row == 0) {
-            cell.textLabel.text =  NSLocalizedString(@"Registration Number",Nil);
+            cell.textLabel.text =    @"Registration Number"  ;
             cell.detailTextLabel.text = self.familyRegister.headOfFamilyId;
         }else if (indexPath.row ==1){
-            cell.textLabel.text =  NSLocalizedString(@"Name",Nil);
+            cell.textLabel.text =    @"Name"  ;
             cell.detailTextLabel.text = self.familyRegister.headOfFamilyName;
             if (self.familyRegister.photographThumbnail) {
                 cell.imageView.image = self.familyRegister.photographImageThumbnail;
@@ -980,12 +980,12 @@ static int section_other_extended_member;
                 }
             }
             if (indexPath.row == 0) {
-                cell.textLabel.text =  NSLocalizedString(@"Registration Number",Nil);
+                cell.textLabel.text =    @"Registration Number"  ;
                 cell.detailTextLabel.text = tmp.registrationNumber;
                 
             }else if (indexPath.row ==1){
                 
-                cell.textLabel.text =  NSLocalizedString(@"Name",Nil);
+                cell.textLabel.text =    @"Name"  ;
                 cell.detailTextLabel.text = [tmp fullname];
                 if (tmp.biometric.photographImageThumbnail) {
                     cell.imageView.image = tmp.biometric.photographImageThumbnail;
@@ -1012,12 +1012,12 @@ static int section_other_extended_member;
             }
         }
         if (indexPath.row == 0) {
-            cell.textLabel.text =  NSLocalizedString(@"Registration Number",Nil);
+            cell.textLabel.text =    @"Registration Number"  ;
             cell.detailTextLabel.text = tmp.registrationNumber;
             
         }else if (indexPath.row ==1){
             
-            cell.textLabel.text =  NSLocalizedString(@"Name",Nil);
+            cell.textLabel.text =    @"Name"  ;
             cell.detailTextLabel.text = [tmp fullname];
             if (tmp.biometric.photographImageThumbnail) {
                 cell.imageView.image = tmp.biometric.photographImageThumbnail;
@@ -1034,12 +1034,12 @@ static int section_other_extended_member;
     
     else {
         if (indexPath.row == 0 || ((indexPath.row %2) == 0)) {
-            cell.textLabel.text =  NSLocalizedString(@"Registration Number",Nil);
+            cell.textLabel.text =    @"Registration Number"  ;
             cell.detailTextLabel.text = tmp.registrationNumber;
             
         }else {
             
-            cell.textLabel.text =  NSLocalizedString(@"Name",Nil);
+            cell.textLabel.text =    @"Name"  ;
             cell.detailTextLabel.text = [tmp fullname];
             if (tmp.biometric.photographImageThumbnail) {
                 cell.imageView.image = tmp.biometric.photographImageThumbnail;
@@ -1085,9 +1085,13 @@ static int section_other_extended_member;
     NSMutableArray * tmp = [NSMutableArray array];
     if ([self.selectedFamilyTypes count]) {
         
+        if (!self.haveHeadOfFamily) {
+            //show alert
+            [self showAlertWithTitle:@"Error" message:[NSString stringWithFormat: @"Please input : %@"  ,[self.selectedFamilyTypes objectAtIndex:0]]];
+            return;
+        }
         
         //only show non selected family types
-        
         for (NSString * type in vc.options) {
             
             if (![self.selectedFamilyTypes containsObject:type]) {
@@ -1432,7 +1436,7 @@ static int section_other_extended_member;
     //save to database
     if (![self.familyRegister.managedObjectContext save:&error]) {
         NSLog(@"Error saving context: %@", [error description]);
-        [self showAlertWithTitle: NSLocalizedString(@"Failed Saving Family Data",Nil) message: NSLocalizedString(@"Please try again. If problem persist, please cancel and consult with administrator.",Nil)];
+        [self showAlertWithTitle:   @"Failed Saving Family Data"   message:   @"Please try again. If problem persist, please cancel and consult with administrator."  ];
     }else {
         //save database
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
@@ -1460,7 +1464,7 @@ static int section_other_extended_member;
         NSError *error;
         if (![self.context save:&error]) {
             NSLog(@"Error deleting family data: %@", [error description]);
-            [self showAlertWithTitle: NSLocalizedString(@"Failed Saving Family Data",Nil) message: NSLocalizedString(@"Please try again. If problem persist, please cancel and consult with administrator.",Nil)];
+            [self showAlertWithTitle:   @"Failed Saving Family Data"   message:   @"Please try again. If problem persist, please cancel and consult with administrator."  ];
             
         }else {
             [[IMDBManager sharedManager] saveDatabase:^(BOOL success){
@@ -1485,7 +1489,7 @@ static int section_other_extended_member;
     // Regisete for HUD callbacks so we can remove it from the window at the right time
     _hud.delegate = self;
     
-    _hud.labelText =  NSLocalizedString(@"Saving...",Nil);
+    _hud.labelText =    @"Saving..."  ;
     //    Show progress window
     [_hud showWhileExecuting:@selector(saving) onTarget:self withObject:nil animated:YES];
     
@@ -1788,7 +1792,7 @@ static int section_other_extended_member;
     if (sender.tag == section_childs) {
         if (!self.haveHeadOfFamily) {
             
-            [self showAlertWithTitle: NSLocalizedString(@"Failed Add Children",Nil) message: NSLocalizedString(@"Please input Head Of Family or Guardian before adding Children.",Nil)];
+            [self showAlertWithTitle:   @"Failed Add Children"   message:   @"Please input Head Of Family or Guardian before adding Children."  ];
             
             return;
         }
@@ -1802,7 +1806,7 @@ static int section_other_extended_member;
     
     else if (sender.tag == section_other_extended_member) {
         if (!self.familyRegister.headOfFamilyId) {
-            [self showAlertWithTitle: NSLocalizedString(@"Failed Add Other Extended Member",Nil) message: NSLocalizedString(@"Please input Head Of Family before adding Other Extended Member.",Nil)];
+            [self showAlertWithTitle:   @"Failed Add Other Extended Member"   message:   @"Please input Head Of Family before adding Other Extended Member."  ];
             
             return;
         }
@@ -1827,7 +1831,7 @@ static int section_other_extended_member;
     }
     //validate data
     if (!validation) {
-        [self showAlertWithTitle: NSLocalizedString(@"Maximum Selection",Nil) message:[NSString stringWithFormat: NSLocalizedString(@"You only can select %i for this section",Nil),maxSelection]];
+        [self showAlertWithTitle:   @"Maximum Selection"   message:[NSString stringWithFormat:   @"You only can select %i for this section"  ,maxSelection]];
         return;
     }
     //show migrant list

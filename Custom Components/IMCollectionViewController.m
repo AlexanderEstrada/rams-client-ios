@@ -25,6 +25,7 @@
 {
     [super viewDidLoad];
     self.collectionView.backgroundColor = [UIColor whiteColor];
+    self.useBackground = YES;
 }
 
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message{
@@ -91,12 +92,14 @@
         _loadingView.backgroundColor = [UIColor clearColor];
         _loadingView.center = self.view.center;
         
-        UIImage *background = [[UIImage screenshotForView:self.view] applyExtraLightEffect];
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-        imageView.translatesAutoresizingMaskIntoConstraints = YES;
-        imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        [self.loadingView addSubview:imageView];
-        
+        if (self.useBackground) {
+            UIImage *background = [[UIImage screenshotForView:self.view] applyExtraLightEffect];
+            UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
+            imageView.translatesAutoresizingMaskIntoConstraints = YES;
+            imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+            [self.loadingView addSubview:imageView];
+        }
+       
         self.loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
         self.loadingIndicator.translatesAutoresizingMaskIntoConstraints = NO;
         self.loadingIndicator.color = [UIColor blackColor];

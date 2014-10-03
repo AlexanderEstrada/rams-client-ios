@@ -135,9 +135,10 @@
 
 - (NSString *)toUTCString{
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    NSTimeZone *timeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
-    [formatter setTimeZone:timeZone];
-    [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
+//    NSTimeZone *timeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+//    [formatter setTimeZone:timeZone];
+    [formatter setDateFormat:@"yyyy-MM-dd'T'00:00:00'Z'"];
+//    [formatter setDateFormat:@"yyyy-MM-dd"];
     return [formatter stringFromDate:self];
 }
 

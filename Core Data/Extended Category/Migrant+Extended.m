@@ -319,8 +319,11 @@
      Migrant * migrant = [self migrantWithId:Id inContext:context];
     
         if (!migrant) {
-            return Nil;
+            //create new migrant data
+            migrant = [Migrant newMigrantInContext:context withId:Id];
         }
+        migrant.registrationNumber = Id;
+        
         //general information
         migrant.underIOMCare = reg.underIOMCare;
         migrant.selfReporting = reg.selfReporting;
@@ -441,14 +444,15 @@
         
         if (![context save:&error]) {
             NSLog(@"Error : %@",[error description]);
-            return nil;
+//            return nil;
+            [context rollback];
         }
         
      
         return migrant;
     }
     @catch (NSException *exception) {
-        NSLog(@"Throw exeption while saveRegistrationData: %@",[exception description]);
+        NSLog(@"Migrant+Extended - Throw exeption while saveRegistrationData: %@",[exception description]);
         [context rollback];
     }
     return nil;
