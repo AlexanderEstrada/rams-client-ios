@@ -248,6 +248,7 @@
 		F2BA6C04195D596B00E26B31 /* IMPortChooserVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */; };
 		F2C139F519487CA8006F8EDD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F419487CA8006F8EDD /* Main.storyboard */; };
 		F2C139F719487D04006F8EDD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F2C139F619487D04006F8EDD /* InfoPlist.strings */; };
+		F2D7A5AF19DD35D900F5DD75 /* modelMapping.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = F2D7A5AE19DD35D900F5DD75 /* modelMapping.xcmappingmodel */; };
 		F926697A18EEA73600A95E94 /* Child+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = F926697918EEA73600A95E94 /* Child+Extended.m */; };
 		F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F93AFCA618F7A25A00AB63DA /* IMRegistrationFilterDataVC.m */; };
 		F977449518F3E5C8001D30FA /* ServerSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F977449418F3E5C8001D30FA /* ServerSettingViewController.m */; };
@@ -683,6 +684,7 @@
 		F2190A7319D2A546006A77F2 /* IMMS 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "IMMS 2.xcdatamodel"; sourceTree = "<group>"; };
 		F23DA50B19812D0100DDF0C1 /* IMMovementListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementListVC.h; sourceTree = "<group>"; };
 		F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementListVC.m; sourceTree = "<group>"; };
+		F23F30BE19DBFC3A0095BB16 /* RAMS Client.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "RAMS Client.entitlements"; sourceTree = SOURCE_ROOT; };
 		F2721EB119C6FD000009EE99 /* IMRAMSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMRAMSTest.m; sourceTree = "<group>"; };
 		F2721EB419C81D8F0009EE99 /* Helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
 		F279A65919CC295A00491B05 /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Registration.h; path = "Core Data/Generated Classes/Registration.h"; sourceTree = "<group>"; };
@@ -730,6 +732,7 @@
 		F2BA6C03195D596B00E26B31 /* IMPortChooserVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMPortChooserVC.m; sourceTree = "<group>"; };
 		F2C139F419487CA8006F8EDD /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		F2C139F619487D04006F8EDD /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
+		F2D7A5AE19DD35D900F5DD75 /* modelMapping.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = modelMapping.xcmappingmodel; sourceTree = "<group>"; };
 		F926697818EEA73600A95E94 /* Child+Extended.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Child+Extended.h"; sourceTree = "<group>"; };
 		F926697918EEA73600A95E94 /* Child+Extended.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Child+Extended.m"; sourceTree = "<group>"; };
 		F93AFCA518F7A25A00AB63DA /* IMRegistrationFilterDataVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMRegistrationFilterDataVC.h; path = RegistrationFilter/IMRegistrationFilterDataVC.h; sourceTree = "<group>"; };
@@ -970,6 +973,7 @@
 		AC807D3917F14F58000988D0 /* RAMS Client */ = {
 			isa = PBXGroup;
 			children = (
+				F23F30BE19DBFC3A0095BB16 /* RAMS Client.entitlements */,
 				F2C139F619487D04006F8EDD /* InfoPlist.strings */,
 				F2C139F419487CA8006F8EDD /* Main.storyboard */,
 				AC807D4217F14F58000988D0 /* IMAppDelegate.h */,
@@ -977,6 +981,7 @@
 				ACE6926217F158E90095F90C /* IMMS.xcdatamodeld */,
 				AC807D4817F14F58000988D0 /* Images.xcassets */,
 				AC807D3A17F14F58000988D0 /* Supporting Files */,
+				F2D7A5AE19DD35D900F5DD75 /* modelMapping.xcmappingmodel */,
 			);
 			name = "RAMS Client";
 			path = "IMMS Manager";
@@ -1787,6 +1792,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
 						};
 					};
 					AC807D4D17F14F58000988D0 = {
@@ -1991,6 +1999,7 @@
 				ACE6946117F159E80095F90C /* IMRootViewController.m in Sources */,
 				ACE6929E17F1599A0095F90C /* IMGPlace.m in Sources */,
 				ACE6930017F159AC0095F90C /* IomOffice+Extended.m in Sources */,
+				F2D7A5AF19DD35D900F5DD75 /* modelMapping.xcmappingmodel in Sources */,
 				ACE6930E17F159AC0095F90C /* Interception.m in Sources */,
 				F2B1B2CC19A1D7B100209FCD /* IMFamilyDataViewController.m in Sources */,
 				ACE693BB17F159E20095F90C /* AFPropertyListRequestOperation.m in Sources */,
@@ -2161,6 +2170,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = "RAMS Client.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2185,6 +2195,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = "RAMS Client.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (

@@ -48,72 +48,45 @@
 
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
-//    @synchronized(self)
-//    {
-        if (self.reloadingData || basePredicate == _basePredicate) {
-            //            /do not do anything until data complete reload
-            return;
-        }
-        
-        _basePredicate = basePredicate;
-        
-        [self reloadData];
-//    };
+    if (self.reloadingData || basePredicate == _basePredicate) {
+        //            /do not do anything until data complete reload
+        return;
+    }
+    
+    _basePredicate = basePredicate;
+    [self reloadData];
 }
 
 - (void)executing
 {
-//    @synchronized(self)
-//    {
-        if(!self.reloadingData){
-            self.reloadingData = YES;
-            
-            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
-            if (self.basePredicate) {
-                request.predicate = self.basePredicate;
-            }else {
-                //default
-                request.predicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
-            }
-            
-            request.returnsObjectsAsFaults = YES;
-            NSError *error;
-            NSUInteger total = [context countForFetchRequest:request error:&error];
-            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:request.predicate];
-            
-            self.dataProvider = Nil;
-            [self setDataProvider:dataProvider];
-    
-//            [_HUD hideUsingAnimation:YES];
-            self.reloadingData = NO;
-            
+    if(!self.reloadingData){
+        self.reloadingData = YES;
+        
+        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Migrant"];
+        if (self.basePredicate) {
+            request.predicate = self.basePredicate;
+        }else {
+            //default
+            request.predicate =  [NSPredicate predicateWithFormat:@"active = YES AND complete = YES"];
         }
-//    };
+        
+        request.returnsObjectsAsFaults = YES;
+        NSError *error;
+        NSUInteger total = [context countForFetchRequest:request error:&error];
+        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Migrant" andSort:@"dateCreated" basePredicate:request.predicate];
+        
+        self.dataProvider = Nil;
+        [self setDataProvider:dataProvider];
+        self.reloadingData = NO;
+        
+    }
+
 }
 
 - (void)reloadData
 {
-//    // Show progress window
-//    if (!_HUD) {
-//        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-//        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-//    }
-//    
-//    
-//    
-//    // Add HUD to screen
-//    [self.view addSubview:_HUD];
-//    
-//    // Regisete for HUD callbacks so we can remove it from the window at the right time
-//    _HUD.delegate = self;
-//    
-//    _HUD.labelText = @"Reloading Data...";
-//    
-//    // Show the HUD while the provided method executes in a new thread
-//    [_HUD showUsingAnimation:YES];
-    
-     [self executing];
+    [self executing];
     
 }
 
@@ -164,11 +137,11 @@
 
 #pragma mark - Data controller delegate
 - (void)dataProvider:(DataProvider *)dataProvider willLoadDataAtIndexes:(NSIndexSet *)indexes {
-
+    
 }
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
-
+    
     //hide loading view
     [self hideLoadingView];
     
@@ -247,28 +220,12 @@
         
         cell.buttonUpload.hidden = TRUE;
         
-//        if (animated) {
-//            cell.photoView.alpha = 0;
-//            cell.labelTitle.alpha = 0;
-//            cell.labelSubtitle.alpha = 0;
-//            cell.labelDetail1.alpha = 0;
-//            cell.labelDetail2.alpha = 0;
-//            cell.labelDetail3.alpha = 0;
-//            cell.labelDetail4.alpha = 0;
-//            cell.labelDetail5.alpha = 0;
-//            cell.buttonUpload.alpha = 0;
-//            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
-//                cell.photoView.alpha = 1;
-//                cell.labelTitle.alpha = 1;
-//                cell.labelSubtitle.alpha = 1;
-//                cell.labelDetail1.alpha = 1;
-//                cell.labelDetail2.alpha = 1;;
-//                cell.labelDetail3.alpha = 1;
-//                cell.labelDetail4.alpha = 1;
-//                cell.labelDetail5.alpha = 1;
-//                cell.buttonUpload.alpha = 1;
-//            }completion:Nil];
-//        }
+        cell.hidden = NO;
+        //hide loading view
+//        [self hideLoadingView];
+    }else{
+        //hide null class
+        cell.hidden = YES;
     }
 }
 
@@ -276,7 +233,7 @@
 {
     Migrant *migrant = self.dataProvider.dataObjects[indexPath.row];
     
-    NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+    NSManagedObjectContext *context = migrant.managedObjectContext;
     
     //save to registration
     Registration * registration = [Registration registrationFromMigrant:migrant inManagedObjectContext:context];
@@ -290,19 +247,19 @@
         //TODO : reload Data
         
         NSError * err;
-                           if (remove) {
-                               //save on database
-                               [context save:&err];
-                               if (err) {
-                                   NSLog(@"Error saving : %@",[err description]);
-                               }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
-                               //delete data on data source
-                               [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
-                               [self.collectionView reloadData];
-                           }else {
-                               //reload Data
-                               [self reloadData];
-                           }
+        if (remove) {
+            //save on database
+            [context save:&err];
+            if (err) {
+                NSLog(@"Error saving : %@",[err description]);
+            }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+            //delete data on data source
+            [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
+            [self.collectionView reloadData];
+        }else {
+            //reload Data
+            [self reloadData];
+        }
     };
     
     UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:editVC];
@@ -328,6 +285,29 @@
 }
 
 
+- (void)hideLoadingView
+{
+    
+    if (!self.loading && [self.dataProvider.dataObjects count]) return;
+    
+    [UIView animateWithDuration:.25
+                     animations:^{
+                         self.loadingView.alpha = 0;
+                         self.loadingView.transform = CGAffineTransformMakeScale(0, 0);
+                     }
+                     completion:^(BOOL finished){
+                         [self.loadingIndicator stopAnimating];
+                         [self.loadingView removeFromSuperview];
+                         self.view.userInteractionEnabled = YES;
+                         
+                         self.labelLoading = nil;
+                         self.loadingIndicator = nil;
+                         self.loadingView = nil;
+                         self.loading = NO;
+                     }];
+    
+}
+
 #pragma mark View Lifecycle
 - (void)viewDidLoad
 {
@@ -336,12 +316,14 @@
     [self.collectionView registerNib:[UINib nibWithNibName:@"IMRegistrationCollectionViewCell"
                                                     bundle:[NSBundle mainBundle]]
           forCellWithReuseIdentifier:@"IMRegistrationCollectionViewCell"];
-    //    self.collectionView.delegate=self;
-    //    [self.collectionView setDataSource:self];
     
     self.thumbnailQueue = [[NSOperationQueue alloc] init];
     self.thumbnailQueue.maxConcurrentOperationCount = 3;
     self.firstLaunch = TRUE;
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
+    
+    //hide loading view
+    [self hideLoadingView];
     
 }
 
@@ -370,7 +352,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-   
+    
     //hide loading view
     [self hideLoadingView];
 }

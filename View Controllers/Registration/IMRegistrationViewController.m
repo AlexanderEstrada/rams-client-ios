@@ -243,20 +243,30 @@
     self.receive_warning = FALSE;
     //reset top layout
     self.edgesForExtendedLayout=UIRectEdgeNone;
+      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
 }
 
+- (void)reloadData
+{
+    if ([self.selectedViewController isKindOfClass:[IMRegistrationListVC class]]) {
+        //reload data
+        IMRegistrationListVC *vc = (IMRegistrationListVC *)self.selectedViewController;
+        [vc reloadData];
+    }
+    
+}
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
-        if (!_HUD) {
+//        if (!_HUD) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
             _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        }
+//        }
         
         // Back to indeterminate mode
-        _HUD.mode = MBProgressHUDModeIndeterminate;
+        _HUD.mode = MBProgressHUDModeDeterminate;
         
         // Add HUD to screen
         [self.navigationController.view addSubview:_HUD];
@@ -266,7 +276,7 @@
         // Regisete for HUD callbacks so we can remove it from the window at the right time
         _HUD.delegate = self;
         
-        _HUD.labelText = @"Uploading Data";
+        _HUD.labelText = NSLocalizedString(@"Uploading Data",Nil);
         
         
         // Show the HUD while the provided method executes in a new thread
@@ -278,7 +288,6 @@
         [self.sideMenuDelegate openSynchronizationDialog:nil];
         
     }
-    
 }
 
 - (void) uploading
@@ -290,6 +299,8 @@
     self.flag = FALSE;
     self.next  =FALSE;
     self.upload_finish = FALSE;
+    static int success = 0;
+    static int fail = 0;
     
     NSManagedObjectContext *moc = [IMDBManager sharedManager].localDatabase.managedObjectContext;
     
@@ -297,7 +308,9 @@
     NSArray *results = [moc executeFetchRequest:request error:&error];
     
     self.total = [results count];
-    
+    //reset value
+    success = 0;
+    fail = 0;
     if (self.total > 0) {
         _HUD.mode = MBProgressHUDModeDeterminate;
         self.progress = 0;
@@ -329,6 +342,7 @@
                 //do something if success
                 NSLog(@"Upload Success");
                 
+                success++;
                 [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
                 [self dismissViewControllerAnimated:YES completion:nil];
 //                [self updateBasePredicateForSelectedIndex];
@@ -340,7 +354,8 @@
                 if(self.progress < self.total ){
                     self.progress += 1;
                     _HUD.progress = self.progress/self.total;
-                    _HUD.labelText = [NSString stringWithFormat:@"Uploaded %i of %lu",(int)self.progress,(unsigned long)[results count]];
+                    _HUD.labelText = [NSString stringWithFormat:NSLocalizedString(@"Uploaded %i of %lu",Nil),(int)self.progress,(unsigned long)[results count]];
+                     _HUD.detailsLabelText = [NSString stringWithFormat:NSLocalizedString(@"Success : %i and Fail : %i",Nil),success,fail];
                     NSLog(@"Upload : %f from %lu",self.progress,(unsigned long)[results count]);
                     
                 }else self.upload_finish = TRUE;
@@ -349,14 +364,22 @@
             };
             
             registration.failureHandler = ^(NSError *error){
-                if (!self.flag) {
+                fail++;
+//                if (!self.flag) {
+                
+//                    [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
+//                    self.flag = TRUE;
+                
+                if(self.progress < self.total ){
+                    self.progress += 1;
+                    _HUD.progress = self.progress/self.total;
+                    _HUD.labelText = [NSString stringWithFormat:NSLocalizedString(@"Uploaded %i of %lu",Nil),(int)self.progress,(unsigned long)[results count]];
+                    _HUD.detailsLabelText = [NSString stringWithFormat:NSLocalizedString(@"Success : %i and Fail : %i",Nil),success,fail];
+                   NSLog(@"Upload Fail : %@",[error description]);
                     
-                    [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
-                    self.flag = TRUE;
-                    NSLog(@"Upload Fail : %@",[error description]);
-                    self.upload_finish = TRUE;
+                }else self.upload_finish = TRUE;
                     self.next = TRUE;
-                }
+//                }
                 
             };
             
@@ -413,8 +436,10 @@
             }
             
         }
-        // Back to indeterminate mode
-        _HUD.mode = MBProgressHUDModeIndeterminate;
+        
+        [self showAlertWithTitle:NSLocalizedString(@"Upload status",Nil) message:[NSString stringWithFormat:NSLocalizedString(@"Success : %i and Fail : %i",Nil),success,fail]];
+        
+       
         
         //save database
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
@@ -426,15 +451,18 @@
         //TODO : reload Data
         [self updateBasePredicateForSelectedIndex];
         
+        // Back to indeterminate mode
+        _HUD.mode = MBProgressHUDModeIndeterminate;
+        
         //synchronize data
-         _HUD.labelText = @"Synchronizing...";
+         _HUD.labelText = NSLocalizedString(@"Synchronizing...",Nil);
         sleep(5);
         
     }else{
         NSLog(@"There is no data to upload");
         
         //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"There is no data to upload" message:Nil delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"There is no data to upload",Nil) message:Nil delegate:Nil cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
         [alert show];
     }
     
@@ -446,11 +474,11 @@
 - (void) uploadAll:(UIBarButtonItem *)sender
 {
     //show confirmation
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Upload all pending Registration"
-                                                    message:@"All your pending Registration will be uploaded and you need internet connection to do this.\nContinue upload all pending Registration?"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Upload all pending Registration",Nil)
+                                                    message:NSLocalizedString(@"All your pending Registration will be uploaded and you need internet connection to do this.\nContinue upload all pending Registration?",Nil)
                                                    delegate:self
-                                          cancelButtonTitle:@"Cancel"
-                                          otherButtonTitles:@"Yes", nil];
+                                          cancelButtonTitle:NSLocalizedString(@"Cancel",Nil)
+                                          otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
     alert.tag = IMAlertUpload_Tag;
     [alert show];
     
@@ -458,7 +486,7 @@
 
 #pragma mark Specific Custom Implementation
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:NSLocalizedString(@"OK",Nil) otherButtonTitles:nil];
     [alert show];
 }
 

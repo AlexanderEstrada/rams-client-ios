@@ -42,6 +42,7 @@ typedef enum
 #define CORE_DATA_OBJECT(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
 
 #define IMLocaDBName                    @"RAMS"
+#define IMDestinationDBName                    @"RAMS-2"
 
 #define IMShowMigrantListNotification   @"IMShowMigrantListNotification"
 #define IMCancelNotification            @"IMCancelNotification"
@@ -62,6 +63,7 @@ typedef enum
 #define IMInterceptionFetcherUpdate     @"IMInterceptionFetcherUpdate"
 #define IMLastSyncDate                  @"IMLastSyncDate"
 #define IMBackgroundUpdates             @"IMBackgroundUpdates"
+#define IMTemplateForm                  @"IMTemplateForm"
 
 #define IMGoogleAPIKeyConstant          @"IMGoogleAPIKey"
 #define IMBaseURLKey                    @"IMBaseURL"

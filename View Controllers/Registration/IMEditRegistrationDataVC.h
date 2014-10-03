@@ -13,4 +13,5 @@
 
 @property (nonatomic, strong) Registration *registration;
 //@property (nonatomic, strong) Registration *lastReg;
+@property (nonatomic) BOOL useLastData;
 @end

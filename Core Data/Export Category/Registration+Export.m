@@ -87,7 +87,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         if (self.underIOMCare.boolValue) [formatted setObject:self.associatedOffice.name forKey:REG_IOM_OFFICE];
         if (self.unhcrDocument) [formatted setObject:self.unhcrDocument forKey:REG_UNHCR_DOCUMENT];
         if (self.unhcrNumber) [formatted setObject:self.unhcrNumber forKey:REG_UNHCR_DOCUMENT_NUMBER];
-        if (self.vulnerability) [formatted setObject:self.vulnerability forKey:REG_VULNERABILITY];
+        //        if (self.vulnerability) [formatted setObject:self.vulnerability forKey:REG_VULNERABILITY];
         
         //Biodata
         NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
@@ -117,21 +117,35 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         //Under IOM care
-//        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
-//            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
-//                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
-//            [formatted setObject:transfer forKey:REG_TRANSFER];
-//        }
+        //        if (self.underIOMCare.boolValue && self.transferDate && self.transferDestination.accommodationId) {
+        //            NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+        //                                       REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+        //            [formatted setObject:transfer forKey:REG_TRANSFER];
+        //        }
         if (self.transferDate && self.transferDestination.accommodationId) {
             NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
                                        REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
             [formatted setObject:transfer forKey:REG_TRANSFER];
+        }else if (!self.transferDestination.name && self.transferDate) {
+            self.transferDestination = [Accommodation accommodationWithName:self.detentionLocationName inManagedObjectContext:self.managedObjectContext];
+            if (self.transferDestination) {
+                NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
+                                           REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
+                [formatted setObject:transfer forKey:REG_TRANSFER];
+                
+                NSError * err;
+                [self.managedObjectContext save:&err];
+                if (err) {
+                    NSLog(@"Error while saving : %@",[err description]);
+                }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+            }
+            
         }
         
         //check for sending finger image flag
-//         [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
+        //         [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
         
-//        if (!self.skipFinger.boolValue) {
+        //        if (!self.skipFinger.boolValue) {
         //case not skip sending finger image
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         NSString * base64Str;
@@ -141,7 +155,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
             if (base64Str) {
                 [biometric setObject:base64Str forKey:REG_RIGHT_THUMB];
             }
-         
+            
         }
         if (self.biometric.rightIndex){
             base64Str = [self.biometric base64FingerImageWithPosition:RightIndex];
@@ -166,7 +180,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
         
-//        }
+        //        }
         /*
          //Movement
          
@@ -308,7 +322,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
                          if ([self saveRegistrationData:params withId:[jsonData objectForKey:REG_ID]] && self.successHandler) {
                              
                              //save returned ID to Registration Data
-                                 self.registrationId = [jsonData objectForKey:REG_ID];
+                             self.registrationId = [jsonData objectForKey:REG_ID];
                              
                              //set status to local
                              self.complete = @(REG_STATUS_LOCAL);
@@ -316,6 +330,8 @@ NSString *const REG_MOVEMENT                 = @"movements";
                              //                             if (![self.managedObjectContext save:&error]){
                              //                                  self.failureHandler(error);
                              //                             }else {
+                             
+                             
                              self.successHandler();
                              //                             }
                          }else if (self.failureHandler){
@@ -437,7 +453,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 NSMutableDictionary * dict = [movement mutableCopy];
                 //set movement type to Transfer as default
                 [dict setObject:@"Transfer" forKey:@"type"];
-
+                
                 Movement *data = [Movement movementWithDictionary:dict inContext:context];
                 if (data) {
                     [migrant addMovementsObject:data];
@@ -484,6 +500,53 @@ NSString *const REG_MOVEMENT                 = @"movements";
         if (![context save:&error]) {
             NSLog(@"Error : %@",[error description]);
         }
+        
+//        //remove photo on local registration folder
+//        NSFileManager *manager = [NSFileManager defaultManager];
+//        
+//        //and delete the registration photo and move it to migrant placechange the path to migrant path
+//        if (migrant.biometric.photographThumbnail){
+//            [manager removeItemAtPath:self.biometric.photographThumbnail error:&error];
+//            if (error) {
+//                NSLog(@"while delete Error : %@",[error description]);
+//            }
+//            self.biometric.photographThumbnail = migrant.biometric.photographThumbnail;
+//        }
+//        if (migrant.biometric.photograph){
+//            [manager removeItemAtPath:self.biometric.photograph error:&error];
+//            if (error) {
+//                NSLog(@"while delete Error : %@",[error description]);
+//            }
+//            self.biometric.photograph = migrant.biometric.photograph;
+//        }
+//        if (migrant.biometric.rightIndexImage) {
+//            [manager removeItemAtPath:self.biometric.rightIndex error:&error];
+//            if (error) {
+//                NSLog(@"while delete Error : %@",[error description]);
+//            }
+//            self.biometric.rightIndex= migrant.biometric.rightIndexImage;
+//        }
+//        if (migrant.biometric.leftIndexImage){
+//            [manager removeItemAtPath:self.biometric.leftIndex error:&error];
+//            if (error) {
+//                NSLog(@"while delete Error : %@",[error description]);
+//            }
+//            self.biometric.leftIndex= migrant.biometric.leftIndexImage;
+//        }
+//        if (migrant.biometric.rightThumbImage){
+//            [manager removeItemAtPath:self.biometric.rightThumb error:&error];
+//            if (error) {
+//                NSLog(@"while delete Error : %@",[error description]);
+//            }
+//            self.biometric.rightThumb= migrant.biometric.rightThumbImage;
+//        }
+//        if (migrant.biometric.leftThumbImage){
+//            [manager removeItemAtPath:self.biometric.leftThumb error:&error];
+//            if (error) {
+//                NSLog(@"while delete Error : %@",[error description]);
+//            }
+//            self.biometric.leftThumb= migrant.biometric.leftThumbImage;
+//        }
         
         
         return YES;
@@ -589,17 +652,17 @@ NSString *const REG_MOVEMENT                 = @"movements";
 {
     BOOL stat = [self.bioData.firstName length] && self.bioData.gender && self.bioData.maritalStatus && self.bioData.dateOfBirth && [self.bioData.placeOfBirth length] && self.bioData.countryOfBirth && self.bioData.nationality;
     if (self.interceptionData.interceptionDate) {
-         stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length] && self.interceptionData.dateOfEntry;
+        stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length] && self.interceptionData.dateOfEntry;
     }
     
     //check photo and finger print
     stat &= [self.biometric.photograph length] > 0?YES:NO;
-
+    
     stat &= ([self.biometric.leftIndex length]> 0?YES:NO) || ([self.biometric.leftThumb length]> 0?YES:NO) || ([self.biometric.rightIndex length]> 0?YES:NO) || ([self.biometric.rightThumb length]> 0?YES:NO);
     
-
+    
     if (self.unhcrDocument) stat &= self.unhcrDocument && ([self.unhcrNumber length]> 0?YES:NO);
-//    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
+    //    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
     self.complete = @(stat);
 }
 
@@ -625,24 +688,25 @@ NSString *const REG_MOVEMENT                 = @"movements";
         backup.bioData.nationality =   registration.bioData.nationality;
         
         //unhcr document
-       backup.unhcrDocument =  registration.unhcrDocument;
+        backup.unhcrDocument =  registration.unhcrDocument;
         backup.unhcrNumber =  registration.unhcrNumber;
         
         
         //interception data
         backup.associatedOffice =  registration.associatedOffice;
         backup.underIOMCare =  registration.underIOMCare;
-      
+        
         backup.selfReporting =  registration.selfReporting;
         backup.interceptionData.dateOfEntry =  registration.interceptionData.dateOfEntry;
         backup.interceptionData.interceptionDate =  registration.interceptionData.interceptionDate;
         backup.interceptionData.interceptionLocation =  registration.interceptionData.interceptionLocation;
         
         //location
-        backup.transferDestination =  registration.transferDestination;
+        //        backup.transferDestination =  registration.transferDestination;
+        backup.transferDestination = [Accommodation accommodationWithName:registration.transferDestination.name inManagedObjectContext:context];
         backup.transferDate =  registration.transferDate;
         
-         NSError *error;
+        NSError *error;
         if (![context save:&error]) {
             NSLog(@"Error saving context: %@", [error description]);
             return Nil;
@@ -777,7 +841,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         data.selfReporting = migrant.selfReporting;
         
         //skip finger flag
-//        data.skipFinger = migrant.skipFinger;
+        //        data.skipFinger = migrant.skipFinger;
         
         return data;
     }
@@ -870,10 +934,10 @@ NSString *const REG_MOVEMENT                 = @"movements";
                     //get newest movement data && have same location with detention location
                     if ([movement.transferLocation.accommodationId isEqualToString:migrant.detentionLocation]) {
                         //Accommodation
-                        data.transferDestination = [Accommodation accommodationWithId:movement.transferLocation.accommodationId inManagedObjectContext:context];
+                        data.transferDestination = [Accommodation accommodationWithId:movement.transferLocation.accommodationId inManagedObjectContext:[[IMDBManager sharedManager] localDatabase].managedObjectContext];
                         data.transferDate = movement.date;
                         break;
-//                        data.transferId = movement.movementId;
+                        //                        data.transferId = movement.movementId;
                     }
                 }
                 
@@ -887,10 +951,16 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         //skip finger flag
-//        data.skipFinger = migrant.skipFinger;
+        //        data.skipFinger = migrant.skipFinger;
         
         //self Reporting
         data.selfReporting = migrant.selfReporting;
+        
+        NSError * err;
+        //save to database
+        if (![context save:&err]) {
+            NSLog(@"error while saving : %@",[err description]);
+        }
         
         return data;
     }

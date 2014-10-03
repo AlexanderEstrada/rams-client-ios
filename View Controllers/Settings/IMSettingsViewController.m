@@ -43,7 +43,7 @@
 {
     if (section == 0) return 2;
     else if (section == 1) return 1;
-    return 3;
+    return 4;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -64,9 +64,9 @@
     headerView.labelTitle.textColor = [UIColor IMLightBlue];
     
     switch (section) {
-        case 0: headerView.labelTitle.text = @"Your Account"; break;
-        case 1: headerView.labelTitle.text = @"Troubleshooting"; break;
-        case 2: headerView.labelTitle.text = @"Updates"; break;
+        case 0: headerView.labelTitle.text = NSLocalizedString(@"Your Account",Nil); break;
+        case 1: headerView.labelTitle.text = NSLocalizedString(@"Troubleshooting",Nil); break;
+        case 2: headerView.labelTitle.text = NSLocalizedString(@"Updates",Nil); break;
     }
     
     return headerView;
@@ -84,15 +84,15 @@
     label.textAlignment = NSTextAlignmentCenter;
     
     if (section == 0) {
-        NSString *text = [NSString stringWithFormat:@"Your session on %@ will expired in %@",[IMHTTPClient sharedClient].baseURL,[[IMAuthManager sharedManager].activeUser.accessExpiryDate relativeTimeToFuture]];
+        NSString *text = [NSString stringWithFormat:NSLocalizedString(@"Your session on %@ will expired in %@",Nil),[IMHTTPClient sharedClient].baseURL,[[IMAuthManager sharedManager].activeUser.accessExpiryDate relativeTimeToFuture]];
         label.text = text;
     }else if (section == 1) {
         NSDate *lastSync = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];
-        NSString *text = [NSString stringWithFormat:@"Latest synchronization was %@", lastSync ? [lastSync relativeTimeLongFormat] : @"never"];
+        NSString *text = [NSString stringWithFormat:NSLocalizedString(@"Latest synchronization was %@",Nil), lastSync ? [lastSync relativeTimeLongFormat] : NSLocalizedString(@"never",Nil)];
         label.text = text;
     }else {
         BOOL stat = [[NSUserDefaults standardUserDefaults] boolForKey:IMBackgroundUpdates];
-        label.text = stat ? @"When updates available, data will be synchronize automatically in the background." : @"App will ask for confirmation when updates available.";
+        label.text = stat ? NSLocalizedString(@"When updates available, data will be synchronize automatically in the background.",Nil) : NSLocalizedString(@"App will ask for confirmation when updates available.",Nil);
     }
     
     label.textColor = [UIColor darkGrayColor];
@@ -126,7 +126,7 @@
             
         }else if(indexPath.row == 1){
             //IMServerSettingViewController
-            cell.textLabel.text = @"Setting";
+            cell.textLabel.text = NSLocalizedString(@"Setting",Nil);
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.imageView.image = [[UIImage imageNamed:@"Settings"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
             
@@ -138,21 +138,21 @@
         
         
     }else if (indexPath.section == 1) {
-        cell.textLabel.text = @"Reset Application Data";
+        cell.textLabel.text = NSLocalizedString(@"Reset Application Data",Nil);
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.imageView.image = [[UIImage imageNamed:@"Database"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         
     }else {
         if (indexPath.row == 0) {
-            cell.textLabel.text = @"Start Data Updates";
+            cell.textLabel.text = NSLocalizedString(@"Start Data Updates",Nil);
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.imageView.image = [[UIImage imageNamed:@"Sync"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         }else if (indexPath.row == 1) {
-            cell.textLabel.text = @"Check for App Updates";
+            cell.textLabel.text = NSLocalizedString(@"Check for App Updates",Nil);
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.imageView.image = [[UIImage imageNamed:@"App"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-        }else {
-            cell.textLabel.text = @"Background Updates";
+        }else if (indexPath.row == 2){
+            cell.textLabel.text = NSLocalizedString(@"Background Updates",Nil);
             cell.imageView.image = [[UIImage imageNamed:@"BackgroundUpdates"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
             UISwitch *sw = [[UISwitch alloc] init];
             sw.on = [[NSUserDefaults standardUserDefaults] boolForKey:IMBackgroundUpdates];
@@ -160,6 +160,15 @@
             sw.onTintColor = [UIColor IMLightBlue];
             cell.accessoryView = sw;
             [sw addTarget:self action:@selector(toggleBackgroundUpdates:) forControlEvents:UIControlEventValueChanged];
+        }else{
+            cell.textLabel.text = NSLocalizedString(@"Remember Form History",Nil);
+           cell.imageView.image = [[UIImage imageNamed:@"Settings"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            UISwitch *sw = [[UISwitch alloc] init];
+            sw.on = [[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm];
+            sw.tag = indexPath.row;
+            sw.onTintColor = [UIColor IMLightBlue];
+            cell.accessoryView = sw;
+            [sw addTarget:self action:@selector(toggleTemplateForm:) forControlEvents:UIControlEventValueChanged];
         }
     }
     
@@ -206,8 +215,8 @@
         // Regisete for HUD callbacks so we can remove it from the window at the right time
         _HUD.delegate = self;
         
-        _HUD.labelText = @"Resetting Data";
-        _HUD.detailsLabelText = @"Please wait a moment ...";
+        _HUD.labelText = NSLocalizedString(@"Resetting Data",Nil);
+        _HUD.detailsLabelText = NSLocalizedString(@"Please wait a moment ...",Nil);
         
         // Show the HUD while the provided method executes in a new thread
         [_HUD showWhileExecuting:@selector(resetDatabase) onTarget:self withObject:nil animated:YES];
@@ -251,11 +260,11 @@
 
 - (void)confirmResetDatabase
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Reset Application Data"
-                                                    message:@"All your unsaved works will be deleted and you need internet connection to update application data before continue using the app.\nContinue reset application data?"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Reset Application Data",Nil)
+                                                    message:NSLocalizedString(@"All your unsaved works will be deleted and you need internet connection to update application data before continue using the app.\nContinue reset application data?",Nil)
                                                    delegate:self
-                                          cancelButtonTitle:@"Cancel"
-                                          otherButtonTitles:@"Yes", nil];
+                                          cancelButtonTitle:NSLocalizedString(@"Cancel",Nil)
+                                          otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
     alert.tag = kResetDatabaseAlertTag;
     [alert show];
 }
@@ -275,17 +284,17 @@
             [[NSFileManager defaultManager] removeItemAtPath:[Biometric rightThumbImageDir] error:nil];
             [[NSFileManager defaultManager] removeItemAtPath:[Biometric rightThumbTemplateDir] error:nil];
             
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Reset Complete"
-                                                            message:@"Continue with updating application data?"
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Reset Complete",Nil)
+                                                            message:NSLocalizedString(@"Continue with updating application data?",Nil)
                                                            delegate:self
-                                                  cancelButtonTitle:@"Later"
-                                                  otherButtonTitles:@"Yes", nil];
+                                                  cancelButtonTitle:NSLocalizedString(@"Later",Nil)
+                                                  otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
             alert.tag = kSyncAlertTag;
             [alert show];
             
         }else {
-            [self showAlertWithTitle:@"Reset Failed"
-                             message:@"Please try again or relaunch the application. If problem persist, please contact administrator."];
+            [self showAlertWithTitle:NSLocalizedString(@"Reset Failed",Nil)
+                             message:NSLocalizedString(@"Please try again or relaunch the application. If problem persist, please contact administrator.",Nil)];
         }
     }];
     
@@ -293,7 +302,7 @@
 
 - (void)checkDataUpdates
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm Data Updates" message:@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Continue", nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Confirm Data Updates",Nil) message:NSLocalizedString(@"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) otherButtonTitles:NSLocalizedString(@"Continue",Nil), nil];
     alert.tag = kConfirmSyncAlertTag;
     [alert show];
 }
@@ -312,11 +321,11 @@
                         if (stringUrl) {
                             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringUrl]];
                         }else {
-                            [self showAlertWithTitle:@"No Update Available" message:@"You have the latest version of IMMS Manager"];
+                            [self showAlertWithTitle:NSLocalizedString(@"No Update Available",Nil) message:NSLocalizedString(@"You have the latest version of IMMS Manager",Nil)];
                         }
                     }
                     failure:^(NSError *error){
-                        [self showAlertWithTitle:@"Network Error" message:@"Failed contacting updates server. Please check your network connection and try again."];
+                        [self showAlertWithTitle:NSLocalizedString(@"Network Error",Nil) message:NSLocalizedString(@"Failed contacting updates server. Please check your network connection and try again.",Nil)];
                     }];
 }
 
@@ -327,6 +336,15 @@
     [def synchronize];
     [self.tableView reloadData];
 }
+
+- (void)toggleTemplateForm:(UISwitch *)sender
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    [def setBool:sender.on forKey:IMTemplateForm];
+    [def synchronize];
+    [self.tableView reloadData];
+}
+
 
 
 #pragma mark View Lifecycle

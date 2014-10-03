@@ -19,6 +19,10 @@
 @property (nonatomic, assign) id<IMSideMenuDelegate>sideMenuDelegate;
 @property (nonatomic, strong) UILabel *labelLoading;
 
+@property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
+@property (nonatomic, strong) UIView *loadingView;
+@property (nonatomic) BOOL loading;
+
 - (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
 - (void)showLoadingView;
 - (void)showLoadingViewWithTitle:(NSString *)title;

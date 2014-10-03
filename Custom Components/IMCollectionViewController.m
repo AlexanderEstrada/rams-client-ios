@@ -15,9 +15,6 @@
 
 @interface IMCollectionViewController ()
 
-@property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
-@property (nonatomic, strong) UIView *loadingView;
-@property (nonatomic) BOOL loading;
 
 @end
 

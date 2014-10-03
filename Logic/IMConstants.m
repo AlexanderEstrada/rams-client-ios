@@ -21,7 +21,7 @@ NSString *const CONST_ROOT                      = @"Root";
 NSString *const CONST_IMConstantKeys            = @"IMConstantKeys";
 NSString *const CONST_LOCATION                  = @"DetentionLocationType";
 NSString *const CONST_FAMILY_TYPE               = @"FamilyType";
-NSInteger const Default_Page_Size = 10;
+NSInteger const Default_Page_Size = 10000;
 
 //value for path address
 NSString *const CONST_IMReferences                      = @"IMReferences";

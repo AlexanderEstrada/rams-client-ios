@@ -66,6 +66,8 @@
     //set multiple selection as default
      self.collectionView.allowsMultipleSelection = YES;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
+    
     UIBarButtonItem *itemFilter = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                                 target:self action:@selector(showFilterOptions:)];
 //    self.itemSelected = [[UIBarButtonItem alloc] initWithTitle:@"Select" style:UIBarButtonItemStyleBordered target:self action:@selector(setMultipleSelection)];

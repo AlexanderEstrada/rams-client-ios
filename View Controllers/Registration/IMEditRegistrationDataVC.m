@@ -25,6 +25,7 @@
 #import "NSDate+Relativity.h"
 #import "UIImage+ImageUtils.h"
 #import "Accommodation+Extended.h"
+#import "IMAuthManager.h"
 
 
 typedef enum : NSUInteger {
@@ -59,7 +60,6 @@ static NSInteger total_row_table_personal_info = 10;
 
 @property (nonatomic) BOOL underIOMCare;
 @property (nonatomic) BOOL skipFinger;
-@property (nonatomic) BOOL useLastData;
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic, strong) Migrant *migrant;
 @property (nonatomic, strong) NSMutableArray *movementData;
@@ -128,15 +128,16 @@ static NSInteger total_row_table_personal_info = 10;
     _useLastData = useLastData;
     
     if(_useLastData == YES) {
-        //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Use Last Registration Data",Nil) message:NSLocalizedString(@"Are you sure want to last Registration Data ?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"NO",Nil) otherButtonTitles:NSLocalizedString(@"YES",Nil), nil];
-        alert.tag = IMUseLastRegistrationData_Tag;
-        [alert show];
+//        //show alert
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Use Last Registration Data",Nil) message:NSLocalizedString(@"Are you sure want to last Registration Data ?",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"NO",Nil) otherButtonTitles:NSLocalizedString(@"YES",Nil), nil];
+//        alert.tag = IMUseLastRegistrationData_Tag;
+//        [alert show];
+         [self saveData:YES];
     }else {
         //reset data to empty
         [self saveData:NO];
     }
-
+    
 }
 
 - (void)setUnderIOMCare:(BOOL)underIOMCare
@@ -151,7 +152,7 @@ static NSInteger total_row_table_personal_info = 10;
 
 - (void)setSkipFinger:(BOOL)skipFinger{
     _skipFinger = skipFinger;
-//    self.registration.skipFinger = @(_skipFinger);
+    //    self.registration.skipFinger = @(_skipFinger);
     
     if(_skipFinger == YES) {
         //show alert
@@ -189,7 +190,7 @@ static NSInteger total_row_table_personal_info = 10;
     NSArray *options = [self vulnerabilityOptions];
     if (self.registration.vulnerability && ![options containsObject:self.registration.vulnerability]) {
         self.registration.vulnerability = nil;
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:8 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_vulnerability inSection:table_personal_info]] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
@@ -336,7 +337,7 @@ static NSInteger total_row_table_personal_info = 10;
             self.registration.transferDestination = Nil;
             self.registration.transferDate = Nil;
             //reload data
-           [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:[NSIndexPath indexPathForRow:0 inSection:sender.tag],[NSIndexPath indexPathForRow:1 inSection:sender.tag], nil] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:[NSIndexPath indexPathForRow:0 inSection:sender.tag],[NSIndexPath indexPathForRow:1 inSection:sender.tag], nil] withRowAnimation:UITableViewRowAnimationFade];
         }
     }
     @catch (NSException *exception) {
@@ -403,7 +404,7 @@ static NSInteger total_row_table_personal_info = 10;
         headerView.buttonAction.tag = table_migrant_location;
         
         //hide if not under IOM care
-//        headerView.hidden = !_underIOMCare;
+        //        headerView.hidden = !_underIOMCare;
         
     }else if (section == table_movements){
         //        headerView = [[IMTableHeaderView alloc] initWithTitle:@"" actionTitle:nil alignCenterY:YES reuseIdentifier:@"movementHeader"];
@@ -509,6 +510,7 @@ static NSInteger total_row_table_personal_info = 10;
             cell.switcher.on = _useLastData;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.useLastData = value;
             };
+            cell.hidden= YES;
         }else if (indexPath.row == row_first_name) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"First Name",Nil);
@@ -560,19 +562,21 @@ static NSInteger total_row_table_personal_info = 10;
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Vulnerability",Nil);
             cell.labelValue.text = self.registration.vulnerability;
+            //hidden as requested
+            cell.hidden = YES;
         }else if (indexPath.row == row_skip_finger) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Skip Finger Image",Nil);
-//            cell.switcher.on = self.registration.skipFinger.boolValue;
+            //            cell.switcher.on = self.registration.skipFinger.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.skipFinger = value;
             };
-
+            
         }
     }else if (indexPath.section == table_unhcr_data) {
         if (indexPath.row == 0) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"UNHCR Document",Nil);
-            cell.labelValue.text = self.registration.unhcrDocument;
+            cell.labelValue.text = [self.registration.unhcrDocument length]?self.registration.unhcrDocument:NSLocalizedString(@"No Document",Nil);
         }else if (indexPath.row == 1) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"UNHCR Document Number",Nil);
@@ -588,6 +592,8 @@ static NSInteger total_row_table_personal_info = 10;
                     self.registration.unhcrNumber = value = Nil;
                 }else self.registration.unhcrNumber = [value uppercaseString]; };
             cell.characterSets = @[[NSCharacterSet characterSetWithCharactersInString:@"0123456789cC-"]];
+            //case no document, then hide UNHCR document Number
+            cell.hidden =[self.registration.unhcrDocument length]?NO:YES;
         }
     }else if (indexPath.section == table_interception_data) {
         if (indexPath.row == 0) {
@@ -612,6 +618,10 @@ static NSInteger total_row_table_personal_info = 10;
             
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             cell.labelTitle.text = NSLocalizedString(@"Assosiate IOM Office",Nil);
+            
+            if (!self.registration.associatedOffice.name) {
+                self.registration.associatedOffice = [IomOffice officeWithName:[IMAuthManager sharedManager].activeUser.officeName inManagedObjectContext:self.registration.managedObjectContext];
+            }
             cell.labelValue.text = self.registration.associatedOffice.name;
             
         }
@@ -712,7 +722,7 @@ static NSInteger total_row_table_personal_info = 10;
             cell.labelValue.text = [self.registration.transferDate mediumFormatted];
         }
         //case not under IOM care, then hide cell
-//        cell.hidden = !_underIOMCare;
+        //        cell.hidden = !_underIOMCare;
     }
     
     return cell;
@@ -727,7 +737,22 @@ static NSInteger total_row_table_personal_info = 10;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _useLastData = NO;
+//    _useLastData = NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (!self.registration.transferDestination.name && self.registration.transferDate) {
+        self.registration.transferDestination = [Accommodation accommodationWithName:self.registration.detentionLocationName inManagedObjectContext:self.registration.managedObjectContext];
+        NSError * err;
+        [self.registration.managedObjectContext save:&err];
+        if (err) {
+            NSLog(@"Error while saving : %@",[err description]);
+        }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+    }
+
 }
 
 - (void)saveData:(BOOL)flag
@@ -761,11 +786,16 @@ static NSInteger total_row_table_personal_info = 10;
                 
                 //location
                 self.registration.transferDestination =  [Accommodation accommodationWithId:lastReg.transferDestination.accommodationId inManagedObjectContext:workingContext];
+                
                 self.registration.transferDate =  lastReg.transferDate;
+                if (!self.registration.detentionLocationName && self.registration.transferDestination.name) {
+                    self.registration.detentionLocationName = self.registration.transferDestination.name;
+                    self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
+                }
             }
         }else {
             self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = Nil;
-            self.registration.unhcrNumber = Nil;
+            self.registration.unhcrDocument = self.registration.unhcrNumber = Nil;
             self.registration.associatedOffice = Nil;
             self.registration.underIOMCare = Nil;
             self.registration.selfReporting = Nil;
@@ -780,11 +810,11 @@ static NSInteger total_row_table_personal_info = 10;
         NSLog(@"Exception with flag : %@ on saveData : %@",flag?@"Yes":@"No",[exception description]);
     }
     @finally {
-         [self.tableView reloadData];
+        [self.tableView reloadData];
     }
-   
     
-   
+    
+    
 }
 
 #pragma mark UIAlertViewDelegate
@@ -794,8 +824,8 @@ static NSInteger total_row_table_personal_info = 10;
         //reset UNHCR document number
         self.registration.unhcrNumber = Nil;
     }else if (alertView.tag == IMSkipFinger_Tag && buttonIndex == [alertView cancelButtonIndex]){
-            _skipFinger = NO;
-//        self.registration.skipFinger = @(_skipFinger);
+        _skipFinger = NO;
+        //        self.registration.skipFinger = @(_skipFinger);
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_skip_finger inSection:table_personal_info]]
                               withRowAnimation:UITableViewRowAnimationNone];
     }else if (alertView.tag == IMUseLastRegistrationData_Tag){
@@ -809,7 +839,7 @@ static NSInteger total_row_table_personal_info = 10;
         }else{
             [self saveData:YES];
         }
-      
+        
         
     }
     
@@ -1124,11 +1154,15 @@ static NSInteger total_row_table_personal_info = 10;
                 [self.movementData replaceObjectAtIndex:index withObject:movement];
             }else {
                 self.registration.transferDestination = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.registration.managedObjectContext];
+                self.registration.detentionLocationName = self.registration.transferDestination.name;
+                self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
             }
             
             
         }else {
             self.registration.transferDestination = [Accommodation accommodationWithId:accommodation.accommodationId inManagedObjectContext:self.registration.managedObjectContext];
+            self.registration.detentionLocationName = self.registration.transferDestination.name;
+            self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
         }
         
         

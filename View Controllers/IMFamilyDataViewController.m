@@ -297,13 +297,13 @@ static int section_other_extended_member;
 {
     if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
-        if (!_hud) {
+//        if (!_hud) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
             _hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        }
+//        }
         
         // Back to indeterminate mode
-        _hud.mode = MBProgressHUDModeIndeterminate;
+        _hud.mode = MBProgressHUDModeDeterminate;
         
         // Add HUD to screen
         [self.navigationController.view addSubview:_hud];

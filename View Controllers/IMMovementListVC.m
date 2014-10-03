@@ -579,6 +579,9 @@
     //set multiple selection as default
             self.collectionView.allowsMultipleSelection = YES;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
+    
+    
 }
 
 //- (void)setMultipleSelection

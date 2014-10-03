@@ -25,6 +25,7 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
             
             typeof(self) weakSelf = self;
             [self addExecutionBlock:^{
+                 [NSThread sleepForTimeInterval:DataLoadingOperationDuration];
                 
                 NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
                 NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entity];
@@ -32,7 +33,8 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
                 
                 if(sort) request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:sort ascending:YES]];
                 request.returnsObjectsAsFaults = YES;
-                request.fetchOffset = [indexes firstIndex];
+//                request.fetchOffset = [indexes firstIndex];
+//                request.fetchOffset = [indexes ];
                 request.fetchLimit = Default_Page_Size;
                 if (basePredicate) request.predicate = basePredicate;
                 
@@ -72,7 +74,9 @@ const NSTimeInterval DataLoadingOperationDuration = 0.3;
             
             request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"dateCreated" ascending:NO]];
             request.returnsObjectsAsFaults = YES;
-            request.fetchOffset = [indexes firstIndex];
+//            request.fetchOffset = [indexes firstIndex];
+                request.fetchOffset = [indexes firstIndex];
+            NSLog(@"indexes : %@",[indexes description]);
             request.fetchLimit = Default_Page_Size;
             
             

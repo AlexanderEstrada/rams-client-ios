@@ -10,7 +10,7 @@
 #import "AWPagedArray.h"
 #import "DataLoadingOperation.h"
 
-const NSUInteger DataProviderDefaultPageSize = 20;
+const NSUInteger DataProviderDefaultPageSize = 10;
 const NSUInteger DataProviderDataCount = 200;
 
 @interface DataProvider () <AWPagedArrayDelegate> @end

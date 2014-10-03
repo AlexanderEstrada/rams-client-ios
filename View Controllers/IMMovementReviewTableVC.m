@@ -18,14 +18,16 @@
 #import "Migrant+Extended.h"
 #import "IMMigrantViewController.h"
 #import "IMFamilyViewController.h"
-
+#import "IMFormCell.h"
+#import "IMDatePickerVC.h"
 
 
 #define cellName @"cellReview"
 
-@interface IMMovementReviewTableVC ()<MBProgressHUDDelegate>
+@interface IMMovementReviewTableVC ()<MBProgressHUDDelegate,UIPopoverControllerDelegate>
 @property (nonatomic,strong) MBProgressHUD *HUD;
 @property (nonatomic,strong) NSManagedObjectContext *context;
+@property (nonatomic,strong) NSDate *deptDate;
 @property (nonatomic) BOOL flag;
 @property (nonatomic) BOOL next;
 @property (nonatomic) BOOL upload_status;
@@ -34,6 +36,7 @@
 @property (nonatomic) BOOL show_migrant_list;
 @property (nonatomic) float progress;
 @property (nonatomic) NSInteger total;
+@property (nonatomic, strong) UIPopoverController *popover;
 @end
 
 typedef enum : NSUInteger {
@@ -348,13 +351,13 @@ typedef enum : NSUInteger {
 {
     if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
         //start uploading
-        if (!_HUD) {
+//        if (!_HUD) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
             _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        }
+//        }
         
         // Back to indeterminate mode
-        _HUD.mode = MBProgressHUDModeIndeterminate;
+        _HUD.mode = MBProgressHUDModeDeterminate;
         
         // Add HUD to screen
         [self.navigationController.view addSubview:_HUD];
@@ -418,6 +421,7 @@ typedef enum : NSUInteger {
         self.movement = [Movement newMovementInContext:self.context];
     }
     self.show_migrant_list = NO;
+    self.deptDate = Nil;
 }
 
 - (void)onCancel{
@@ -475,6 +479,45 @@ typedef enum : NSUInteger {
     return 12;
 }
 
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+    self.popover = nil;
+}
+
+- (void)showPopoverFromRect:(CGRect)rect withViewController:(UIViewController *)vc navigationController:(BOOL)useNavigation
+{
+    rect = CGRectMake(rect.size.width - 150, rect.origin.y, rect.size.width, rect.size.height);
+    vc.view.tintColor = [UIColor IMMagenta];
+    vc.modalInPopover = NO;
+    
+    if (useNavigation) {
+        UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:vc];
+        navCon.navigationBar.tintColor = [UIColor IMMagenta];
+        self.popover = [[UIPopoverController alloc] initWithContentViewController:navCon];
+    }else {
+        vc.view.tintColor = [UIColor IMMagenta];
+        self.popover = [[UIPopoverController alloc] initWithContentViewController:vc];
+    }
+    
+    self.popover.delegate = self;
+    [self.popover presentPopoverFromRect:rect inView:self.tableView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
+
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if (indexPath.row == section_departure_date) {
+//        IMDatePickerVC *datePicker = [[IMDatePickerVC alloc] initWithAction:^(NSDate *date){
+//            self.deptDate = date;
+//            UITableViewCell *cell = (UITableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+//            cell.detailTextLabel.text = [self.deptDate mediumFormatted];
+//        }];
+//        
+//        datePicker.maximumDate = [NSDate date];
+//        datePicker.date = self.deptDate;
+//        [self showPopoverFromRect:[tableView rectForRowAtIndexPath:indexPath] withViewController:datePicker navigationController:NO];
+//    }
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -494,9 +537,8 @@ typedef enum : NSUInteger {
             break;
         }
         case section_departure_date:{
-            cell.textLabel.text = @"Departure date";
-            cell.detailTextLabel.text = [[NSDate date] mediumFormatted];
-            
+            cell.textLabel.text = @"Movement date";
+            cell.detailTextLabel.text = [self.movement.date mediumFormatted];
             break;
         }
         case section_submitter:{

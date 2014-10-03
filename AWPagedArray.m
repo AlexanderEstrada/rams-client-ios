@@ -49,7 +49,7 @@ NSString *const AWPagedArrayObjectsPerPageMismatchException = @"AWPagedArrayObje
     _totalCount = count;
     _objectsPerPage = objectsPerPage;
     _pages = [[NSMutableDictionary alloc] initWithCapacity:[self numberOfPages]];
-    
+
     return self;
 }
 - (void)setObjects:(NSArray *)objects forPage:(NSUInteger)page {
@@ -144,7 +144,6 @@ NSString *const AWPagedArrayObjectsPerPageMismatchException = @"AWPagedArrayObje
     NSMutableArray *objects = [[NSMutableArray alloc] initWithCapacity:_totalCount];
     
     for (NSInteger pageIndex = 1; pageIndex <= [self numberOfPages]; pageIndex++) {
-//      for (NSInteger pageIndex = 0; pageIndex <= [self numberOfPages]; pageIndex++) {
     
         NSArray *page = _pages[@(pageIndex)];
         if (!page) page = [self _placeholdersForPage:pageIndex];

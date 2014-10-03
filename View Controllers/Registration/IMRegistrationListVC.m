@@ -33,6 +33,8 @@ typedef enum : NSUInteger {
 @property (nonatomic,strong) NSIndexPath * selectedIndexPath;
 @property (nonatomic,strong) NSManagedObjectContext * context;
 @property (nonatomic) NSInteger currentTag;
+@property (nonatomic) BOOL visible;
+@property (nonatomic) BOOL showLoading;
 
 @end
 
@@ -56,149 +58,91 @@ typedef enum : NSUInteger {
     }
 }
 
+- (void)setShowLoading:(BOOL)showLoading
+{
+    _showLoading = showLoading;
+    if (_showLoading) {
+        [self showLoadingViewWithTitle:@"Loading ..."];
+    }else{
+       [self hideLoadingView];
+    }
+}
+- (void)setVisible:(BOOL)visible{
+    _visible = visible;
+    
+    if (_visible) {
+        [self hideLoadingView];
+    }
+}
+
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-        if (!self.dataProvider.dataObjects && !self.reloadingData){
+    if (!self.reloadingData){
+        [self reloadData];
+    }
     
-            [self reloadData];
-        }
+    if ([self.dataProvider.dataObjects count]) {
+        [self showLoadingViewWithTitle:@"Loading ..."];
+          _visible = NO;
+    }
 
-        if ([self.dataProvider.dataObjects count]) {
-            sleep(1);
-            [self showLoadingViewWithTitle:@"Loading ..."];
-        }
 }
 
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
-    
-//    _basePredicate = basePredicate;
-//
-//    [self reloadData];
-    
-//    @synchronized(self)
-//    {
-//        NSLog(@"basePredicate : %@ - _basePredicate : %@",[basePredicate description],[_basePredicate description]);
-//        if ([basePredicate isEqual:_basePredicate] || self.reloadingData) {
-//            //            /do not do anything until data complete reload
-//            return;
-//        }else {
-            _basePredicate = basePredicate;
-            
-            [self reloadData];
-//        }
-//    };
-    
+    if (self.reloadingData || [basePredicate isEqual:_basePredicate]) {
+        //            /do not do anything until data complete reload
+//          [self hideLoadingView];
+        return;
+    }else {
+        _basePredicate = basePredicate;
+        
+        [self reloadData];
+    }
 }
 
 - (void)executing
 {
-    //    @synchronized(self)
-    //    {
-    if(!self.reloadingData){
-        self.reloadingData = YES;
-        
-        NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
-        if (self.basePredicate) {
-            request.predicate = self.basePredicate;
-        }else {
-            //default
-           request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+        if(!self.reloadingData){
+            self.dataProvider = Nil;
+            self.reloadingData = YES;
+            
+            NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+            NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Registration"];
+            if (self.basePredicate) {
+                request.predicate = self.basePredicate;
+            }else {
+                //default
+                request.predicate =  [NSPredicate predicateWithFormat:@"complete = NO"];
+            }
+            request.returnsObjectsAsFaults = YES;
+            
+            NSError *error;
+            NSUInteger total = [context countForFetchRequest:request error:&error];
+            DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:request.predicate];
+            [self setDataProvider:dataProvider];
+            
+            self.reloadingData = NO;
         }
-        request.returnsObjectsAsFaults = YES;
-        
-        NSError *error;
-        //            if (!_context) {
-        //                 _context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        //            }
-        
-        
-        NSUInteger total = [context countForFetchRequest:request error:&error];
-        DataProvider *dataProvider = [[DataProvider alloc] initWithPageSize:(total > Default_Page_Size)?Default_Page_Size:total initWithTotalData:total withEntity:@"Registration" andSort:@"dateCreated" basePredicate:request.predicate];
-//        self.dataProvider = Nil;
-        [self setDataProvider:dataProvider];
-        //            [_HUD hideUsingAnimation:YES];
-        //            [self hideLoadingView];
-        
-        self.reloadingData = NO;
-    }
-    //    };
+
 }
 
 - (void)reloadData
 {
-    
-    //    // Show progress window
-    //    if (!_HUD) {
-    //        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-    //        _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-    //    }
-    //
-    //
-    //
-    //    // Add HUD to screen
-    //    [self.view addSubview:_HUD];
-    //
-    //    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    //    _HUD.delegate = self;
-    //
-    //    _HUD.labelText = @"Reloading Data...";
-    //
-    //    // Show the HUD while the provided method executes in a new thread
-    //    [_HUD showUsingAnimation:YES];
-    
-//    [self showLoadingViewWithTitle:@"Loading ..."];
-    
+//    [self.dataProvider.dataObjects removeAllObjects];
     [self executing];
-    
-    
-    
 }
 
-#pragma mark UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
-        //        if (!_HUD) {
-        //            // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        //            _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        //
-        //        }
-        //
-        //        // Back to indeterminate mode
-        //        _HUD.mode = MBProgressHUDModeIndeterminate;
-        //
-        //        // Regisete for HUD callbacks so we can remove it from the window at the right time
-        //        _HUD.delegate = self;
-        //
-        //        _HUD.labelText = @"Just a moment please...";
-        //
-        //        // Add HUD to screen
-        //        [self.navigationController.view addSubview:_HUD];
-        //
-        //        // Show the HUD while the provided method executes in a new thread
-        ////        [_HUD showWhileExecuting:@selector(uploading:) onTarget:self withObject:nil animated:YES];
-        //        [_HUD show:YES];
-        [self showLoadingViewWithTitle:@"Just a moment please..."];
-        [self uploading:Nil];
-        
-    }else {
-        //    [self hideLoadingView];
-        [self dismissViewControllerAnimated:YES completion:nil];
-        [self.collectionView reloadData];
-    }
-    
-}
+
 
 - (void)uploading:(UIButton *)sender
 {
-    
+    self.showLoading = YES;
     Registration * registration = self.dataProvider.dataObjects[self.currentTag];
     
     //implement success and failure handler
-    __weak typeof(self) weakSelf = self;
+//    __weak typeof(self) weakSelf = self;
     registration.successHandler = ^{
         
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
@@ -207,7 +151,7 @@ typedef enum : NSUInteger {
         //TODO : reload Data
         
         //delete data on data source
-        [self.dataProvider.dataObjects removeObjectAtIndex:weakSelf.currentTag];
+//        [self.dataProvider.dataObjects removeObjectAtIndex:weakSelf.currentTag];
         [self.collectionView reloadData];
         
         //sleep for synchcronize
@@ -262,8 +206,11 @@ typedef enum : NSUInteger {
 #pragma mark Collection View Methods
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+//     [self hideLoadingView];
+    if (!self.visible && ![self.dataProvider.dataObjects count]) {
+        self.visible = YES;
+    }
     [collectionView.collectionViewLayout invalidateLayout];
-    
     return [self.dataProvider.dataObjects count];
 }
 
@@ -274,23 +221,23 @@ typedef enum : NSUInteger {
     id data = self.dataProvider.dataObjects[indexPath.row];
     [self _configureCell:cell forDataObject:data animated:NO];
     cell.buttonUpload.tag = indexPath.row;
-//    // load photo images in the background
-//    __weak IMRegistrationListVC *weakSelf = self;
-//    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            // then set them via the main queue if the cell is still visible.
-//            if ([weakSelf.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
-//                IMRegistrationCollectionViewCell *cell =
-//                (IMRegistrationCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
-//                id data = self.dataProvider.dataObjects[indexPath.row];
-//                [self _configureCell:cell forDataObject:data animated:NO];
-//                cell.buttonUpload.tag = indexPath.row;
-//            }
-//        });
-//    }];
-//    
-//    [self.thumbnailQueue addOperation:operation];
+    // load photo images in the background
+    __weak IMRegistrationListVC *weakSelf = self;
+    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // then set them via the main queue if the cell is still visible.
+            if ([weakSelf.collectionView.indexPathsForVisibleItems containsObject:indexPath]) {
+                IMRegistrationCollectionViewCell *cell =
+                (IMRegistrationCollectionViewCell *)[weakSelf.collectionView cellForItemAtIndexPath:indexPath];
+                id data = self.dataProvider.dataObjects[indexPath.row];
+                [self _configureCell:cell forDataObject:data animated:NO];
+                cell.buttonUpload.tag = indexPath.row;
+            }
+        });
+    }];
+    
+    [self.thumbnailQueue addOperation:operation];
     
     return cell;
 }
@@ -302,7 +249,7 @@ typedef enum : NSUInteger {
 
 - (void)dataProvider:(DataProvider *)dataProvider didLoadDataAtIndexes:(NSIndexSet *)indexes {
     
-    [self hideLoadingView];
+//    [self hideLoadingView];
     
     
     [indexes enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
@@ -315,6 +262,7 @@ typedef enum : NSUInteger {
             [self _configureCell:cell forDataObject:dataProvider.dataObjects[index] animated:NO];
         }
     }];
+    
 }
 
 #pragma mark - Private methods
@@ -322,6 +270,7 @@ typedef enum : NSUInteger {
     
     if ([dataObject isKindOfClass:[Registration class]]) {
         Registration *registration = (Registration *) dataObject;
+        
         if (!registration) {
             //do not show empty cell
             return;
@@ -381,7 +330,7 @@ typedef enum : NSUInteger {
         [cell.buttonUpload removeTarget:self action:@selector(upload:) forControlEvents:UIControlEventTouchUpInside];
         [cell.buttonUpload addTarget:self action:@selector(upload:) forControlEvents:UIControlEventTouchUpInside];
         
-        if (self.tabBarController.selectedIndex != 2){
+        if (self.tabBarController.selectedIndex != 2 && !registration.registrationId){
             //implement long press gesture recognizer
             UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
             longPress.minimumPressDuration = .5; //seconds
@@ -390,29 +339,19 @@ typedef enum : NSUInteger {
             
             [cell addGestureRecognizer:longPress];
         }
+        cell.hidden = NO;
+//        [self hideLoadingView];
+        if (!self.visible) {
+            self.visible = YES;
+        }
         
-        //        if (animated) {
-        //            cell.photoView.alpha = 0;
-        //            cell.labelTitle.alpha = 0;
-        //            cell.labelSubtitle.alpha = 0;
-        //            cell.labelDetail1.alpha = 0;
-        //            cell.labelDetail2.alpha = 0;
-        //            cell.labelDetail3.alpha = 0;
-        //            cell.labelDetail4.alpha = 0;
-        //            cell.labelDetail5.alpha = 0;
-        //            cell.buttonUpload.alpha = 0;
-        //            [UIView animateWithDuration:IMRootViewAnimationDuration animations:^{
-        //                cell.photoView.alpha = 1;
-        //                cell.labelTitle.alpha = 1;
-        //                cell.labelSubtitle.alpha = 1;
-        //                cell.labelDetail1.alpha = 1;
-        //                cell.labelDetail2.alpha = 1;;
-        //                cell.labelDetail3.alpha = 1;
-        //                cell.labelDetail4.alpha = 1;
-        //                cell.labelDetail5.alpha = 1;
-        //                cell.buttonUpload.alpha = 1;
-        //            }];
-        //        }
+        if (!self.view.userInteractionEnabled) {
+            self.view.userInteractionEnabled = YES;
+        }
+        
+    }else{
+        //hide null class
+        cell.hidden = YES;
     }
 }
 
@@ -433,54 +372,78 @@ typedef enum : NSUInteger {
             UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"Choose Action",Nil) delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel",Nil) destructiveButtonTitle:NSLocalizedString(@"Delete",Nil) otherButtonTitles:NSLocalizedString(@"Edit",Nil),nil];
             
             CGRect rect = CGRectMake(location.x, location.y,30, 30);
-            [actionSheet showFromRect:rect inView:self.view animated:YES];
+            [actionSheet showFromRect:rect inView:self.collectionView animated:YES];
             
             
         }
         
     }
-    NSLog(@"gesture.state = %i",gesture.state);
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == IMAlertUpload_Tag && buttonIndex != [alertView cancelButtonIndex]) {
+        [self uploading:Nil];
+        
+    }else if (alertView.tag == IMDeleteItems_Tag && buttonIndex != [alertView cancelButtonIndex]){
+        
+        // get the cell at indexPath (the one you long pressed)
+        // do stuff with the cell
+        Registration *registration = self.dataProvider.dataObjects[self.selectedIndexPath.row];
+        
+        //delete on data base and datasource
+        NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+        [context deleteObject:registration];
+        NSError * err;
+        [context save:&err];
+        if (err) {
+            NSLog(@"error : %@",[err description]);
+        }else {
+            [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+            [self.dataProvider.dataObjects removeObjectAtIndex:self.selectedIndexPath.row];
+            [self.collectionView reloadData];
+            //sleep for synch
+            if (!_HUD) {
+                // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+                _HUD = [[MBProgressHUD alloc] initWithView:self.view];
+            }
+            
+            
+            
+            // Add HUD to screen
+            [self.view addSubview:_HUD];
+            
+            // Regisete for HUD callbacks so we can remove it from the window at the right time
+            _HUD.delegate = self;
+            
+            _HUD.labelText = @"Please wait a moment ...";
+            
+            // Show the HUD while the provided method executes in a new thread
+            [_HUD showWhileExecuting:@selector(synch) onTarget:self withObject:Nil animated:YES];
+            //                registration= Nil;
+        }
+
+    }else {
+        [self hideLoadingView];
+        [self dismissViewControllerAnimated:YES completion:nil];
+        [self.collectionView reloadData];
+    }
+    
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     @try {
         if (buttonIndex == option_delete) {
-            // get the cell at indexPath (the one you long pressed)
-            // do stuff with the cell
-            Registration *registration = self.dataProvider.dataObjects[self.selectedIndexPath.row];
-            
-            //delete on data base and datasource
-            NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-            [context deleteObject:registration];
-            NSError * err;
-            [context save:&err];
-            if (err) {
-                NSLog(@"error : %@",[err description]);
-            }else {
-                [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
-                [self.dataProvider.dataObjects removeObjectAtIndex:self.selectedIndexPath.row];
-                [self.collectionView reloadData];
-                //sleep for synch
-                if (!_HUD) {
-                    // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-                    _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-                }
-                
-                
-                
-                // Add HUD to screen
-                [self.view addSubview:_HUD];
-                
-                // Regisete for HUD callbacks so we can remove it from the window at the right time
-                _HUD.delegate = self;
-                
-                _HUD.labelText = @"Please wait a moment ...";
-                
-                // Show the HUD while the provided method executes in a new thread
-                [_HUD showWhileExecuting:@selector(synch) onTarget:self withObject:Nil animated:YES];
-                //                registration= Nil;
-            }
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Delete Confirmation",Nil)
+                                                            message:NSLocalizedString(@"Are you sure to delete this Registration data ?",Nil)
+                                                           delegate:self
+                                                  cancelButtonTitle:NSLocalizedString(@"Cancel",Nil)
+                                                  otherButtonTitles:NSLocalizedString(@"Yes",Nil), nil];
+            alert.tag = IMDeleteItems_Tag;
+            [alert show];
+
         }else if (buttonIndex == option_edit) {
             //show edit
             [self collectionView:self.collectionView didSelectItemAtIndexPath:self.selectedIndexPath];
@@ -489,7 +452,7 @@ typedef enum : NSUInteger {
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"exeption : %@",[exception description]);
+        NSLog(@"exception : %@",[exception description]);
     }
 }
 
@@ -500,15 +463,14 @@ typedef enum : NSUInteger {
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     Registration *registration = self.dataProvider.dataObjects[indexPath.row];
     IMEditRegistrationVC *editVC = [self.storyboard instantiateViewControllerWithIdentifier:@"IMEditRegistrationVC"];
     
-    if (registration.registrationId) {
-        //get the latest data from database
-        NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
-        registration = [Registration registrationWithId:registration.registrationId inManagedObjectContext:context];
-    }
+//    if (registration.registrationId) {
+//        //get the latest data from database
+//        NSManagedObjectContext * context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+//        registration = [Registration registrationWithId:registration.registrationId inManagedObjectContext:context];
+//    }
     
     editVC.registration = registration;
     //set last registration
@@ -542,6 +504,7 @@ typedef enum : NSUInteger {
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     @try {
+        
         if (indexPath.row < [self.dataProvider.dataObjects count] ) {
             if ([self.dataProvider.dataObjects[indexPath.row] isKindOfClass:[Registration class]]) {
                 Registration *reg = self.dataProvider.dataObjects[indexPath.row];
@@ -558,7 +521,6 @@ typedef enum : NSUInteger {
         NSLog(@"Error faulting registration data: %@", [exception description]);
     }
 }
-
 
 #pragma mark View Lifecycle
 - (void)viewDidLoad
@@ -578,9 +540,11 @@ typedef enum : NSUInteger {
         _HUD = [[MBProgressHUD alloc] initWithView:self.view];
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:IMDatabaseChangedNotification object:nil];
     
     //hide loading view
-    //     [self hideLoadingView];
+//    [self hideLoadingView];
+  
     
 }
 
@@ -591,23 +555,41 @@ typedef enum : NSUInteger {
 }
 
 
+- (void)hideLoadingView
+{
+//        if (!self.loading && [self.dataProvider.dataObjects count]) return;
+    
+    [UIView animateWithDuration:.25
+                     animations:^{
+                         self.loadingView.alpha = 0;
+                         self.loadingView.transform = CGAffineTransformMakeScale(0, 0);
+                     }
+                     completion:^(BOOL finished){
+                         [self.loadingIndicator stopAnimating];
+                         [self.loadingView removeFromSuperview];
+                         self.view.userInteractionEnabled = YES;
+                         
+                         self.labelLoading = nil;
+                         self.loadingIndicator = nil;
+                         self.loadingView = nil;
+                         self.loading = NO;
+                     }];
+
+    
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    //    if (!self.dataProvider.dataObjects && !self.reloadingData){
-    //        [self reloadData];
-    //    }
-    //    else {
-    [self hideLoadingView];
-    //    }
+
+//    [self hideLoadingView];
     
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    
+    sleep(1);
     self.dataProvider = Nil;
     [self.collectionView reloadData];
 }
@@ -652,6 +634,8 @@ typedef enum : NSUInteger {
     
     return padding;
 }
+
+
 
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     [self.collectionView setAlpha:0.0f];

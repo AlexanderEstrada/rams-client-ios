@@ -337,10 +337,12 @@ typedef enum : NSUInteger {
 
 - (void)saving
 {
+      BOOL showAlert =FALSE;
+    
     @try {
-        
-        NSNumber * lastStatus = self.registration.complete;
         BOOL needRemove =FALSE;
+        NSNumber * lastStatus = self.registration.complete;
+      
         
         //checking the value
         if (!self.registration.unhcrDocument && self.registration.unhcrNumber) {
@@ -349,6 +351,7 @@ typedef enum : NSUInteger {
             
             [alert show];
             [_hud hideUsingAnimation:YES];
+            showAlert = YES;
             return;
         }
         
@@ -359,6 +362,7 @@ typedef enum : NSUInteger {
             
             [alert show];
             [_hud hideUsingAnimation:YES];
+             showAlert = YES;
             return;
             
         }
@@ -370,6 +374,7 @@ typedef enum : NSUInteger {
             
             [alert show];
             [_hud hideUsingAnimation:YES];
+             showAlert = YES;
             return;
             
         }
@@ -383,6 +388,7 @@ typedef enum : NSUInteger {
             
             [alert show];
             [_hud hideUsingAnimation:YES];
+             showAlert = YES;
             return;
         }
         
@@ -439,26 +445,33 @@ typedef enum : NSUInteger {
                 self.registrationSave(needRemove);
             }
             
-            //save to backup for template next data
+           
             
-            if (self.registrationLast) {
+//            if (self.registrationLast) {
                 //                self.registrationLast(self.registration);
-                
+             //save to backup for template next data
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm]) {
                 //get last registration data on backup
-                if (![Registration createBackupReg:self.registration inManagedObjectContext:[IMDBManager sharedManager].localDatabase.managedObjectContext]) {
+                if (![Registration createBackupReg:self.registration inManagedObjectContext:self.registration.managedObjectContext]) {
                     NSLog(@"Fail to create backup");
                 }
                 
                 sleep(1);
             }
+            
+//            }
         }
     }
     @catch (NSException *exception) {
         NSLog(@"Exception on saving : %@",[exception description]);
     }
     @finally {
-        [self dismissViewControllerAnimated:YES completion:nil];
-        [_hud hideUsingAnimation:YES];
+        //flag for alert view, do not dissmiss before user touch alert button
+        if (!showAlert) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+            [_hud hideUsingAnimation:YES];
+        }
+        
     }
     
     
@@ -558,6 +571,9 @@ typedef enum : NSUInteger {
     if ([vc isKindOfClass:[IMEditRegistrationDataVC class]]) {
         IMEditRegistrationDataVC *regVC = (IMEditRegistrationDataVC *)vc;
         regVC.registration = self.registration;
+        if (!self.editingMode && [[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm]) {
+            regVC.useLastData = YES;
+        }
 //        regVC.lastReg = self.LastReg;
     }
     
