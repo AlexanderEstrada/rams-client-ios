@@ -202,7 +202,11 @@
 {
     self = [super init];
     self.modal = modal;
-    self.basePredicate = basePredicate;
+    if (!basePredicate) {
+        //only show that active accomodation
+        self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES"];
+    }else self.basePredicate = basePredicate;
+    
     self.entity = Nil;
     self.sortDescriptorWithKey = Nil;
     
@@ -242,7 +246,12 @@
     if (entity && key) {
         self = [super init];
         self.modal = modal;
-        self.basePredicate = basePredicate;
+//        self.basePredicate = basePredicate;
+        if (!basePredicate) {
+            //only show that active accomodation
+            self.basePredicate = [NSPredicate predicateWithFormat:@"active = YES"];
+        }else self.basePredicate = basePredicate;
+        
         self.entity = entity;
         self.sortDescriptorWithKey = key;
         

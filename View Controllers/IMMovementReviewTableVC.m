@@ -62,7 +62,10 @@ typedef enum : NSUInteger {
 
 - (void)hudWasHidden {
     //    // Remove HUD from screen when the HUD was hidded
-    [_HUD removeFromSuperview];
+    if (_HUD) {
+         [_HUD removeFromSuperview];
+    }
+   
 }
 
 - (id)initWithStyle:(UITableViewStyle)style

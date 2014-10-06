@@ -379,7 +379,6 @@
                 fail++;
                 self.next = TRUE;
                 if (!self.flag && !statusCode) {
-                    [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
                     self.flag = TRUE;
                     
                 }else{
@@ -449,9 +448,11 @@
             }
             
         }
-        
+        if (success == 0 && fail == 1 && self.flag) {
+             [self showAlertWithTitle:@"Upload Failed" message:@"Please check your network connection and try again. If problem persist, contact administrator."];
+        }else {
         [self showAlertWithTitle:  @"Upload status"   message:[NSString stringWithFormat:  @"Success : %i and Fail : %i"  ,success,fail]];
-        
+        }
         
         
         //save database
@@ -511,7 +512,9 @@
 
 - (void)hudWasHidden {
     //    // Remove HUD from screen when the HUD was hidded
-    [_HUD removeFromSuperview];
+    if (_HUD) {
+        [_HUD removeFromSuperview];
+    }
 }
 
 - (void)onCancel {

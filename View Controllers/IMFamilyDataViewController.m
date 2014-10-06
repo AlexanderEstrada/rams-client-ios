@@ -1977,7 +1977,10 @@ static int section_other_extended_member;
 
 - (void)hudWasHidden {
     // Remove HUD from screen when the HUD was hidded
-    [_hud removeFromSuperview];
+    if (_hud) {
+        [_hud removeFromSuperview];
+    }
+    
 }
 
 
