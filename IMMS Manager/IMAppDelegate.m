@@ -60,7 +60,22 @@
 {
     @try {
         
+        //path on cache
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+        url = [url URLByAppendingPathComponent:IMLocaDBName];
+        
+        //check if database already open
+        if ([IMDBManager sharedManager].localDatabase.managedObjectContext && [[[IMDBManager sharedManager].localDatabase.fileURL path] isEqualToString:[url path]]) {
+            //case already open. then close
+            [[IMDBManager sharedManager] closeDatabase];
+        }
         //check if the database path is on cache
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[url path]])
+        {
+            //case exist then move all of the file and folder to new destination
+            
+            
+        }
         
         //case in cache then move to document
         
