@@ -12,6 +12,7 @@
 @interface IMCountryListVC : IMViewController
 
 @property (nonatomic, strong) NSPredicate *basePredicate;
+@property (nonatomic, strong) NSArray *options;
 @property (nonatomic, copy) void (^onSelected)(Country *selectedCountry);
 @property (nonatomic, copy) void (^onCancel)(void);
 
@@ -19,5 +20,6 @@
 
 
 - (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal popover:(BOOL)popover withEntity:(NSString*)entity sortDescriptorWithKey:(NSString*)key;
+- (void)setupFetchRequestWithPredicate:(NSPredicate *)predicate;
 
 @end

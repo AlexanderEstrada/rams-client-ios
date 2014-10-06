@@ -75,6 +75,7 @@
     
     NSError *error;
     NSArray *results = [moc executeFetchRequest:request error:&error];
+    self.options = [results copy];
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
     //sort first
@@ -157,6 +158,7 @@
     [request setResultType:NSDictionaryResultType];
     request.returnsObjectsAsFaults = YES;
     results = [context executeFetchRequest:request error:&error];
+     self.options = [results copy];
     NSArray *locationID = [results valueForKeyPath:@"@distinctUnionOfObjects.detentionLocation"];
     
     //remove redundent data

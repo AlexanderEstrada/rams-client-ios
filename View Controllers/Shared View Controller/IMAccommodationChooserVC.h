@@ -14,11 +14,13 @@
 
 @property (nonatomic) BOOL allowsCreate;
 @property (nonatomic, strong) NSPredicate *basePredicate;
+@property (nonatomic, strong) NSArray *options;
 
 @property (nonatomic, copy) void (^onSelected)(Accommodation *selectedAccommodation);
 @property (nonatomic, copy) void (^onCancel)(void);
 
 - (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal;
 - (id)initWithBasePredicate:(NSPredicate *)basePredicate presentAsModal:(BOOL)modal withEntity:(NSString *)entity sortDescriptorWithKey:(NSString*)key;
+- (void)setupFetchRequestWithPredicate:(NSPredicate *)filterPredicate;
 
 @end

@@ -573,7 +573,8 @@ typedef enum : NSUInteger {
         regVC.registration = self.registration;
         if (!self.editingMode && [[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm]) {
             regVC.useLastData = YES;
-        }
+        }else regVC.useLastData = NO;
+
         //        regVC.lastReg = self.LastReg;
     }
     

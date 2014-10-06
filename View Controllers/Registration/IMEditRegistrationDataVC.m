@@ -758,16 +758,47 @@ static NSInteger total_row_table_personal_info = 10;
 - (void)saveData:(BOOL)flag
 {
     @try {
+           NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
+        
+        IMOptionChooserViewController *vc = Nil;
         if (flag) {
             //deep copy all data
             //        self.registration = self.lastReg;
-            NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
+         
             Registration * lastReg = [Registration registrationWithId:IMBackupKey inManagedObjectContext:workingContext];
             if (lastReg) {
                 
                 //personal information
-                self.registration.bioData.countryOfBirth = [Country countryWithName:lastReg.bioData.countryOfBirth.name inManagedObjectContext:workingContext];
-                self.registration.bioData.nationality =   [Country countryWithName:lastReg.bioData.nationality.name inManagedObjectContext:workingContext];
+                if (![Country countryWithName:lastReg.bioData.countryOfBirth.name inManagedObjectContext:workingContext]) {
+                    IMCountryListVC * countryList = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:NO];
+                    [countryList setupFetchRequestWithPredicate:Nil];
+                    
+                    Country * country = [countryList.options objectAtIndex:0];
+                    self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = [Country countryWithCode:country.code inManagedObjectContext:workingContext];
+                    
+                    country = Nil;
+                    countryList = Nil;
+                }else {
+                    self.registration.bioData.countryOfBirth = [Country countryWithName:lastReg.bioData.countryOfBirth.name inManagedObjectContext:workingContext];
+                    self.registration.bioData.nationality =   [Country countryWithName:lastReg.bioData.nationality.name inManagedObjectContext:workingContext];
+                }
+               
+                
+                if (!lastReg.bioData.gender) {
+                    IMOptionChooserViewController *vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_GENDER delegate:self];
+                    self.registration.bioData.gender = [vc.options objectAtIndex:0];
+                }else {
+                    self.registration.bioData.gender = lastReg.bioData.gender;
+                }
+                
+                if (!lastReg.bioData.maritalStatus) {
+                    vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_MARITAL_STATUS delegate:self];
+                    self.registration.bioData.maritalStatus = [vc.options objectAtIndex:0];
+                    vc = Nil;
+                }else self.registration.bioData.maritalStatus = lastReg.bioData.maritalStatus;
+                
+                self.registration.bioData.dateOfBirth = lastReg.bioData.dateOfBirth?lastReg.bioData.dateOfBirth:[NSDate date];
+                self.registration.bioData.placeOfBirth = lastReg.bioData.placeOfBirth;
                 
                 //unhcr document
                 self.registration.unhcrDocument = lastReg.unhcrDocument;
@@ -776,34 +807,79 @@ static NSInteger total_row_table_personal_info = 10;
                 
                 //interception data
                 
-                self.registration.associatedOffice = [IomOffice officeWithName:lastReg.associatedOffice.name inManagedObjectContext:workingContext];
+                if (![IomOffice officeWithName:lastReg.associatedOffice.name inManagedObjectContext:workingContext]) {
+                    self.registration.associatedOffice = [IomOffice officeWithName:[IMAuthManager sharedManager].activeUser.officeName inManagedObjectContext:workingContext];
+                }else self.registration.associatedOffice = [IomOffice officeWithName:lastReg.associatedOffice.name inManagedObjectContext:workingContext];
+                
                 self.registration.underIOMCare = lastReg.underIOMCare;
                 self.underIOMCare = self.registration.underIOMCare.boolValue;
                 self.registration.selfReporting =  lastReg.selfReporting;
-                self.registration.interceptionData.dateOfEntry =  lastReg.interceptionData.dateOfEntry;
-                self.registration.interceptionData.interceptionDate =  lastReg.interceptionData.interceptionDate;
+                self.registration.interceptionData.dateOfEntry =  lastReg.interceptionData.dateOfEntry?lastReg.interceptionData.dateOfEntry:[NSDate date];
+                self.registration.interceptionData.interceptionDate =  lastReg.interceptionData.interceptionDate?lastReg.interceptionData.interceptionDate:[NSDate date];
+                
                 self.registration.interceptionData.interceptionLocation =  lastReg.interceptionData.interceptionLocation;
                 
                 //location
                 self.registration.transferDestination =  [Accommodation accommodationWithId:lastReg.transferDestination.accommodationId inManagedObjectContext:workingContext];
                 
-                self.registration.transferDate =  lastReg.transferDate;
+                self.registration.transferDate =  lastReg.transferDate?lastReg.transferDate:[NSDate date];
                 if (!self.registration.detentionLocationName && self.registration.transferDestination.name) {
                     self.registration.detentionLocationName = self.registration.transferDestination.name;
                     self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
                 }
+                
+                if (!self.registration.transferDestination) {
+                    //use default
+                    IMAccommodationChooserVC *location = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
+                    [location setupFetchRequestWithPredicate:Nil];
+                    Accommodation *accommodation = [location.options objectAtIndex:0];
+                    self.registration.transferDestination = [Accommodation accommodationWithName:accommodation.name inManagedObjectContext:workingContext];
+                    
+                    self.registration.detentionLocationName = self.registration.transferDestination.name;
+                    self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
+                    
+                    accommodation = Nil;
+                    location = Nil;
+                }
             }
         }else {
-            self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = Nil;
+            //use default value
+            
+             vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_GENDER delegate:self];
+             self.registration.bioData.gender = [vc.options objectAtIndex:0];
+            vc = Nil;
+            vc = [[IMOptionChooserViewController alloc] initWithConstantsKey:CONST_MARITAL_STATUS delegate:self];
+            self.registration.bioData.maritalStatus = [vc.options objectAtIndex:0];
+            vc = Nil;
+            IMCountryListVC * countryList = [[IMCountryListVC alloc] initWithBasePredicate:nil presentAsModal:NO popover:NO];
+            [countryList setupFetchRequestWithPredicate:Nil];
+            
+            Country * country = [countryList.options objectAtIndex:0];
+            self.registration.bioData.countryOfBirth = self.registration.bioData.nationality = [Country countryWithCode:country.code inManagedObjectContext:workingContext];
             self.registration.unhcrDocument = self.registration.unhcrNumber = Nil;
-            self.registration.associatedOffice = Nil;
+            self.registration.associatedOffice = [IomOffice officeWithName:[IMAuthManager sharedManager].activeUser.officeName inManagedObjectContext:workingContext];
+           
+            
+            self.registration.bioData.dateOfBirth = [NSDate date];
             self.registration.underIOMCare = Nil;
             self.registration.selfReporting = Nil;
-            self.registration.interceptionData.dateOfEntry = Nil;
-            self.registration.interceptionData.interceptionDate = Nil;
+            self.registration.interceptionData.dateOfEntry = self.registration.interceptionData.interceptionDate = [NSDate date];
             self.registration.interceptionData.interceptionLocation = Nil;
-            self.registration.transferDestination = Nil;
-            self.registration.transferDate = Nil;
+             IMAccommodationChooserVC *location = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
+            [location setupFetchRequestWithPredicate:Nil];
+            Accommodation *accommodation = [location.options objectAtIndex:0];
+            self.registration.transferDestination = [Accommodation accommodationWithName:accommodation.name inManagedObjectContext:workingContext];
+            
+            self.registration.detentionLocationName = self.registration.transferDestination.name;
+            self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
+            self.registration.transferDate = [NSDate date];
+            
+            vc = Nil;
+            location = Nil;
+            countryList = Nil;
+            country = Nil;
+            accommodation = Nil;
+            
         }
     }
     @catch (NSException *exception) {

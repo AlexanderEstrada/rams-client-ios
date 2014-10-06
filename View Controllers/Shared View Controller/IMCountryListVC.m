@@ -60,6 +60,8 @@
         NSError *error;
         NSMutableArray *results = [[moc executeFetchRequest:request error:&error] mutableCopy];
         
+        self.options = [results copy];
+        
         if (error) {
             NSLog(@"Fail to Query : %@",[error description]);
             return;

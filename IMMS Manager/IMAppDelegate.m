@@ -59,6 +59,13 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     @try {
+        
+        //check if the database path is on cache
+        
+        //case in cache then move to document
+        
+        //case not run RAMS as ussual
+        
         if ([[IMAuthManager sharedManager] isLoggedOn]) {
             if ([[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
                 //TODO : comment for testing

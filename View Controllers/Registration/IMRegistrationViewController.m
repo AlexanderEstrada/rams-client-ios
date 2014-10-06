@@ -17,6 +17,7 @@
 #import "MBProgressHUD.h"
 #import "DataProvider.h"
 #import "Registration.h"
+#import "IMEditRegistrationDataVC.h"
 
 
 
