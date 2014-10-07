@@ -79,6 +79,7 @@ typedef enum : NSUInteger {
     [super viewWillAppear:animated];
     
     if (!self.reloadingData){
+        
         [self reloadData];
     }
     
@@ -406,10 +407,10 @@ typedef enum : NSUInteger {
             [self.dataProvider.dataObjects removeObjectAtIndex:self.selectedIndexPath.row];
             [self.collectionView reloadData];
             //sleep for synch
-            if (!_HUD) {
+//            if (!_HUD) {
                 // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
                 _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-            }
+//            }
             
             
             
@@ -478,16 +479,25 @@ typedef enum : NSUInteger {
     //set last registration
     //    editVC.LastReg = self.lastReg;
     
+      __weak typeof(editVC) weakSelf = editVC;
+    
     editVC.registrationSave = ^(BOOL remove)
     {
         //TODO : reload Data
         if (remove) {
             //delete data on data source
-            [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
-            [self.collectionView reloadData];
+            if ([self.dataProvider.dataObjects objectAtIndex:indexPath.row]) {
+                [self.dataProvider.dataObjects removeObjectAtIndex:indexPath.row];
+            }
+            if ([self isViewLoaded]) {
+                [self.collectionView reloadData];
+            }
         }else {
-            //reload Data
-            [self reloadData];
+            if (![weakSelf.registration.complete isEqual:@(REG_STATUS_PENDING)]) {
+                //reload Data
+                [self reloadData];
+            }
+            
         }
     };
     
@@ -582,24 +592,21 @@ typedef enum : NSUInteger {
     //        self.loading = YES;
     //    }];
     
-    if (!_HUD) {
+//    if (!_HUD) {
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
         _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    }
+//    }
     
     // Back to indeterminate mode
     _HUD.mode = MBProgressHUDModeIndeterminate;
-    
-    // Add HUD to screen
-    [self.navigationController.view addSubview:_HUD];
-    
-    
     
     // Regisete for HUD callbacks so we can remove it from the window at the right time
     _HUD.delegate = self;
     
     _HUD.labelText =  title;
     
+    // Add HUD to screen
+    [self.navigationController.view addSubview:_HUD];
     
     // Show the HUD while the provided method executes in a new thread
     [_HUD showUsingAnimation:YES];
@@ -699,7 +706,12 @@ typedef enum : NSUInteger {
     [self.collectionView setContentOffset:CGPointMake(offset, 0)];
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.currentIndex inSection:0];
     
-    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+    //check if there is collection to be view
+    if ([[self.collectionView visibleCells] count]) {
+        //case exist
+        [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+    }
+    
     
     [UIView animateWithDuration:0.125f animations:^{
         [self.collectionView setAlpha:1.0f];

@@ -811,36 +811,40 @@ static NSInteger total_row_table_personal_info = 10;
                     self.registration.associatedOffice = [IomOffice officeWithName:[IMAuthManager sharedManager].activeUser.officeName inManagedObjectContext:workingContext];
                 }else self.registration.associatedOffice = [IomOffice officeWithName:lastReg.associatedOffice.name inManagedObjectContext:workingContext];
                 
+                if (!lastReg.underIOMCare) {
+                    lastReg.underIOMCare = [NSNumber numberWithBool:NO];
+                }
+                
                 self.registration.underIOMCare = lastReg.underIOMCare;
                 self.underIOMCare = self.registration.underIOMCare.boolValue;
                 self.registration.selfReporting =  lastReg.selfReporting;
-                self.registration.interceptionData.dateOfEntry =  lastReg.interceptionData.dateOfEntry?lastReg.interceptionData.dateOfEntry:[NSDate date];
-                self.registration.interceptionData.interceptionDate =  lastReg.interceptionData.interceptionDate?lastReg.interceptionData.interceptionDate:[NSDate date];
+                self.registration.interceptionData.dateOfEntry =  lastReg.interceptionData.dateOfEntry;
+                self.registration.interceptionData.interceptionDate =  lastReg.interceptionData.interceptionDate;
                 
                 self.registration.interceptionData.interceptionLocation =  lastReg.interceptionData.interceptionLocation;
                 
                 //location
                 self.registration.transferDestination =  [Accommodation accommodationWithId:lastReg.transferDestination.accommodationId inManagedObjectContext:workingContext];
                 
-                self.registration.transferDate =  lastReg.transferDate?lastReg.transferDate:[NSDate date];
+                self.registration.transferDate =  lastReg.transferDate;
                 if (!self.registration.detentionLocationName && self.registration.transferDestination.name) {
                     self.registration.detentionLocationName = self.registration.transferDestination.name;
                     self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
                 }
                 
-                if (!self.registration.transferDestination) {
-                    //use default
-                    IMAccommodationChooserVC *location = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
-                    [location setupFetchRequestWithPredicate:Nil];
-                    Accommodation *accommodation = [location.options objectAtIndex:0];
-                    self.registration.transferDestination = [Accommodation accommodationWithName:accommodation.name inManagedObjectContext:workingContext];
-                    
-                    self.registration.detentionLocationName = self.registration.transferDestination.name;
-                    self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
-                    
-                    accommodation = Nil;
-                    location = Nil;
-                }
+//                if (!self.registration.transferDestination) {
+//                    //use default
+//                    IMAccommodationChooserVC *location = [[IMAccommodationChooserVC alloc] initWithBasePredicate:nil presentAsModal:NO];
+//                    [location setupFetchRequestWithPredicate:Nil];
+//                    Accommodation *accommodation = [location.options objectAtIndex:0];
+//                    self.registration.transferDestination = [Accommodation accommodationWithName:accommodation.name inManagedObjectContext:workingContext];
+//                    
+//                    self.registration.detentionLocationName = self.registration.transferDestination.name;
+//                    self.registration.detentionLocation = self.registration.transferDestination.accommodationId;
+//                    
+//                    accommodation = Nil;
+//                    location = Nil;
+//                }
             }
         }else {
             //use default value

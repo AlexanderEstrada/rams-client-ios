@@ -176,20 +176,20 @@
 //            }];
             
             [self.localDatabase openWithCompletionHandler:^(BOOL success){
-                if (!success) {
-                    NSError * err;
-                    //try to change the model
-                    if (![self migrateStore:_localDatabase.fileURL toVersionTwoStore:_destinationDatabase.fileURL error:&err]) {
-                        NSLog(@"Error while change mapping : %@",[err description]);
-                    }else {
-                        //change local to destination
-                        _localDatabase = Nil;
-                        _localDatabase = _destinationDatabase;
-                        //set to success
-                        success = YES;
-                    }
-                    
-                }
+//                if (!success) {
+//                    NSError * err;
+//                    //try to change the model
+//                    if (![self migrateStore:_localDatabase.fileURL toVersionTwoStore:_destinationDatabase.fileURL error:&err]) {
+//                        NSLog(@"Error while change mapping : %@",[err description]);
+//                    }else {
+//                        //change local to destination
+//                        _localDatabase = Nil;
+//                        _localDatabase = _destinationDatabase;
+//                        //set to success
+//                        success = YES;
+//                    }
+//                    
+//                }
                 
                 if (successBlock) {
                     successBlock(success);

@@ -307,10 +307,10 @@
 //        self.loading = YES;
 //    }];
     
-    if (!_HUD) {
+//    if (!_HUD) {
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
         _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    }
+//    }
     
     // Back to indeterminate mode
     _HUD.mode = MBProgressHUDModeIndeterminate;
@@ -468,7 +468,12 @@
     [self.collectionView setContentOffset:CGPointMake(offset, 0)];
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.currentIndex inSection:0];
     
-    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+    //check if there is collection to be view
+    if ([[self.collectionView visibleCells] count]) {
+        //case exist
+        [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+    }
+
     
     [UIView animateWithDuration:0.125f animations:^{
         [self.collectionView setAlpha:1.0f];

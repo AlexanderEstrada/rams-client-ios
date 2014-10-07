@@ -21,6 +21,7 @@
 - (void)handleGraceTimer:(NSTimer *)theTimer;
 - (void)handleMinShowTimer:(NSTimer *)theTimer;
 - (void)setTransformForCurrentOrientation:(BOOL)animated;
+- (BOOL)isViewLoaded;
 
 @property (strong) UIView *indicator;
 @property (strong) UIButton * cancelButton;
@@ -555,6 +556,11 @@
         self.cancelButton = Nil;
     }
     [self hide:useAnimation];
+}
+
+- (BOOL)isViewLoaded
+{
+    return [self isViewLoaded];
 }
 
 #pragma mark -

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13E28" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Accommodation" representedClassName="Accommodation" syncable="YES">
         <attribute name="accommodationId" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="active" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
@@ -313,7 +313,7 @@
         <element name="Photo" positionX="358" positionY="524" width="128" height="103"/>
         <element name="PoliceOfficer" positionX="754" positionY="320" width="128" height="103"/>
         <element name="Port" positionX="-441" positionY="113" width="128" height="103"/>
-        <element name="Registration" positionX="207" positionY="-676" width="128" height="313"/>
+        <element name="Registration" positionX="207" positionY="-676" width="128" height="315"/>
         <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="178"/>
         <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="150"/>
         <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>

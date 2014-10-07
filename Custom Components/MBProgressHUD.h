@@ -314,6 +314,8 @@ typedef enum {
  */
 - (void)hide:(BOOL)animated;
 
+- (BOOL)isViewLoaded;
+
 /** 
  * Shows the HUD while a background task is executing in a new thread, then hides the HUD.
  *

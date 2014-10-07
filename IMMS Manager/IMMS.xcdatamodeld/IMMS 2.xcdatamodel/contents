@@ -181,11 +181,13 @@
         <attribute name="deceased" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="detentionLocation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="detentionLocationName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fatherName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUploader" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="motherName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="registrationNumber" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="selfReporting" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="skipFinger" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="underIOMCare" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="underIOMCare" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="unhcrDocument" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unhcrNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unhcrStatus" attributeType="String" defaultValueString="Unregistered" indexed="YES" syncable="YES"/>
@@ -242,7 +244,7 @@
         <attribute name="skipFinger" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="transferDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="transferId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="underIOMCare" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="underIOMCare" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="unhcrDocument" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unhcrNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="vulnerability" optional="YES" attributeType="String" syncable="YES"/>
@@ -255,9 +257,11 @@
     <entity name="RegistrationBioData" representedClassName="RegistrationBioData" syncable="YES">
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="familyName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fatherName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="maritalStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="motherName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="placeOfBirth" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="countryOfBirth" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="registrationCountryOfBirth" inverseEntity="Country" syncable="YES"/>
         <relationship name="nationality" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="registrationNationality" inverseEntity="Country" syncable="YES"/>
@@ -311,13 +315,13 @@
         <element name="IomData" positionX="-173" positionY="-403" width="128" height="103"/>
         <element name="IomOffice" positionX="25" positionY="-568" width="128" height="163"/>
         <element name="IomOfficer" positionX="756" positionY="50" width="128" height="103"/>
-        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="390"/>
+        <element name="Migrant" positionX="-351" positionY="-261" width="128" height="418"/>
         <element name="Movement" positionX="-236" positionY="68" width="128" height="223"/>
         <element name="Photo" positionX="358" positionY="524" width="128" height="103"/>
         <element name="PoliceOfficer" positionX="754" positionY="320" width="128" height="103"/>
         <element name="Port" positionX="-441" positionY="113" width="128" height="103"/>
-        <element name="Registration" positionX="207" positionY="-676" width="128" height="343"/>
-        <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="178"/>
+        <element name="Registration" positionX="207" positionY="-676" width="128" height="345"/>
+        <element name="RegistrationBioData" positionX="198" positionY="-376" width="128" height="210"/>
         <element name="RegistrationBiometric" positionX="423" positionY="-601" width="128" height="150"/>
         <element name="RegistrationInterception" positionX="405" positionY="-373" width="128" height="118"/>
         <element name="RegistrationProfile" positionX="576" positionY="-532" width="128" height="208"/>

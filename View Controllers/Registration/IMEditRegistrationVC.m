@@ -42,6 +42,7 @@
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic, strong) NSManagedObjectContext *context;
 @property (nonatomic) BOOL underIOMCare;
+@property (nonatomic) BOOL waiting;
 @property (nonatomic,strong) MBProgressHUD *hud;
 
 @end
@@ -53,6 +54,8 @@ typedef enum : NSUInteger {
 } photo_option;
 
 @implementation IMEditRegistrationVC
+
+
 
 - (void)showFingerprintScanner:(UITapGestureRecognizer *)gesture
 {
@@ -335,11 +338,61 @@ typedef enum : NSUInteger {
     
 }
 
+- (void)save
+{
+    if (_hud) {
+        _hud = Nil;
+    }
+    
+    // Show progress window
+    // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+    _hud = [[MBProgressHUD alloc] initWithView:self.view];
+    
+    // Regisete for HUD callbacks so we can remove it from the window at the right time
+    _hud.delegate = self;
+    
+    _hud.labelText =   @"Saving..."  ;
+    
+    
+     [_hud showUsingAnimation:YES];
+    
+    // Add HUD to screen
+    [self.view addSubview:_hud];
+
+    
+    
+    // Show the HUD while the provided method executes in a new thread
+    [_hud showWhileExecuting:@selector(saving) onTarget:self withObject:Nil animated:YES];
+    
+    self.waiting = YES;
+    
+    while (self.waiting) {
+        
+        sleep(1);
+    }
+
+}
+
+- (void)sleeping
+{
+    BOOL doesContain = NO;
+    while (!doesContain && !self.waiting) {
+        
+        if(!doesContain) {
+            doesContain = [self.view.subviews containsObject:_hud];
+        }else{
+            self.waiting = YES;
+        }
+        usleep(5000);
+    }
+}
+
 - (void)saving
 {
     BOOL showAlert =FALSE;
     
     @try {
+        
         BOOL needRemove =FALSE;
         NSNumber * lastStatus = self.registration.complete;
         
@@ -350,8 +403,10 @@ typedef enum : NSUInteger {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Invalid Input"   message:  @"Please input UNHCR Document"   delegate:self cancelButtonTitle:  @"OK"   otherButtonTitles:nil];
             
             [alert show];
-            [_hud hideUsingAnimation:YES];
+//            [_hud hideUsingAnimation:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             showAlert = YES;
+            self.waiting = NO;
             return;
         }
         
@@ -361,8 +416,10 @@ typedef enum : NSUInteger {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Invalid Input on Interception Data"   message:  @"Date Of Entry can not be more than interception date"   delegate:self cancelButtonTitle:  @"OK"   otherButtonTitles:nil];
             
             [alert show];
-            [_hud hideUsingAnimation:YES];
+//            [_hud hideUsingAnimation:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             showAlert = YES;
+            self.waiting = NO;
             return;
             
         }
@@ -373,8 +430,10 @@ typedef enum : NSUInteger {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Invalid Input on Location Data"   message:  @"Please check your input on Location"   delegate:self cancelButtonTitle:  @"OK"   otherButtonTitles:nil];
             
             [alert show];
-            [_hud hideUsingAnimation:YES];
+//            [_hud hideUsingAnimation:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             showAlert = YES;
+            self.waiting = NO;
             return;
             
         }
@@ -387,8 +446,10 @@ typedef enum : NSUInteger {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Invalid Input on Personal Information"   message:  @"Please input First Name"   delegate:self cancelButtonTitle:  @"OK"   otherButtonTitles:nil];
             
             [alert show];
-            [_hud hideUsingAnimation:YES];
+//            [_hud hideUsingAnimation:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             showAlert = YES;
+          self.waiting = NO;
             return;
         }
         
@@ -399,8 +460,11 @@ typedef enum : NSUInteger {
             self.registration.dateCreated = [NSDate date];
         }
         
+        if (!self.registration.underIOMCare) {
+             self.registration.underIOMCare = [NSNumber numberWithBool:NO];
+        }
         
-        NSManagedObjectContext *workingContext = self.registration.managedObjectContext;
+        NSManagedObjectContext *workingContext = self.registration.managedObjectContext.parentContext;
         NSError *error;
         
         
@@ -423,11 +487,20 @@ typedef enum : NSUInteger {
             //deep copy new registration data to migrant
             [Migrant saveMigrantInContext:workingContext withId:self.registration.registrationId andRegistrationData:self.registration];
         }
+//          self.complete = @(REG_STATUS_LOCAL);
+        if ([self.registration.complete  isEqual: @(REG_STATUS_LOCAL)]) {
+            //change flag
+            self.registration.complete  = @(REG_STATUS_PENDING);
+            
+            //case from upload tab
+             needRemove = TRUE;
+        }
         
         if (![workingContext save:&error]) {
             NSLog(@"Error saving context: %@", [error description]);
             [self showAlertWithTitle:  @"Failed Saving Registration"   message:  @"Please try again. If problem persist, please cancel and consult with administrator."  ];
         }else {
+            
             //save database
             [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
             
@@ -436,16 +509,14 @@ typedef enum : NSUInteger {
             //            sleep(2);
             //        }
             
-            if (!self.editingMode) {
+            if (!self.editingMode && ![self.registration.complete isEqual:@(REG_STATUS_PENDING)]) {
                 //new registration
                 needRemove = TRUE;
             }
             
-            if (self.registrationSave) {
-                self.registrationSave(needRemove);
+            if ([lastStatus isEqual:@(REG_STATUS_PENDING)]) {
+                needRemove = FALSE;
             }
-            
-            
             
             //            if (self.registrationLast) {
             //                self.registrationLast(self.registration);
@@ -456,9 +527,15 @@ typedef enum : NSUInteger {
                     NSLog(@"Fail to create backup");
                 }
                 
-                sleep(1);
+//                sleep(1);
             }
             
+           
+            if (self.registrationSave) {
+                self.registrationSave(needRemove);
+            }
+            
+//            sleep(2);
             //            }
         }
     }
@@ -469,46 +546,14 @@ typedef enum : NSUInteger {
         //flag for alert view, do not dissmiss before user touch alert button
         if (!showAlert) {
             [self dismissViewControllerAnimated:YES completion:nil];
-            [_hud hideUsingAnimation:YES];
+//            [_hud hideUsingAnimation:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+    
         }
-        
+        self.waiting = NO;
     }
     
     
-}
-
-- (void)save
-{
-    //    // Add HUD to screen
-    //    [self.view addSubview:_hud];
-    //
-    //    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    //    _hud.delegate = self;
-    //
-    //    _hud.labelText = @"Saving...";
-    //    //    Show progress window
-    //    [_hud showWhileExecuting:@selector(saving) onTarget:self withObject:nil animated:YES];
-    
-    // Show progress window
-    if (!_hud) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _hud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
-    
-    
-    
-    // Add HUD to screen
-    [self.view addSubview:_hud];
-    
-    // Regisete for HUD callbacks so we can remove it from the window at the right time
-    _hud.delegate = self;
-    
-    _hud.labelText =   @"Saving..."  ;
-    
-    // Show the HUD while the provided method executes in a new thread
-    [_hud showUsingAnimation:YES];
-    
-    [self saving];
 }
 
 
@@ -565,23 +610,22 @@ typedef enum : NSUInteger {
     
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saving)];
     
     UIViewController *vc = [self.childViewControllers lastObject];
     if ([vc isKindOfClass:[IMEditRegistrationDataVC class]]) {
         IMEditRegistrationDataVC *regVC = (IMEditRegistrationDataVC *)vc;
         regVC.registration = self.registration;
-        if (!self.editingMode && [[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm]) {
-            regVC.useLastData = YES;
-        }else regVC.useLastData = NO;
-
-        //        regVC.lastReg = self.LastReg;
+         BOOL key = [[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm];
+        if (!self.editingMode) {
+            regVC.useLastData =key;
+        }
     }
     
-    if (!_hud) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _hud = [[MBProgressHUD alloc] initWithView:self.presentingViewController.view];
-    }
+//    if (!_hud) {
+//        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
+//        _hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+//    }
     
 }
 
@@ -674,6 +718,7 @@ typedef enum : NSUInteger {
     // Remove HUD from screen when the HUD was hidded
     if (_hud) {
          [_hud removeFromSuperview];
+        _hud = Nil;
     }
    
 }

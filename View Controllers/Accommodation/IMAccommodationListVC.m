@@ -44,10 +44,10 @@
 - (void)setBasePredicate:(NSPredicate *)basePredicate
 {
     _basePredicate = basePredicate;
-    if (!_HUD) {
+//    if (!_HUD) {
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
         _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-    }
+//    }
     // Add HUD to screen
     [self.navigationController.view addSubview:_HUD];
     
@@ -68,10 +68,10 @@
     if (![_city isEqualToString:city]  ) {
         _city = city;
         
-        if (!_HUD) {
+//        if (!_HUD) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
             _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        }
+//        }
         // Add HUD to screen
         [self.navigationController.view addSubview:_HUD];
         
@@ -91,10 +91,10 @@
         
         _active = active;
         
-        if (!_HUD) {
+//        if (!_HUD) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
             _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        }
+//        }
         // Add HUD to screen
         [self.navigationController.view addSubview:_HUD];
         
@@ -440,10 +440,10 @@
     [super viewDidAppear:animated];
     if (![self.locations count])
     {
-        if (!_HUD) {
+//        if (!_HUD) {
             // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
             _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        }
+//        }
         // Add HUD to screen
         [self.navigationController.view addSubview:_HUD];
         

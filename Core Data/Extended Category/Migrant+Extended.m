@@ -325,12 +325,16 @@
         migrant.registrationNumber = Id;
         
         //general information
-        migrant.underIOMCare = reg.underIOMCare;
-        migrant.selfReporting = reg.selfReporting;
-        migrant.unhcrDocument = reg.unhcrDocument;
-        migrant.unhcrNumber = reg.unhcrNumber;
-        migrant.vulnerabilityStatus = reg.vulnerability;
-        migrant.registrationNumber =  reg.registrationId;
+        if (reg.underIOMCare){
+            migrant.underIOMCare = reg.underIOMCare;
+        }else{
+            reg.underIOMCare = migrant.underIOMCare = [NSNumber numberWithBool:NO];
+        }
+        if (reg.selfReporting) migrant.selfReporting = reg.selfReporting;
+        if (reg.unhcrDocument) migrant.unhcrDocument = reg.unhcrDocument;
+        if (reg.unhcrNumber) migrant.unhcrNumber = reg.unhcrNumber;
+        if (reg.vulnerability) migrant.vulnerabilityStatus = reg.vulnerability;
+        if (reg.registrationId) migrant.registrationNumber =  reg.registrationId;
         
         migrant.dateCreated = reg.dateCreated;
         

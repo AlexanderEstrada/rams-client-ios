@@ -115,10 +115,10 @@
     if (self.scanCompleted) return;
     
     // Show progress window
-    if (!_hud) {
+//    if (!_hud) {
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
         _hud = [[MBProgressHUD alloc] initWithView:self.view];
-    }
+//    }
     
     // Add HUD to screen
     [self.view addSubview:_hud];

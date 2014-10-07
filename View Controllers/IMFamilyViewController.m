@@ -163,10 +163,10 @@ typedef enum : NSUInteger {
 - (void)reloadData
 {
     // Show progress window
-    if (!_HUD) {
+//    if (!_HUD) {
         // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
         _HUD = [[MBProgressHUD alloc] initWithView:self.view];
-    }
+//    }
     
     
     

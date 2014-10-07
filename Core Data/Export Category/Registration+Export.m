@@ -105,7 +105,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         NSLog(@"bioData.dateOfBirth : %@",[self.bioData.dateOfBirth toUTCString]);
         
         //Interception
-        if (self.interceptionData.interceptionDate) {
+        if ([self.interceptionData.interceptionLocation length]) {
             NSMutableDictionary *interception = [NSMutableDictionary dictionary];
             if (self.interceptionData.dateOfEntry == Nil) {
                 self.interceptionData.dateOfEntry =self.dateCreated;
@@ -674,7 +674,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
 - (void)validateCompletion
 {
     BOOL stat = [self.bioData.firstName length] && self.bioData.gender && self.bioData.maritalStatus && self.bioData.dateOfBirth && [self.bioData.placeOfBirth length] && self.bioData.countryOfBirth && self.bioData.nationality;
-    if (self.interceptionData.interceptionDate) {
+    if (([self.interceptionData.interceptionLocation length]> 0?YES:NO)) {
         stat &= self.interceptionData.interceptionDate && [self.interceptionData.interceptionLocation length] && self.interceptionData.dateOfEntry;
     }
     
