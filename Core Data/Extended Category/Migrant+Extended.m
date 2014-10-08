@@ -130,10 +130,10 @@
             [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_THUMB_IMAGE]) forFingerPosition:LeftThumb];
             [migrant.biometric updateFingerImageFromBase64String:CORE_DATA_OBJECT([biometric objectForKey:BIO_LEFT_INDEX_IMAGE]) forFingerPosition:LeftIndex];
             
-//            migrant.skipFinger = @(NO);
+            migrant.skipFinger = @(NO);
         }else {
             migrant.biometric = Nil;
-//            migrant.skipFinger = @(YES);
+            migrant.skipFinger = @(YES);
         }
         
         //Bio data
@@ -142,6 +142,10 @@
             NSDictionary *bioData = [dictionary objectForKey:@"bioData"];
             migrant.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:@"firstName"]);
             migrant.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:@"familyName"]);
+            
+            migrant.bioData.fatherName = CORE_DATA_OBJECT([bioData objectForKey:@"fatherName"]);
+            migrant.bioData.motherName = CORE_DATA_OBJECT([bioData objectForKey:@"motherName"]);
+            
             migrant.bioData.alias = CORE_DATA_OBJECT([bioData objectForKey:@"alias"]);
             
             NSString *gender = CORE_DATA_OBJECT([bioData objectForKey:@"gender"]);
@@ -369,6 +373,9 @@
         migrant.bioData.firstName = reg.bioData.firstName;
         migrant.bioData.familyName = reg.bioData.familyName;
         
+        migrant.bioData.fatherName = reg.bioData.fatherName;
+        migrant.bioData.motherName = reg.bioData.motherName;
+        
         migrant.bioData.gender = reg.bioData.gender;
         migrant.bioData.maritalStatus = reg.bioData.maritalStatus;
         migrant.bioData.nationality = [Country countryWithCode:reg.bioData.nationality.code inManagedObjectContext:context];
@@ -441,7 +448,7 @@
         }
         
         //save skip finger flag
-//        migrant.skipFinger = reg.skipFinger;
+        migrant.skipFinger = reg.skipFinger;
         
         //save flag to complete
         migrant.complete = @(FALSE);

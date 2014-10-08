@@ -218,10 +218,9 @@
 		F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784E198A3B8B006679AB /* IMFamilyListVC.m */; };
 		F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */; };
 		F2721EB219C6FD000009EE99 /* IMRAMSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2721EB119C6FD000009EE99 /* IMRAMSTest.m */; };
-		F27B1C4919E4F2FB001F691F /* RegistrationBioData.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4819E4F2FB001F691F /* RegistrationBioData.m */; };
 		F27B1C4C19E4F2FC001F691F /* BioData.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4B19E4F2FC001F691F /* BioData.m */; };
-		F27B1C5419E51000001F691F /* Migrant.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4E19E4F2FC001F691F /* Migrant.m */; };
-		F27B1C5519E5136D001F691F /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C5119E4F2FD001F691F /* Registration.m */; };
+		F27B1C5619E51970001F691F /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F279A65A19CC295B00491B05 /* Registration.m */; };
+		F27B1C5719E5198A001F691F /* Migrant.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4E19E4F2FC001F691F /* Migrant.m */; };
 		F288C34919B5761800EE7948 /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */; };
 		F288C34C19B5761900EE7948 /* FamilyData.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34B19B5761900EE7948 /* FamilyData.m */; };
 		F288C34F19B5761900EE7948 /* FamilyRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34E19B5761900EE7948 /* FamilyRegister.m */; };
@@ -1872,8 +1871,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F27B1C5519E5136D001F691F /* Registration.m in Sources */,
-				F27B1C5419E51000001F691F /* Migrant.m in Sources */,
+				F27B1C5719E5198A001F691F /* Migrant.m in Sources */,
+				F27B1C5619E51970001F691F /* Registration.m in Sources */,
 				ACE6931C17F159AC0095F90C /* RegistrationInterception.m in Sources */,
 				ACCBD260181E27DC00CC3EDE /* RegistrationBiometric.m in Sources */,
 				ACE6931717F159AC0095F90C /* Movement.m in Sources */,
@@ -1937,7 +1936,6 @@
 				ACE6934617F159BA0095F90C /* IMTableViewCell.m in Sources */,
 				F288C34C19B5761900EE7948 /* FamilyData.m in Sources */,
 				AC14E0A1181F6F4400EB356B /* IMEditRegistrationVC.m in Sources */,
-				F27B1C4919E4F2FB001F691F /* RegistrationBioData.m in Sources */,
 				ACE6944C17F159E80095F90C /* IMEditInterceptionVC.m in Sources */,
 				ACE6931517F159AC0095F90C /* IomOfficer.m in Sources */,
 				AC5DD1831804FD0400E3911C /* IMAccommodationPhotoView.m in Sources */,

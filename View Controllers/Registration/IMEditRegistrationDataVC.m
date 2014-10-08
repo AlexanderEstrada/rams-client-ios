@@ -41,6 +41,8 @@ typedef enum : NSUInteger {
     row_use_last_data = 0,
     row_first_name,
     row_family_name,
+    row_father_name,
+    row_mother_name,
     row_sex,
     row_status,
     row_date_of_birth,
@@ -51,7 +53,7 @@ typedef enum : NSUInteger {
     row_skip_finger
 } table_personal_info_row;
 
-static NSInteger total_row_table_personal_info = 10;
+static NSInteger total_row_table_personal_info = 13;
 #define MAGIC_NUMBER 666
 
 #define TOTAL_SECTION (5) // we remove table_location
@@ -530,6 +532,24 @@ static NSInteger total_row_table_personal_info = 10;
             cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.familyName = value; };
             cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
             cell.maxCharCount = 40;
+        }else if (indexPath.row == row_father_name) {
+            cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
+            cell.labelTitle.text = @"Father Name";
+            cell.labelTitle.textColor = [UIColor grayColor];
+            cell.textValue.placeholder = @"e.g Muhammad";
+            cell.textValue.text = self.registration.bioData.fatherName;
+            cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.fatherName = value; };
+            cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
+            cell.maxCharCount = 40;
+        }else if (indexPath.row == row_mother_name) {
+            cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeTextInput reuseIdentifier:cellIdentifier];
+            cell.labelTitle.text = @"Mother Name";
+            cell.labelTitle.textColor = [UIColor grayColor];
+            cell.textValue.placeholder = @"e.g Fatimah";
+            cell.textValue.text = self.registration.bioData.motherName;
+            cell.onTextValueReturn = ^(NSString *value){ self.registration.bioData.motherName = value; };
+            cell.characterSets = @[[NSCharacterSet alphanumericCharacterSet], [NSCharacterSet whitespaceCharacterSet]];
+            cell.maxCharCount = 40;
         }else if (indexPath.row == row_sex) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeDetail reuseIdentifier:cellIdentifier];
             //            cell.labelTitle.text = @"Gender";
@@ -567,7 +587,7 @@ static NSInteger total_row_table_personal_info = 10;
         }else if (indexPath.row == row_skip_finger) {
             cell = [[IMFormCell alloc] initWithFormType:IMFormCellTypeSwitch reuseIdentifier:cellIdentifier];
             cell.labelTitle.text =  @"Skip Finger Image" ;
-            //            cell.switcher.on = self.registration.skipFinger.boolValue;
+                        cell.switcher.on = self.registration.skipFinger.boolValue;
             cell.onSwitcherValueChanged = ^(BOOL value){ self.skipFinger = value;
             };
             
@@ -905,7 +925,7 @@ static NSInteger total_row_table_personal_info = 10;
         self.registration.unhcrNumber = Nil;
     }else if (alertView.tag == IMSkipFinger_Tag && buttonIndex == [alertView cancelButtonIndex]){
         _skipFinger = NO;
-        //        self.registration.skipFinger = @(_skipFinger);
+                self.registration.skipFinger = @(_skipFinger);
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row_skip_finger inSection:table_personal_info]]
                               withRowAnimation:UITableViewRowAnimationNone];
     }else if (alertView.tag == IMUseLastRegistrationData_Tag){

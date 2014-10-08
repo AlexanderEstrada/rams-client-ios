@@ -17,6 +17,7 @@
 #import "IMConstants.h"
 #import "ServerSettingViewController.h"
 #import "Registration+Export.h"
+#import "RegistrationBiometric+Storage.h"
 
 #import "MBProgressHUD.h"
 
@@ -323,6 +324,13 @@
             [[NSFileManager defaultManager] removeItemAtPath:[Biometric rightIndexTemplateDir] error:nil];
             [[NSFileManager defaultManager] removeItemAtPath:[Biometric rightThumbImageDir] error:nil];
             [[NSFileManager defaultManager] removeItemAtPath:[Biometric rightThumbTemplateDir] error:nil];
+            [[NSFileManager defaultManager] removeItemAtPath:[Registration jsonDir] error:nil];
+            [[NSFileManager defaultManager] removeItemAtPath:[RegistrationBiometric photograpDir] error:nil];
+             [[NSFileManager defaultManager] removeItemAtPath:[RegistrationBiometric photograpThumbnailDir] error:nil];
+             [[NSFileManager defaultManager] removeItemAtPath:[RegistrationBiometric leftIndexImageDir] error:nil];
+             [[NSFileManager defaultManager] removeItemAtPath:[RegistrationBiometric rightIndexImageDir] error:nil];
+             [[NSFileManager defaultManager] removeItemAtPath:[RegistrationBiometric leftThumbImageDir] error:nil];
+             [[NSFileManager defaultManager] removeItemAtPath:[RegistrationBiometric rightThumbImageDir] error:nil];
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Reset Complete"  
                                                             message:  @"Continue with updating application data?"  

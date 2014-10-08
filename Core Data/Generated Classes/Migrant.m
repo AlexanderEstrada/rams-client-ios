@@ -1,9 +1,9 @@
 //
 //  Migrant.m
-//  IMMS Manager
+//  RAMS Client
 //
-//  Created by Mario Yohanes on 10/21/13.
-//  Copyright (c) 2013 Mario Yohanes. All rights reserved.
+//  Created by IOM Jakarta on 10/8/14.
+//  Copyright (c) 2014 International Organization for Migration. All rights reserved.
 //
 
 #import "Migrant.h"
@@ -19,25 +19,26 @@
 
 @dynamic active;
 @dynamic blacklist;
+@dynamic complete;
+@dynamic dateCreated;
 @dynamic deceased;
+@dynamic detentionLocation;
+@dynamic detentionLocationName;
+@dynamic lastUploader;
 @dynamic registrationNumber;
+@dynamic selfReporting;
+@dynamic skipFinger;
+@dynamic underIOMCare;
 @dynamic unhcrDocument;
 @dynamic unhcrNumber;
 @dynamic unhcrStatus;
+@dynamic uploader;
 @dynamic vulnerabilityStatus;
-@dynamic underIOMCare;
-@dynamic selfReporting;
 @dynamic bioData;
 @dynamic biometric;
 @dynamic familyData;
 @dynamic interceptions;
 @dynamic iomData;
 @dynamic movements;
-@dynamic detentionLocation;
-@dynamic dateCreated;
-@dynamic complete;
-@dynamic uploader;
-@dynamic lastUploader;
-@dynamic detentionLocationName;
-//@dynamic skipFinger;
+
 @end

@@ -52,7 +52,5 @@
 - (NSString *) dumpToFile;
 - (void) removeBackupFile;
 
-@property (nonatomic, strong) NSString *backupFileName;
-
 
 @end

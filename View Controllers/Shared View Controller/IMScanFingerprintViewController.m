@@ -80,8 +80,10 @@
  
     
     [self.engine validateFingerprintImage:grayscaleImage onComplete:^(BOOL valid){
-
-          [_hud hideUsingAnimation:YES];
+    
+        if ([MBProgressHUD hideHUDForView:self.view animated:YES]) {
+            self.hud = Nil;
+        }
     
         if (valid) {
             [self.data setObject:grayscaleImage forKey:@(self.currentFingerPosition)];
@@ -97,6 +99,7 @@
             self.buttonRescan.hidden = FALSE;
             self.itemDone.enabled = FALSE;
         }
+        
     }];
 
 }
@@ -114,25 +117,18 @@
     //TODO : add spin
     if (self.scanCompleted) return;
     
-    // Show progress window
-//    if (!_hud) {
-        // The hud will dispable all input on the view (use the higest view possible in the view hierarchy)
-        _hud = [[MBProgressHUD alloc] initWithView:self.view];
-//    }
-    
-    // Add HUD to screen
-    [self.view addSubview:_hud];
-    
+    //  // Add HUD to screen and Show progress window
+        if (!self.hud) {
+            self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        }
+
     // Regisete for HUD callbacks so we can remove it from the window at the right time
-    _hud.delegate = self;
+    self.hud.delegate = self;
     
-    _hud.labelText = @"Just a moment please ...";
+    self.hud.labelText = @"Just a moment please ...";
     
     
     self.containerView.backgroundColor = [UIColor blueColor];
-
-    // Show the HUD while the provided method executes in a new thread
-    [_hud showUsingAnimation:YES];
     
     }
     

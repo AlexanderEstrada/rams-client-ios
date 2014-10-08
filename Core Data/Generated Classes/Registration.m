@@ -1,9 +1,9 @@
 //
 //  Registration.m
-//  IMMS Manager
+//  RAMS Client
 //
-//  Created by Mario Yohanes on 28/10/13.
-//  Copyright (c) 2013 Mario Yohanes. All rights reserved.
+//  Created by IOM Jakarta on 10/8/14.
+//  Copyright (c) 2014 International Organization for Migration. All rights reserved.
 //
 
 #import "Registration.h"
@@ -20,24 +20,26 @@
 @synthesize successHandler;
 @synthesize successHandlerAndCode;
 @synthesize onProgress;
-@dynamic registrationId;
-@dynamic dateCreated;
-@dynamic unhcrDocument;
-@dynamic unhcrNumber;
+@dynamic active;
 @dynamic captureDevice;
-@dynamic underIOMCare;
-@dynamic selfReporting;
-//@dynamic skipFinger;
-@dynamic transferDate;
 @dynamic complete;
-@dynamic vulnerability;
-@dynamic associatedOffice;
-@dynamic interceptionData;
-@dynamic bioData;
-@dynamic biometric;
-@dynamic transferDestination;
+@dynamic dateCreated;
 @dynamic detentionLocation;
 @dynamic detentionLocationName;
-//@dynamic transferId;
+@dynamic registrationId;
+@dynamic selfReporting;
+@dynamic skipFinger;
+@dynamic transferDate;
+@dynamic transferId;
+@dynamic underIOMCare;
+@dynamic unhcrDocument;
+@dynamic unhcrNumber;
+@dynamic vulnerability;
+@dynamic backupName;
+@dynamic associatedOffice;
+@dynamic bioData;
+@dynamic biometric;
+@dynamic interceptionData;
+@dynamic transferDestination;
 
 @end

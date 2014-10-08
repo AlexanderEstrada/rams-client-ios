@@ -500,26 +500,21 @@ typedef enum : NSUInteger {
             NSLog(@"Error saving context: %@", [error description]);
             [self showAlertWithTitle:  @"Failed Saving Registration"   message:  @"Please try again. If problem persist, please cancel and consult with administrator."  ];
         }else {
-            
+            //need to save on child, not to parent context
+            if ([self.registration.complete isEqual:@(REG_STATUS_UNCOMPLETE)]) {
+                
+                if (![self.registration.managedObjectContext save:&error]) {
+                    NSLog(@"Error while save : %@",[error description]);
+                }
+                
+            }
             //save database
             [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
-            
-            //        if(self.editingMode && [data count]){
-            //            // sleep for synch
-            //            sleep(2);
-            //        }
-            
-            if (!self.editingMode && ![self.registration.complete isEqual:@(REG_STATUS_PENDING)]) {
-                //new registration
-                needRemove = TRUE;
-            }
             
             if ([lastStatus isEqual:@(REG_STATUS_PENDING)]) {
                 needRemove = FALSE;
             }
             
-            //            if (self.registrationLast) {
-            //                self.registrationLast(self.registration);
             //save to backup for template next data
             if ([[NSUserDefaults standardUserDefaults] boolForKey:IMTemplateForm]) {
                 //get last registration data on backup
@@ -527,13 +522,12 @@ typedef enum : NSUInteger {
                     NSLog(@"Fail to create backup");
                 }
                 
-//                sleep(1);
             }
             
            
             if ([self.registration.complete isEqual:@(REG_STATUS_PENDING)]) {
                 //case this is new registration data and in pendding page, then create backup file
-                self.registration.backupFileName = [self.registration dumpToFile];
+                [self.registration dumpToFile];
                 
                 //todo : save the filename into database
             }
@@ -542,8 +536,6 @@ typedef enum : NSUInteger {
                 self.registrationSave(needRemove);
             }
             
-//            sleep(2);
-            //            }
         }
     }
     @catch (NSException *exception) {

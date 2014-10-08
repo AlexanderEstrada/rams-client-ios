@@ -1,9 +1,9 @@
 //
 //  RegistrationBioData.m
-//  IMMS Manager
+//  RAMS Client
 //
-//  Created by Mario Yohanes on 28/10/13.
-//  Copyright (c) 2013 Mario Yohanes. All rights reserved.
+//  Created by IOM Jakarta on 10/8/14.
+//  Copyright (c) 2014 International Organization for Migration. All rights reserved.
 //
 
 #import "RegistrationBioData.h"
@@ -13,14 +13,16 @@
 
 @implementation RegistrationBioData
 
-@dynamic firstName;
+@dynamic dateOfBirth;
 @dynamic familyName;
+@dynamic fatherName;
+@dynamic firstName;
 @dynamic gender;
 @dynamic maritalStatus;
+@dynamic motherName;
 @dynamic placeOfBirth;
-@dynamic dateOfBirth;
 @dynamic countryOfBirth;
-@dynamic registration;
 @dynamic nationality;
+@dynamic registration;
 
 @end

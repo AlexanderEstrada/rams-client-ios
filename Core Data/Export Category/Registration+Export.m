@@ -14,8 +14,6 @@
 
 @implementation Registration (Export)
 
-@dynamic backupFileName;
-
 NSString *const REG_ENTITY_NAME                 = @"Registration";
 NSString *const REG_ID                          = @"id";
 
@@ -29,6 +27,8 @@ NSString *const REG_VULNERABILITY               = @"vulnerability";
 
 NSString *const REG_BIO_DATA                    = @"bioData";
 NSString *const REG_FIRST_NAME                  = @"firstName";
+NSString *const REG_FATHER_NAME                  = @"fatherName";
+NSString *const REG_MOTHER_NAME                  = @"motherName";
 NSString *const REG_FAMILY_NAME                 = @"familyName";
 NSString *const REG_GENDER                      = @"gender";
 NSString *const  REG_SKIP_FINGER                = @"skipFinger";
@@ -151,19 +151,19 @@ NSString *const REG_MOVEMENT                 = @"movements";
 {
     @try {
         //TODO : removing backup files
-        if (self.backupFileName) {
+        if (self.backupName) {
             //get the directory
-            NSString * path = [[Registration jsonDir] stringByAppendingPathComponent:self.backupFileName];
+            NSString * path = [[Registration jsonDir] stringByAppendingPathComponent:self.backupName];
             
             
             //check if file exist
             if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
                 NSError * err;
                 //case exist then remove from file
-                [[NSFileManager defaultManager] removeItemAtPath:self.backupFileName error:&err];
+                [[NSFileManager defaultManager] removeItemAtPath:path error:&err];
                 if (err) {
                     NSLog(@"Error while deleting backup file :%@",[err description]);
-                }
+                }else NSLog(@"Delete %@ Success",path);
             }
             
             
@@ -192,7 +192,8 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //get path
         // Write dictionary
         if ([json writeToFile:objectId atomically:YES]) {
-            return [objectId lastPathComponent];
+            self.backupName = [objectId lastPathComponent];
+            return self.backupName;
         }else return nil;
         
     }
@@ -224,7 +225,9 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //Biodata
         NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
         [bioData setObject:self.bioData.firstName forKey:REG_FIRST_NAME];
-        if (self.bioData.familyName) [bioData setObject:self.bioData.familyName forKey:REG_FAMILY_NAME];
+        if ([self.bioData.familyName length]) [bioData setObject:self.bioData.familyName forKey:REG_FAMILY_NAME];
+         if ([self.bioData.motherName length]) [bioData setObject:self.bioData.motherName forKey:REG_MOTHER_NAME];
+         if ([self.bioData.fatherName length]) [bioData setObject:self.bioData.fatherName forKey:REG_FATHER_NAME];
         //    [bioData setObject:self.bioData.gender forKey:REG_GENDER];
         [bioData setObject:[self.bioData.gender isEqual:@"Male"] ? @"M":@"F" forKey:REG_GENDER];
         [bioData setObject:self.bioData.maritalStatus forKey:REG_MARITAL_STATUS];
@@ -279,10 +282,10 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         //check for sending finger image flag
-        //         [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
+                 [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
         
         NSLog(@"formatted without biometric: %@",[formatted description]);
-        //        if (!self.skipFinger.boolValue) {
+                if (!self.skipFinger.boolValue) {
         //case not skip sending finger image
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         NSString * base64Str;
@@ -317,7 +320,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
         
-        //        }
+                }
         /*
          //Movement
          
@@ -395,6 +398,9 @@ NSString *const REG_MOVEMENT                 = @"movements";
         dt.bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
         dt.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
         dt.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
+        
+        dt.bioData.fatherName = CORE_DATA_OBJECT([bioData objectForKey:REG_FATHER_NAME]);
+        dt.bioData.motherName = CORE_DATA_OBJECT([bioData objectForKey:REG_MOTHER_NAME]);
         
         dt.bioData.gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
         dt.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
@@ -556,6 +562,10 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //            dt.bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
         migrant.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
         migrant.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
+        
+        migrant.bioData.fatherName = CORE_DATA_OBJECT([bioData objectForKey:REG_FATHER_NAME]);
+        migrant.bioData.motherName = CORE_DATA_OBJECT([bioData objectForKey:REG_MOTHER_NAME]);
+        
         
         NSString * gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
         if ([gender length] == 1 || [gender length] == 2) {
@@ -813,8 +823,9 @@ NSString *const REG_MOVEMENT                 = @"movements";
     //check photo and finger print
     stat &= [self.biometric.photograph length] > 0?YES:NO;
     
-    stat &= ([self.biometric.leftIndex length]> 0?YES:NO) || ([self.biometric.leftThumb length]> 0?YES:NO) || ([self.biometric.rightIndex length]> 0?YES:NO) || ([self.biometric.rightThumb length]> 0?YES:NO);
-    
+    if (!self.skipFinger.boolValue) {
+        stat &= ([self.biometric.leftIndex length]> 0?YES:NO) || ([self.biometric.leftThumb length]> 0?YES:NO) || ([self.biometric.rightIndex length]> 0?YES:NO) || ([self.biometric.rightThumb length]> 0?YES:NO);
+    }
     
     if (self.unhcrDocument) stat &= self.unhcrDocument && ([self.unhcrNumber length]> 0?YES:NO);
     //    if (self.underIOMCare.boolValue) stat &= self.transferDate && self.transferDestination;
@@ -937,6 +948,10 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //Biodata
         data.bioData.firstName = migrant.bioData.firstName;
         data.bioData.familyName = migrant.bioData.familyName;
+        
+        data.bioData.fatherName = migrant.bioData.fatherName;
+        data.bioData.motherName = migrant.bioData.motherName;
+        
         data.bioData.gender = migrant.bioData.gender;
         data.bioData.maritalStatus = migrant.bioData.maritalStatus;
         data.bioData.placeOfBirth = migrant.bioData.cityOfBirth;
@@ -996,7 +1011,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         data.selfReporting = migrant.selfReporting;
         
         //skip finger flag
-        //        data.skipFinger = migrant.skipFinger;
+                data.skipFinger = migrant.skipFinger;
         
         return data;
     }
@@ -1040,6 +1055,10 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //Biodata
         data.bioData.firstName = migrant.bioData.firstName;
         data.bioData.familyName = migrant.bioData.familyName;
+        
+        data.bioData.fatherName = migrant.bioData.fatherName;
+        data.bioData.motherName = migrant.bioData.motherName;
+        
         data.bioData.gender = migrant.bioData.gender;
         data.bioData.maritalStatus = migrant.bioData.maritalStatus;
         data.bioData.placeOfBirth = migrant.bioData.cityOfBirth;
@@ -1106,7 +1125,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         //skip finger flag
-        //        data.skipFinger = migrant.skipFinger;
+                data.skipFinger = migrant.skipFinger;
         
         //self Reporting
         data.selfReporting = migrant.selfReporting;
