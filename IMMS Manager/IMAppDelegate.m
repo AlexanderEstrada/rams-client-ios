@@ -14,7 +14,9 @@
 #import "IMHTTPClient.h"
 #import "IMConstants.h"
 
+@interface IMAppDelegate ()<NSFileManagerDelegate>
 
+@end
 
 @implementation IMAppDelegate
 
@@ -56,16 +58,66 @@
     if ([[IMAuthManager sharedManager] isTokenExpired]) [[IMAuthManager sharedManager] logout];
 }
 
+#pragma mark - NSFileManagerDelegate
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath
+{
+     return YES;
+}
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL
+{
+    return YES;
+}
+
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     @try {
         
-        //check if the database path is on cache
+         NSError* err;
+        //old directory is on cache, case exist then move it to Library directory
+        NSURL *oldURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&err];
+        oldURL = [oldURL URLByAppendingPathComponent:IMLocaDBName];
         
-        //case in cache then move to document
+        
+        //check if the database path is on cache
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[oldURL path]]) {
+            //case in cache then move to document
+            oldURL = nil;
+            oldURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&err];
+            
+             NSFileManager *manager = [[NSFileManager alloc] init];
+           
+            manager.delegate = self;
+            
+            NSArray *properties = [NSArray arrayWithObjects: NSURLLocalizedNameKey,
+                                   NSURLCreationDateKey, NSURLLocalizedTypeDescriptionKey, nil];
+            
+            NSArray *array = [[NSFileManager defaultManager]
+                              contentsOfDirectoryAtURL:oldURL
+                              includingPropertiesForKeys:properties
+                              options:(NSDirectoryEnumerationSkipsHiddenFiles)
+                              error:&err];
+            NSString * tmp;
+            if ([array count]) {
+                for (NSURL * path in array) {
+                    //create new destination name base on source file
+                    tmp = [path lastPathComponent];
+                     NSURL *newURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&err];
+                     newURL = [newURL URLByAppendingPathComponent:tmp];
+                    
+                    if ([[NSFileManager defaultManager] fileExistsAtPath:[newURL path]]) {
+                        [[NSFileManager defaultManager] removeItemAtPath:[newURL path] error:nil];
+                    }
+                    if (![manager moveItemAtPath:[path path] toPath:[newURL path] error:&err]) {
+                        NSLog(@"Fail to move directory %@ to %@ with err : %@",[path path],[newURL path],[err description]);
+                    }
+                }
+            }
+            
+        }
+        
         
         //case not run RAMS as ussual
-        
         if ([[IMAuthManager sharedManager] isLoggedOn]) {
             if ([[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate]) {
                 //TODO : comment for testing

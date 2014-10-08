@@ -16,6 +16,7 @@
 #import "Photo+Storage.h"
 #import "IMConstants.h"
 #import "ServerSettingViewController.h"
+#import "Registration+Export.h"
 
 #import "MBProgressHUD.h"
 
@@ -31,6 +32,7 @@
 #define kResetDatabaseAlertTag  1
 #define kSyncAlertTag           2
 #define kConfirmSyncAlertTag    3
+#define kConfirmRetoreAlertTag    4
 
 
 #pragma mark Table View
@@ -43,7 +45,7 @@
 {
     if (section == 0) return 2;
     else if (section == 1) return 1;
-    return 5;
+    return 6;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -169,8 +171,12 @@
             sw.onTintColor = [UIColor IMLightBlue];
             cell.accessoryView = sw;
             [sw addTarget:self action:@selector(toggleTemplateForm:) forControlEvents:UIControlEventValueChanged];
-        }else{
-              cell.textLabel.text =   [NSString stringWithFormat:@"RAMS version %@.%@",[NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],[NSBundle mainBundle].infoDictionary[@"CFBundleVersion"]];
+        }else if (indexPath.row == 4){
+            cell.textLabel.text =   @"Restore Backup"  ;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.imageView.image = [[UIImage imageNamed:@"Sync"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        }else {
+            cell.textLabel.text =   [NSString stringWithFormat:@"RAMS version %@.%@",[NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],[NSBundle mainBundle].infoDictionary[@"CFBundleVersion"]];
         }
     }
     
@@ -192,12 +198,17 @@
             [self confirmResetDatabase];
             break;
         }
-        case 2:
+        case 2:{
             switch (indexPath.row) {
                 case 0: [self checkDataUpdates]; break;
                 case 1: [self checkAppUpdate]; break;
+                case 4:  [self restore]; break;
+                default: break;
+
             }
             break;
+        }
+        default: break;
     }
 }
 
@@ -227,8 +238,32 @@
         [self.sideMenuDelegate openSynchronizationDialog:nil];
     }else if (alertView.tag == kConfirmSyncAlertTag && buttonIndex != [alertView cancelButtonIndex]) {
         [self.sideMenuDelegate openSynchronizationDialog:nil];
+    }else if (alertView.tag == kConfirmRetoreAlertTag && buttonIndex != [alertView cancelButtonIndex]){
+       
+        
+        _HUD = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+        
+        // Add HUD to screen
+        [self.navigationController.view addSubview:_HUD];
+        
+        // Regisete for HUD callbacks so we can remove it from the window at the right time
+        _HUD.delegate = self;
+        
+        _HUD.labelText =   @"Restoring Data"  ;
+        _HUD.detailsLabelText =   @"Please wait a moment ..."  ;
+        
+        // Show the HUD while the provided method executes in a new thread
+        [_HUD showWhileExecuting:@selector(restoring) onTarget:self withObject:nil animated:YES];
+      
     }
 //    [self hideLoadingView];
+}
+
+- (void)restoring
+{
+    NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
+      [Registration restore:context];
+    [self showAlertWithTitle:@"Restore complete" message:Nil];
 }
 
 #pragma mark -
@@ -309,6 +344,12 @@
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Confirm Data Updates"   message:  @"You are about to start data updates. Internet connection is required and may take some time to finish.\nContinue updating application data?"   delegate:self cancelButtonTitle:  @"Cancel"   otherButtonTitles:  @"Continue"  , nil];
     alert.tag = kConfirmSyncAlertTag;
+    [alert show];
+}
+
+- (void)restore{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:  @"Confirm Data Restore"   message:  @"You are about to start data restore.\nContinue restoring application data?"   delegate:self cancelButtonTitle:  @"Cancel"   otherButtonTitles:  @"Continue"  , nil];
+    alert.tag = kConfirmRetoreAlertTag;
     [alert show];
 }
 

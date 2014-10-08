@@ -152,7 +152,7 @@ static NSInteger total_row_table_personal_info = 10;
 
 - (void)setSkipFinger:(BOOL)skipFinger{
     _skipFinger = skipFinger;
-    //    self.registration.skipFinger = @(_skipFinger);
+        self.registration.skipFinger = @(_skipFinger);
     
     if(_skipFinger == YES) {
         //show alert

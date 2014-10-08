@@ -33,7 +33,8 @@
 #pragma mark File Management
 + (NSString *)dirNFIQ
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [cachesPath stringByAppendingPathComponent:@"NFIQ"];
     

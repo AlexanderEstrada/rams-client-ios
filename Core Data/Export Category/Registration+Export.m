@@ -12,9 +12,9 @@
 #import "Migrant+Extended.h"
 #import "IMAuthManager.h"
 
-
-
 @implementation Registration (Export)
+
+@dynamic backupFileName;
 
 NSString *const REG_ENTITY_NAME                 = @"Registration";
 NSString *const REG_ID                          = @"id";
@@ -71,6 +71,138 @@ NSString *const REG_MOVEMENT                 = @"movements";
     return registration;
 }
 
++ (NSString *)jsonDir
+{
+    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    NSString *cachesPath = [cachesURL path];
+    NSString *dir = [cachesPath stringByAppendingPathComponent:@"JSON"];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dir]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    return dir;
+}
+
++ (Registration *) restore:(NSManagedObjectContext *)context
+{
+    
+    Registration * data = nil;
+    @try {
+        NSError * err;
+       
+        NSArray *directoryContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[Registration jsonDir] error:&err];
+        if (err) {
+            NSLog(@"Error while restore : %@",[err description]);
+        }else NSLog(@"directory %@ - Content : %@",[Registration jsonDir],[directoryContent description]);
+        
+        for (NSString * path in directoryContent)
+        {
+            //check if file exist
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+                //case exist then read
+             data = [Registration restoreFromFile:path inContext:context];
+            }
+            
+            
+        }
+        
+        return data;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception restore : %@",[exception description]);
+        return data;
+    }
+    @finally{
+        return data;
+    }
+}
+
++ (Registration *) restoreFromFile:(NSString*)path inContext:(NSManagedObjectContext *)context
+{
+    Registration * data = nil;
+    @try {
+        
+        if (path) {
+            NSString * tmp = [[Registration jsonDir] stringByAppendingPathComponent:path];
+            
+            //check if file exist
+            if ([[NSFileManager defaultManager] fileExistsAtPath:tmp]) {
+                //case exist then read
+                NSDictionary *dictFromFile = [NSDictionary dictionaryWithContentsOfFile:path];
+                //restore to object
+                data =  [self registrationWithDictionary:dictFromFile inManagedObjectContext:context];
+            }
+            
+        }
+        return data;
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception restoreFromFile : %@",[exception description]);
+        return data;
+    }
+    @finally{
+        return data;
+    }
+    
+}
+
+- (void) removeBackupFile
+{
+    @try {
+        //TODO : removing backup files
+        if (self.backupFileName) {
+            //get the directory
+            NSString * path = [[Registration jsonDir] stringByAppendingPathComponent:self.backupFileName];
+            
+            
+            //check if file exist
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+                NSError * err;
+                //case exist then remove from file
+                [[NSFileManager defaultManager] removeItemAtPath:self.backupFileName error:&err];
+                if (err) {
+                    NSLog(@"Error while deleting backup file :%@",[err description]);
+                }
+            }
+            
+            
+        }
+
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception while removeBackupFile : %@",[exception description]);
+    }
+    
+   }
+
+- (NSString *) dumpToFile
+{
+    //dump json format to file as backup
+    @try {
+        //create json format
+        NSDictionary * json = [self format];
+        
+        //dump it to file
+        
+        //use id from database as file name
+        NSString * objectId = [[Registration jsonDir] stringByAppendingPathComponent:[[[[self objectID] URIRepresentation] absoluteURL] lastPathComponent]];
+        NSLog(@"objectId : %@",objectId);
+        
+        //get path
+        // Write dictionary
+        if ([json writeToFile:objectId atomically:YES]) {
+            return [objectId lastPathComponent];
+        }else return nil;
+        
+    }
+    
+    @catch (NSException *exception) {
+        NSLog(@"dumpToFile exception : %@",[exception description]);
+        return Nil;
+    }
+    
+}
 
 - (NSDictionary *)format
 {
@@ -149,7 +281,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //check for sending finger image flag
         //         [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
         
-                NSLog(@"formatted without biometric: %@",[formatted description]);
+        NSLog(@"formatted without biometric: %@",[formatted description]);
         //        if (!self.skipFinger.boolValue) {
         //case not skip sending finger image
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
@@ -302,7 +434,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         return dt;
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception while creating Detention Location: %@", [exception description]);
+        NSLog(@"Exception while registrationWithDictionary: %@", [exception description]);
     }
     
     return nil;
@@ -481,7 +613,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 }
             }
             
-
+            
         }
         
         //biometric

@@ -47,7 +47,8 @@
         
         //case if not, then open new database in new path
         
-        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+          NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
         url = [url URLByAppendingPathComponent:IMLocaDBName];
         _localDatabase = [[UIManagedDocument alloc] initWithFileURL:url];
         
@@ -149,6 +150,7 @@
     }
 }
 
+
 - (void)openDatabase:(void (^)(BOOL success))successBlock
 {
     @try {
@@ -160,7 +162,8 @@
                         }];
         }else if (self.localDatabase.documentState == UIDocumentStateClosed){
 //            [self.localDatabase openWithCompletionHandler:successBlock];
-            
+
+         
             
 //            [self.localDatabase openWithCompletionHandler:^(BOOL success){
 //                if (!success) {
@@ -176,20 +179,34 @@
 //            }];
             
             [self.localDatabase openWithCompletionHandler:^(BOOL success){
-//                if (!success) {
-//                    NSError * err;
-//                    //try to change the model
-//                    if (![self migrateStore:_localDatabase.fileURL toVersionTwoStore:_destinationDatabase.fileURL error:&err]) {
-//                        NSLog(@"Error while change mapping : %@",[err description]);
-//                    }else {
-//                        //change local to destination
-//                        _localDatabase = Nil;
-//                        _localDatabase = _destinationDatabase;
-//                        //set to success
-//                        success = YES;
-//                    }
-//                    
-//                }
+                if (!success) {
+                    NSError * err;
+                    NSMigrationManager * manager = [[NSMigrationManager alloc] init];
+                    NSURL * oldData = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+                    oldData = [oldData URLByAppendingPathComponent:IMLocaDBName];
+                    
+                    NSURL * newData = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+                    newData = [newData URLByAppendingPathComponent:IMDestinationDBName];
+                    
+                    
+                    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"modelMapping" withExtension:@"cdm"];
+                    NSMappingModel *mappingModel = [[NSMappingModel alloc] initWithContentsOfURL:fileURL];
+                    
+                    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                                             [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+                    //try to change the model
+                    if (![manager migrateStoreFromURL:oldData type:NSSQLiteStoreType options:options withMappingModel:mappingModel toDestinationURL:newData destinationType:NSSQLiteStoreType destinationOptions:options error:&err]) {
+                        NSLog(@"Error while change mapping : %@",[err description]);
+                    }else {
+                        //change local to destination
+                        _localDatabase = Nil;
+                        _localDatabase = _destinationDatabase;
+                        //set to success
+                        success = YES;
+                    }
+                    
+                }
                 
                 if (successBlock) {
                     successBlock(success);

@@ -14,7 +14,9 @@ NSString *const PHOTO_CACHE_DIR_NAME    = @"Photos";
 
 + (NSString *)photosDir
 {
-    NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+      NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    
     NSString *dir = [url.path stringByAppendingPathComponent:PHOTO_CACHE_DIR_NAME];
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:dir]) {

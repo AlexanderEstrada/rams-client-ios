@@ -76,7 +76,6 @@
 		ACB2901318221375000322B4 /* libutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB28FFE18221375000322B4 /* libutil.a */; };
 		ACB2901418221375000322B4 /* libwsq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB28FFF18221375000322B4 /* libwsq.a */; };
 		ACB2901518221375000322B4 /* NBISWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB2900118221375000322B4 /* NBISWrapper.m */; };
-		ACCBD251181E27DB00CC3EDE /* RegistrationBioData.m in Sources */ = {isa = PBXBuildFile; fileRef = ACCBD250181E27DB00CC3EDE /* RegistrationBioData.m */; };
 		ACCBD260181E27DC00CC3EDE /* RegistrationBiometric.m in Sources */ = {isa = PBXBuildFile; fileRef = ACCBD25F181E27DC00CC3EDE /* RegistrationBiometric.m */; };
 		ACCBD27F181E501800CC3EDE /* IMMigrantTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = ACCBD27E181E501800CC3EDE /* IMMigrantTableViewCell.m */; };
 		ACCBD281181E503700CC3EDE /* IMMigrantTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACCBD280181E503700CC3EDE /* IMMigrantTableViewCell.xib */; };
@@ -117,7 +116,6 @@
 		ACE6930517F159AC0095F90C /* RegistrationProfile+Extended.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692C217F159AC0095F90C /* RegistrationProfile+Extended.m */; };
 		ACE6930617F159AC0095F90C /* Accommodation.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692C517F159AC0095F90C /* Accommodation.m */; };
 		ACE6930717F159AC0095F90C /* Allowance.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692C717F159AC0095F90C /* Allowance.m */; };
-		ACE6930817F159AC0095F90C /* BioData.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692C917F159AC0095F90C /* BioData.m */; };
 		ACE6930917F159AC0095F90C /* Biometric.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692CB17F159AC0095F90C /* Biometric.m */; };
 		ACE6930A17F159AC0095F90C /* Country.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692CD17F159AC0095F90C /* Country.m */; };
 		ACE6930B17F159AC0095F90C /* DetentionLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692CF17F159AC0095F90C /* DetentionLocation.m */; };
@@ -130,7 +128,6 @@
 		ACE6931317F159AC0095F90C /* IomData.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692DF17F159AC0095F90C /* IomData.m */; };
 		ACE6931417F159AC0095F90C /* IomOffice.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692E117F159AC0095F90C /* IomOffice.m */; };
 		ACE6931517F159AC0095F90C /* IomOfficer.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692E317F159AC0095F90C /* IomOfficer.m */; };
-		ACE6931617F159AC0095F90C /* Migrant.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692E517F159AC0095F90C /* Migrant.m */; };
 		ACE6931717F159AC0095F90C /* Movement.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692E717F159AC0095F90C /* Movement.m */; };
 		ACE6931817F159AC0095F90C /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692E917F159AC0095F90C /* Photo.m */; };
 		ACE6931917F159AC0095F90C /* PoliceOfficer.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE692EB17F159AC0095F90C /* PoliceOfficer.m */; };
@@ -215,13 +212,16 @@
 		ACE694ED17F198830095F90C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EC17F198830095F90C /* AVFoundation.framework */; };
 		ACE694EF17F199770095F90C /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE694EE17F199770095F90C /* GoogleMaps.framework */; };
 		ACE694F117F199AE0095F90C /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = ACE694F017F199AE0095F90C /* GoogleMaps.bundle */; };
-		F210079919CC3F52007CA840 /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F210079819CC3F52007CA840 /* Registration.m */; };
 		F21278011988B63B006679AB /* IMMovementsReviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278001988B63B006679AB /* IMMovementsReviewVC.m */; };
 		F21278491989F7C6006679AB /* IMFamilyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278481989F7C6006679AB /* IMFamilyViewController.m */; };
 		F212784C198A0158006679AB /* IMSSCheckMark.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784B198A0158006679AB /* IMSSCheckMark.m */; };
 		F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784E198A3B8B006679AB /* IMFamilyListVC.m */; };
 		F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */; };
 		F2721EB219C6FD000009EE99 /* IMRAMSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2721EB119C6FD000009EE99 /* IMRAMSTest.m */; };
+		F27B1C4919E4F2FB001F691F /* RegistrationBioData.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4819E4F2FB001F691F /* RegistrationBioData.m */; };
+		F27B1C4C19E4F2FC001F691F /* BioData.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4B19E4F2FC001F691F /* BioData.m */; };
+		F27B1C5419E51000001F691F /* Migrant.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4E19E4F2FC001F691F /* Migrant.m */; };
+		F27B1C5519E5136D001F691F /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C5119E4F2FD001F691F /* Registration.m */; };
 		F288C34919B5761800EE7948 /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */; };
 		F288C34C19B5761900EE7948 /* FamilyData.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34B19B5761900EE7948 /* FamilyData.m */; };
 		F288C34F19B5761900EE7948 /* FamilyRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34E19B5761900EE7948 /* FamilyRegister.m */; };
@@ -413,8 +413,6 @@
 		ACB28FFF18221375000322B4 /* libwsq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libwsq.a; sourceTree = "<group>"; };
 		ACB2900018221375000322B4 /* NBISWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NBISWrapper.h; sourceTree = "<group>"; };
 		ACB2900118221375000322B4 /* NBISWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NBISWrapper.m; sourceTree = "<group>"; };
-		ACCBD24F181E27DB00CC3EDE /* RegistrationBioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationBioData.h; sourceTree = "<group>"; };
-		ACCBD250181E27DB00CC3EDE /* RegistrationBioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegistrationBioData.m; sourceTree = "<group>"; };
 		ACCBD25E181E27DC00CC3EDE /* RegistrationBiometric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationBiometric.h; sourceTree = "<group>"; };
 		ACCBD25F181E27DC00CC3EDE /* RegistrationBiometric.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegistrationBiometric.m; sourceTree = "<group>"; };
 		ACCBD27D181E501800CC3EDE /* IMMigrantTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMigrantTableViewCell.h; sourceTree = "<group>"; };
@@ -493,8 +491,6 @@
 		ACE692C517F159AC0095F90C /* Accommodation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Accommodation.m; sourceTree = "<group>"; };
 		ACE692C617F159AC0095F90C /* Allowance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Allowance.h; sourceTree = "<group>"; };
 		ACE692C717F159AC0095F90C /* Allowance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Allowance.m; sourceTree = "<group>"; };
-		ACE692C817F159AC0095F90C /* BioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BioData.h; sourceTree = "<group>"; };
-		ACE692C917F159AC0095F90C /* BioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BioData.m; sourceTree = "<group>"; };
 		ACE692CA17F159AC0095F90C /* Biometric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Biometric.h; sourceTree = "<group>"; };
 		ACE692CB17F159AC0095F90C /* Biometric.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Biometric.m; sourceTree = "<group>"; };
 		ACE692CC17F159AC0095F90C /* Country.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Country.h; sourceTree = "<group>"; };
@@ -519,8 +515,6 @@
 		ACE692E117F159AC0095F90C /* IomOffice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IomOffice.m; sourceTree = "<group>"; };
 		ACE692E217F159AC0095F90C /* IomOfficer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IomOfficer.h; sourceTree = "<group>"; };
 		ACE692E317F159AC0095F90C /* IomOfficer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IomOfficer.m; sourceTree = "<group>"; };
-		ACE692E417F159AC0095F90C /* Migrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Migrant.h; sourceTree = "<group>"; };
-		ACE692E517F159AC0095F90C /* Migrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Migrant.m; sourceTree = "<group>"; };
 		ACE692E617F159AC0095F90C /* Movement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movement.h; sourceTree = "<group>"; };
 		ACE692E717F159AC0095F90C /* Movement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Movement.m; sourceTree = "<group>"; };
 		ACE692E817F159AC0095F90C /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Photo.h; sourceTree = "<group>"; };
@@ -671,8 +665,6 @@
 		ACE694EC17F198830095F90C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		ACE694EE17F199770095F90C /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Libraries/GoogleMaps.framework; sourceTree = "<group>"; };
 		ACE694F017F199AE0095F90C /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = Libraries/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
-		F210079719CC3F52007CA840 /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Registration.h; sourceTree = "<group>"; };
-		F210079819CC3F52007CA840 /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Registration.m; sourceTree = "<group>"; };
 		F21277FF1988B63B006679AB /* IMMovementsReviewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMMovementsReviewVC.h; sourceTree = "<group>"; };
 		F21278001988B63B006679AB /* IMMovementsReviewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMMovementsReviewVC.m; sourceTree = "<group>"; };
 		F21278471989F7C6006679AB /* IMFamilyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IMFamilyViewController.h; sourceTree = "<group>"; };
@@ -689,6 +681,14 @@
 		F2721EB419C81D8F0009EE99 /* Helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
 		F279A65919CC295A00491B05 /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Registration.h; path = "Core Data/Generated Classes/Registration.h"; sourceTree = "<group>"; };
 		F279A65A19CC295B00491B05 /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Registration.m; path = "Core Data/Generated Classes/Registration.m"; sourceTree = "<group>"; };
+		F27B1C4719E4F2FB001F691F /* RegistrationBioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistrationBioData.h; path = ../RegistrationBioData.h; sourceTree = "<group>"; };
+		F27B1C4819E4F2FB001F691F /* RegistrationBioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RegistrationBioData.m; path = ../RegistrationBioData.m; sourceTree = "<group>"; };
+		F27B1C4A19E4F2FC001F691F /* BioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BioData.h; path = ../BioData.h; sourceTree = "<group>"; };
+		F27B1C4B19E4F2FC001F691F /* BioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BioData.m; path = ../BioData.m; sourceTree = "<group>"; };
+		F27B1C4D19E4F2FC001F691F /* Migrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Migrant.h; path = ../Migrant.h; sourceTree = "<group>"; };
+		F27B1C4E19E4F2FC001F691F /* Migrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Migrant.m; path = ../Migrant.m; sourceTree = "<group>"; };
+		F27B1C5019E4F2FD001F691F /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Registration.h; path = ../Registration.h; sourceTree = "<group>"; };
+		F27B1C5119E4F2FD001F691F /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Registration.m; path = ../Registration.m; sourceTree = "<group>"; };
 		F288C34719B5761800EE7948 /* FamilyRegisterEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyRegisterEntry.h; sourceTree = "<group>"; };
 		F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FamilyRegisterEntry.m; sourceTree = "<group>"; };
 		F288C34A19B5761900EE7948 /* FamilyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FamilyData.h; sourceTree = "<group>"; };
@@ -1302,8 +1302,14 @@
 		ACE692C317F159AC0095F90C /* Generated Classes */ = {
 			isa = PBXGroup;
 			children = (
-				F210079719CC3F52007CA840 /* Registration.h */,
-				F210079819CC3F52007CA840 /* Registration.m */,
+				F27B1C5019E4F2FD001F691F /* Registration.h */,
+				F27B1C5119E4F2FD001F691F /* Registration.m */,
+				F27B1C4D19E4F2FC001F691F /* Migrant.h */,
+				F27B1C4E19E4F2FC001F691F /* Migrant.m */,
+				F27B1C4A19E4F2FC001F691F /* BioData.h */,
+				F27B1C4B19E4F2FC001F691F /* BioData.m */,
+				F27B1C4719E4F2FB001F691F /* RegistrationBioData.h */,
+				F27B1C4819E4F2FB001F691F /* RegistrationBioData.m */,
 				F288C34D19B5761900EE7948 /* FamilyRegister.h */,
 				F288C34E19B5761900EE7948 /* FamilyRegister.m */,
 				F288C34A19B5761900EE7948 /* FamilyData.h */,
@@ -1312,16 +1318,12 @@
 				F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */,
 				ACCBD25E181E27DC00CC3EDE /* RegistrationBiometric.h */,
 				ACCBD25F181E27DC00CC3EDE /* RegistrationBiometric.m */,
-				ACCBD24F181E27DB00CC3EDE /* RegistrationBioData.h */,
-				ACCBD250181E27DB00CC3EDE /* RegistrationBioData.m */,
 				AC6D728918068C1100E5F845 /* Child.h */,
 				AC6D728A18068C1100E5F845 /* Child.m */,
 				ACE692C417F159AC0095F90C /* Accommodation.h */,
 				ACE692C517F159AC0095F90C /* Accommodation.m */,
 				ACE692C617F159AC0095F90C /* Allowance.h */,
 				ACE692C717F159AC0095F90C /* Allowance.m */,
-				ACE692C817F159AC0095F90C /* BioData.h */,
-				ACE692C917F159AC0095F90C /* BioData.m */,
 				ACE692CA17F159AC0095F90C /* Biometric.h */,
 				ACE692CB17F159AC0095F90C /* Biometric.m */,
 				ACE692CC17F159AC0095F90C /* Country.h */,
@@ -1346,8 +1348,6 @@
 				ACE692E117F159AC0095F90C /* IomOffice.m */,
 				ACE692E217F159AC0095F90C /* IomOfficer.h */,
 				ACE692E317F159AC0095F90C /* IomOfficer.m */,
-				ACE692E417F159AC0095F90C /* Migrant.h */,
-				ACE692E517F159AC0095F90C /* Migrant.m */,
 				ACE692E617F159AC0095F90C /* Movement.h */,
 				ACE692E717F159AC0095F90C /* Movement.m */,
 				ACE692E817F159AC0095F90C /* Photo.h */,
@@ -1872,6 +1872,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F27B1C5519E5136D001F691F /* Registration.m in Sources */,
+				F27B1C5419E51000001F691F /* Migrant.m in Sources */,
 				ACE6931C17F159AC0095F90C /* RegistrationInterception.m in Sources */,
 				ACCBD260181E27DC00CC3EDE /* RegistrationBiometric.m in Sources */,
 				ACE6931717F159AC0095F90C /* Movement.m in Sources */,
@@ -1904,7 +1906,6 @@
 				AC807D4017F14F58000988D0 /* main.m in Sources */,
 				ACE694CD17F17B4F0095F90C /* UIColor+IMMS.m in Sources */,
 				F93AFCA718F7A25A00AB63DA /* IMRegistrationFilterDataVC.m in Sources */,
-				ACCBD251181E27DB00CC3EDE /* RegistrationBioData.m in Sources */,
 				ACE693BE17F159E20095F90C /* UIImageView+AFNetworking.m in Sources */,
 				F2B30F241962761600B643C4 /* IMMovementViewController.m in Sources */,
 				ACE693CD17F159E20095F90C /* NSDate+Relativity.m in Sources */,
@@ -1929,15 +1930,14 @@
 				AC20B637181FE92000E82C26 /* IMConstants.m in Sources */,
 				F9C6042818E6D05000D9A450 /* IMRegistrationFetcher.m in Sources */,
 				ACE6931917F159AC0095F90C /* PoliceOfficer.m in Sources */,
-				ACE6931617F159AC0095F90C /* Migrant.m in Sources */,
 				ACE6933D17F159BA0095F90C /* IMCollectionViewController.m in Sources */,
 				ACE6930117F159AC0095F90C /* IomOfficer+Extended.m in Sources */,
 				ACB28FC2182211D9000322B4 /* IMBiometricEngine.m in Sources */,
-				ACE6930817F159AC0095F90C /* BioData.m in Sources */,
 				ACE6945B17F159E80095F90C /* IMIOMOfficerVC.m in Sources */,
 				ACE6934617F159BA0095F90C /* IMTableViewCell.m in Sources */,
 				F288C34C19B5761900EE7948 /* FamilyData.m in Sources */,
 				AC14E0A1181F6F4400EB356B /* IMEditRegistrationVC.m in Sources */,
+				F27B1C4919E4F2FB001F691F /* RegistrationBioData.m in Sources */,
 				ACE6944C17F159E80095F90C /* IMEditInterceptionVC.m in Sources */,
 				ACE6931517F159AC0095F90C /* IomOfficer.m in Sources */,
 				AC5DD1831804FD0400E3911C /* IMAccommodationPhotoView.m in Sources */,
@@ -1999,7 +1999,6 @@
 				ACA7C64C182162C100C560FD /* Interception+Extended.m in Sources */,
 				ACE6945E17F159E80095F90C /* IMLoginViewController.m in Sources */,
 				AC5DD1861804FD3700E3911C /* IMEditAccommodationVC.m in Sources */,
-				F210079919CC3F52007CA840 /* Registration.m in Sources */,
 				ACE692A017F1599A0095F90C /* IMHTTPClient.m in Sources */,
 				AC4092BC1816400B00FAA04E /* IMAccommodationInfoWindow.m in Sources */,
 				ACE693BD17F159E20095F90C /* AFXMLRequestOperation.m in Sources */,
@@ -2007,6 +2006,7 @@
 				ACE693D217F159E20095F90C /* UIImage+ImageUtils.m in Sources */,
 				ACE6945417F159E80095F90C /* IMInterceptionListVC.m in Sources */,
 				ACE693BC17F159E20095F90C /* AFURLConnectionOperation.m in Sources */,
+				F27B1C4C19E4F2FC001F691F /* BioData.m in Sources */,
 				ACE692FF17F159AC0095F90C /* IomData+Extended.m in Sources */,
 				ACE6930D17F159AC0095F90C /* ImmigrationOfficer.m in Sources */,
 				ACE6945117F159E80095F90C /* IMInterceptionMovementHistoryVC.m in Sources */,
@@ -2325,7 +2325,7 @@
 				F2190A7319D2A546006A77F2 /* IMMS 2.xcdatamodel */,
 				ACE6926317F158E90095F90C /* IMMS.xcdatamodel */,
 			);
-			currentVersion = ACE6926317F158E90095F90C /* IMMS.xcdatamodel */;
+			currentVersion = F2190A7319D2A546006A77F2 /* IMMS 2.xcdatamodel */;
 			path = IMMS.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

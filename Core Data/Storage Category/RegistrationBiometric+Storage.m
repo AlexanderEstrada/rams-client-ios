@@ -18,7 +18,8 @@
 
 + (NSString *)photograpDir
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"Photograph"];
     
@@ -31,7 +32,8 @@
 
 + (NSString *)photograpThumbnailDir
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"PhotographThumbnail"];
     
@@ -46,7 +48,8 @@
 
 + (NSString *)leftIndexImageDir
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"LeftIndex"];
     
@@ -59,7 +62,8 @@
 
 + (NSString *)rightIndexImageDir
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"RightIndex"];
     
@@ -72,7 +76,8 @@
 
 + (NSString *)leftThumbImageDir
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"LeftThumb"];
     
@@ -85,7 +90,8 @@
 
 + (NSString *)rightThumbImageDir
 {
-    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//    NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+     NSURL *cachesURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
     NSString *cachesPath = [cachesURL path];
     NSString *dir = [[cachesPath stringByAppendingPathComponent:@"Registration"] stringByAppendingPathComponent:@"RightThumb"];
     

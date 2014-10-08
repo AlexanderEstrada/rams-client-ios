@@ -531,6 +531,13 @@ typedef enum : NSUInteger {
             }
             
            
+            if ([self.registration.complete isEqual:@(REG_STATUS_PENDING)]) {
+                //case this is new registration data and in pendding page, then create backup file
+                self.registration.backupFileName = [self.registration dumpToFile];
+                
+                //todo : save the filename into database
+            }
+            
             if (self.registrationSave) {
                 self.registrationSave(needRemove);
             }

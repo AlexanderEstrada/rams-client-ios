@@ -364,6 +364,9 @@
                     }
                     
                 }
+                //case there is file backup, then delete it
+                [weakRegistration removeBackupFile];
+                
                 if(self.progress < self.total ){
                     self.progress += 1;
                     _HUD.progress = self.progress/self.total;

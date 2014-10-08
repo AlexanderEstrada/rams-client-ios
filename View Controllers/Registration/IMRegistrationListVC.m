@@ -144,6 +144,7 @@ typedef enum : NSUInteger {
     
     //implement success and failure handler
     __weak typeof(self) weakSelf = self;
+     __weak typeof(registration) weakRegistration = registration;
     registration.successHandler = ^{
         
         [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil];
@@ -161,6 +162,9 @@ typedef enum : NSUInteger {
         sleep(5);
         [self hideLoadingView];
         //        [_HUD hide:YES];
+        
+        //case there is file backup, then delete it
+        [weakRegistration removeBackupFile];
         [self showAlertWithTitle:@"Upload Success" message:nil];
         
     };

@@ -23,6 +23,8 @@
 
 @interface Registration (Export)
 
++ (Registration *) restoreFromFile:(NSString*)path inContext:(NSManagedObjectContext *)context;
++ (Registration *) restore:(NSManagedObjectContext *)context;
 + (Registration *)newRegistrationInContext:(NSManagedObjectContext *)context;
 + (Registration *)registrationWithId:(NSString *)registrationId
               inManagedObjectContext:(NSManagedObjectContext *)context;
@@ -32,6 +34,7 @@
                       inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Registration *)registrationFromMigrant:(Migrant *)migrant inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Registration *)registrationFromMigrantAndDictionary:(Migrant *)migrant withdictionary:(NSDictionary *)dictionary inManagedObjectContext:(NSManagedObjectContext *)context;
++ (NSString *)jsonDir;
 
 - (NSDictionary *)format;
 
@@ -46,5 +49,10 @@
 - (void) sendRegistrationUpdate:(NSDictionary *)params;
 - (void) setToLocal:(NSNumber *)value;
 - (void) setRegistrationToLocal;
+- (NSString *) dumpToFile;
+- (void) removeBackupFile;
+
+@property (nonatomic, strong) NSString *backupFileName;
+
 
 @end
