@@ -185,7 +185,16 @@
             for (NSDictionary *movement in movements) {
                 Movement *data = [Movement movementWithDictionary:movement inContext:context];
                 if (data) {
-                    [migrant addMovementsObject:data];
+                    BOOL exist = NO;
+                    for (Movement * movement in migrant.movements) {
+                        if ([movement.date isEqualToDate:data.date] && [movement.transferLocation.name isEqualToString:data.transferLocation.name] ) {
+                            //movement is already on database, then skipp it
+                            exist = YES;
+                            break;
+                        }
+                    }
+                    
+                    if (!exist) [migrant addMovementsObject:data];
                 }
             }
         }

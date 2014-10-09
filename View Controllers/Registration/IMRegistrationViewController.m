@@ -274,13 +274,6 @@
         // Add HUD to screen
         [self.navigationController.view addSubview:_HUD];
         
-        
-        
-    
-        
-        _HUD.labelText =   @"Uploading Data"  ;
-        
-        
         // Show the HUD while the provided method executes in a new thread
         [_HUD showWhileExecuting:@selector(uploading) onTarget:self withObject:nil animated:YES];
         
@@ -308,14 +301,17 @@
     
     NSError *error;
     NSArray *results = [moc executeFetchRequest:request error:&error];
-    
+      self.progress = 0;
     self.total = [results count];
+
     //reset value
     success = 0;
     fail = 0;
     if (self.total > 0) {
         _HUD.mode = MBProgressHUDModeDeterminate;
-        self.progress = 0;
+        _HUD.progress = self.progress/self.total;
+        _HUD.labelText = [NSString stringWithFormat:  @"Uploaded %i of %lu"  ,(int)self.progress,(unsigned long)[results count]];
+        _HUD.detailsLabelText = [NSString stringWithFormat:  @"Success : %i and Fail : %i"  ,success,fail];
         //disable Menu
         [self.sideMenuDelegate disableMenu:YES];
         //show data loading view until upload is finish

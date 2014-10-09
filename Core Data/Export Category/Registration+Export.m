@@ -436,6 +436,12 @@ NSString *const REG_MOVEMENT                 = @"movements";
         dt.biometric.leftIndex = CORE_DATA_OBJECT([biometric objectForKey:REG_LEFT_INDEX]);
         dt.biometric.photograph = CORE_DATA_OBJECT([biometric objectForKey:REG_PHOTOGRAPH]);
         
+        if (dt) {
+            NSError * err;
+            if (![dt.managedObjectContext save:&err]) {
+                NSLog(@"Error while saving registrationWithDictionary : %@ ",[err description]);
+            }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+        }
         
         return dt;
     }
@@ -618,8 +624,18 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 NSString * key = @"type";
                 [movement setObject:text forKey:key];
                 Movement *data = [Movement movementWithDictionary:movement inContext:context];
+                //check location and date before adding new movement
                 if (data) {
-                    [migrant addMovementsObject:data];
+                    BOOL exist = NO;
+                    for (Movement * movement in migrant.movements) {
+                        if ([movement.date isEqualToDate:data.date] && [movement.transferLocation.name isEqualToString:data.transferLocation.name] ) {
+                            //movement is already on database, then skipp it
+                            exist = YES;
+                            break;
+                        }
+                    }
+                    
+                    if (!exist) [migrant addMovementsObject:data];
                 }
             }
             

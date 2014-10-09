@@ -43,7 +43,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) NSMutableArray *previewingPhotos;
 @property (nonatomic, strong) NSMutableArray *childData;
 @property (nonatomic, strong) NSMutableArray *migrantData;
-@property (nonatomic, strong) NSArray *familyRegister;
+@property (nonatomic, strong) NSMutableArray *familyRegister;
 @property (nonatomic) int tapCount;
 @property (nonatomic) BOOL reloadingData;
 @property (nonatomic, strong) NSOperationQueue *thumbnailQueue;
@@ -142,9 +142,13 @@ typedef enum : NSUInteger {
         NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"FamilyRegister"];
         
+        request.predicate = [NSPredicate predicateWithFormat:@"familyID != Nil"];
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"headOfFamilyName" ascending:YES]];
         request.returnsObjectsAsFaults = YES;
         NSError *error;
-        self.familyRegister = [context executeFetchRequest:request error:&error];
+        self.familyRegister = [[context executeFetchRequest:request error:&error] mutableCopy];
+        
+        //check is there is empty data, then remove
         
         if (error) {
             NSLog(@"Error : %@",[error description]);
@@ -223,6 +227,9 @@ typedef enum : NSUInteger {
         NSManagedObjectContext *context = [IMDBManager sharedManager].localDatabase.managedObjectContext;
         Migrant * tmp = [Migrant migrantWithId:familyRegister.headOfFamilyId inContext:context];
         if (tmp && tmp.biometric.photograph) {
+            //update path
+            [tmp.biometric photographImage];
+            
             //add all photo
             familyRegister.photograph = tmp.biometric.photograph;
         }
@@ -255,7 +262,8 @@ typedef enum : NSUInteger {
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.familyRegister count]?[self.familyRegister count]:1;
+    NSInteger total = [self.familyRegister count]?[self.familyRegister count]:1;
+    return total;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

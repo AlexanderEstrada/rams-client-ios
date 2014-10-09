@@ -405,6 +405,8 @@ static int section_other_extended_member;
                          [alert show];
                          NSLog(@"Upload Success");
                          NSLog(@"return JSON : %@",[jsonData description]);
+                         //save family id
+                         self.familyRegister.familyID = [jsonData objectForKey:@"id"];
                          self.uploadStatus = self.next = YES;
                      }
                      failure:^(NSDictionary *jsonData, NSError *error, int statusCode){
@@ -485,12 +487,11 @@ static int section_other_extended_member;
         //set head of family gender
         Migrant * migrant = [Migrant migrantWithId:self.familyRegister.headOfFamilyId inContext:self.context];
         
-        //set default value
-        self.isHeadOfFamilyFemale = NO;
+//        //set default value
         if (migrant) {
-            if ([migrant.bioData.gender isEqualToString:@"Female"]) {
+            if ([migrant.bioData.gender isEqualToString:@"Female"] || [migrant.bioData.gender isEqualToString:@"F"]) {
                 self.isHeadOfFamilyFemale = YES;
-            }
+            }else self.isHeadOfFamilyFemale = NO;
         }
         
         //reset flag
@@ -797,7 +798,8 @@ static int section_other_extended_member;
         NSInteger index = indexPath.row/2;
         entry = [ self.others objectAtIndex:index];
         tmp = [Migrant migrantWithId:entry.migrantId inContext:self.context];
-    }else return; // do nothing
+    }
+    
     UIImage * image = Nil;
     //update photo path
     if (tmp) {
@@ -869,7 +871,7 @@ static int section_other_extended_member;
         
     }
     
-    
+
     if (![self.previewingPhotos count]) {
         //there is no photo to show
         //release memory
@@ -1199,6 +1201,10 @@ static int section_other_extended_member;
                 self.familyRegister.headOfFamilyName = [migrant fullname];
                 self.familyRegister.photographThumbnail = migrant.biometric.photographThumbnail;
                 self.familyRegister.photograph = migrant.biometric.photograph;
+                
+                    if ([migrant.bioData.gender isEqualToString:@"Female"] || [migrant.bioData.gender isEqualToString:@"F"]) {
+                        self.isHeadOfFamilyFemale = YES;
+                    }else self.isHeadOfFamilyFemale = NO;
                 
                 //check is this an update or new
                 for (FamilyRegisterEntry *entry in self.familyRegister.familyEntryID) {
