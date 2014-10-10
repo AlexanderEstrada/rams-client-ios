@@ -144,7 +144,7 @@
     }
 
 - (void)applicationWillTerminate:(UIApplication *)application
-{
+{    
     [[IMDBManager sharedManager] closeDatabase];
 }
 

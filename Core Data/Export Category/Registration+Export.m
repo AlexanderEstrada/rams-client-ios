@@ -90,7 +90,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
     Registration * data = nil;
     @try {
         NSError * err;
-       
+        
         NSArray *directoryContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[Registration jsonDir] error:&err];
         if (err) {
             NSLog(@"Error while restore : %@",[err description]);
@@ -98,15 +98,25 @@ NSString *const REG_MOVEMENT                 = @"movements";
         
         for (NSString * path in directoryContent)
         {
+          
             //check if file exist
-            if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            if ([[NSFileManager defaultManager] fileExistsAtPath:[[Registration jsonDir] stringByAppendingPathComponent:path]]) {
                 //case exist then read
-             data = [Registration restoreFromFile:path inContext:context];
+                data = [Registration restoreFromFile:path inContext:context];
+                
+                if (data) {
+                    //saving to database
+                    NSError * err;
+                    if (![data.managedObjectContext save:&err]) {
+                        NSLog(@"Error while restore : %@ ",[err description]);
+                    }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];
+                }
+                
             }
             
             
         }
-        
+        //only return last object
         return data;
     }
     @catch (NSException *exception) {
@@ -124,14 +134,25 @@ NSString *const REG_MOVEMENT                 = @"movements";
     @try {
         
         if (path) {
-            NSString * tmp = [[Registration jsonDir] stringByAppendingPathComponent:path];
-            
+            NSString * fullPath = [[Registration jsonDir] stringByAppendingPathComponent:path];
+
             //check if file exist
-            if ([[NSFileManager defaultManager] fileExistsAtPath:tmp]) {
+            if ([[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
                 //case exist then read
-                NSDictionary *dictFromFile = [NSDictionary dictionaryWithContentsOfFile:path];
+                NSDictionary *dictFromFile = [NSDictionary dictionaryWithContentsOfFile:fullPath];
+                
+                if (!dictFromFile) {
+                    //remove empty file
+                    [[NSFileManager defaultManager] removeItemAtPath:fullPath error:Nil];
+                    
+                }
                 //restore to object
                 data =  [self registrationWithDictionary:dictFromFile inManagedObjectContext:context];
+                if (data) {
+                    //save filename to data
+                    data.backupName = [fullPath lastPathComponent];
+                }
+                
             }
             
         }
@@ -163,18 +184,22 @@ NSString *const REG_MOVEMENT                 = @"movements";
                 [[NSFileManager defaultManager] removeItemAtPath:path error:&err];
                 if (err) {
                     NSLog(@"Error while deleting backup file :%@",[err description]);
-                }else NSLog(@"Delete %@ Success",path);
+                }else {
+                    //set to Nil, to allow creating new file if needed
+                    self.backupName = nil;
+                    NSLog(@"Delete %@ Success",path);
+                }
             }
             
             
         }
-
+        
     }
     @catch (NSException *exception) {
         NSLog(@"Exception while removeBackupFile : %@",[exception description]);
     }
     
-   }
+}
 
 - (NSString *) dumpToFile
 {
@@ -186,7 +211,13 @@ NSString *const REG_MOVEMENT                 = @"movements";
         //dump it to file
         
         //use id from database as file name
-        NSString * objectId = [[Registration jsonDir] stringByAppendingPathComponent:[[[[self objectID] URIRepresentation] absoluteURL] lastPathComponent]];
+        NSString * objectId = Nil;
+        
+        if (![self.backupName length]) {
+            //there is no last fbackup file name, then use object ID, if not then use backup file name to avoid create double file
+            objectId = [[Registration jsonDir] stringByAppendingPathComponent:[[[[self objectID] URIRepresentation] absoluteURL] lastPathComponent]];
+        }else objectId = [[Registration jsonDir] stringByAppendingPathComponent:self.backupName];
+        
         NSLog(@"objectId : %@",objectId);
         
         //get path
@@ -226,8 +257,8 @@ NSString *const REG_MOVEMENT                 = @"movements";
         NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
         [bioData setObject:self.bioData.firstName forKey:REG_FIRST_NAME];
         if ([self.bioData.familyName length]) [bioData setObject:self.bioData.familyName forKey:REG_FAMILY_NAME];
-         if ([self.bioData.motherName length]) [bioData setObject:self.bioData.motherName forKey:REG_MOTHER_NAME];
-         if ([self.bioData.fatherName length]) [bioData setObject:self.bioData.fatherName forKey:REG_FATHER_NAME];
+        if ([self.bioData.motherName length]) [bioData setObject:self.bioData.motherName forKey:REG_MOTHER_NAME];
+        if ([self.bioData.fatherName length]) [bioData setObject:self.bioData.fatherName forKey:REG_FATHER_NAME];
         //    [bioData setObject:self.bioData.gender forKey:REG_GENDER];
         [bioData setObject:[self.bioData.gender isEqual:@"Male"] ? @"M":@"F" forKey:REG_GENDER];
         [bioData setObject:self.bioData.maritalStatus forKey:REG_MARITAL_STATUS];
@@ -236,8 +267,6 @@ NSString *const REG_MOVEMENT                 = @"movements";
         [bioData setObject:self.bioData.placeOfBirth forKey:REG_PLACE_OF_BIRTH];
         [bioData setObject:[self.bioData.dateOfBirth toUTCString] forKey:REG_DATE_OF_BIRTH];
         [formatted setObject:bioData forKey:REG_BIO_DATA];
-        
-        NSLog(@"bioData.dateOfBirth : %@",[self.bioData.dateOfBirth toUTCString]);
         
         //Interception
         if ([self.interceptionData.interceptionLocation length]) {
@@ -251,7 +280,6 @@ NSString *const REG_MOVEMENT                 = @"movements";
             [interception setObject:self.interceptionData.interceptionLocation forKey:REG_INTERCEPTION_LOCATION];
             [interception setObject:self.selfReporting.intValue?@"true":@"false" forKey:REG_SELF_REPORT];
             [formatted setObject:interception forKey:REG_INTERCEPTION];
-            NSLog(@"interceptionData.interceptionDate : %@",[self.interceptionData.interceptionDate toUTCString]);
         }
         
         //Under IOM care
@@ -263,7 +291,6 @@ NSString *const REG_MOVEMENT                 = @"movements";
         if (self.transferDate && self.transferDestination.accommodationId) {
             NSDictionary *transfer = @{REG_TRANSFER_DATE: [self.transferDate toUTCString],
                                        REG_TRANSFER_DESTINATION: self.transferDestination.accommodationId};
-            NSLog(@"self.transferDate : %@",[self.transferDate toUTCString]);
             [formatted setObject:transfer forKey:REG_TRANSFER];
         }else if (!self.transferDestination.name && self.transferDate) {
             self.transferDestination = [Accommodation accommodationWithName:self.detentionLocationName inManagedObjectContext:self.managedObjectContext];
@@ -282,45 +309,49 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         //check for sending finger image flag
-                 [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
+        [formatted setObject:self.skipFinger.intValue?@"true":@"false" forKey:REG_SKIP_FINGER];
         
         NSLog(@"formatted without biometric: %@",[formatted description]);
-                if (!self.skipFinger.boolValue) {
-        //case not skip sending finger image
+    
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
-        NSString * base64Str;
         [biometric setObject:[self.biometric base64Photograph] forKey:REG_PHOTOGRAPH];
-        if (self.biometric.rightThumb){
-            base64Str =[self.biometric base64FingerImageWithPosition:RightThumb];
-            if (base64Str) {
-                [biometric setObject:base64Str forKey:REG_RIGHT_THUMB];
+        if (!self.skipFinger.boolValue) {
+            //case not skip sending finger image
+
+            NSString * base64Str;
+          
+            
+            if (self.biometric.rightThumb){
+                base64Str =[self.biometric base64FingerImageWithPosition:RightThumb];
+                if (base64Str) {
+                    [biometric setObject:base64Str forKey:REG_RIGHT_THUMB];
+                }
+                
+            }
+            if (self.biometric.rightIndex){
+                base64Str = [self.biometric base64FingerImageWithPosition:RightIndex];
+                if (base64Str) {
+                    [biometric setObject:base64Str forKey:REG_RIGHT_INDEX];
+                }
+                
+            }
+            if (self.biometric.leftThumb){
+                base64Str = [self.biometric base64FingerImageWithPosition:LeftThumb];
+                if (base64Str) {
+                    [biometric setObject:base64Str forKey:REG_LEFT_THUMB];
+                }
+                
+            }
+            if (self.biometric.leftIndex){
+                base64Str = [self.biometric base64FingerImageWithPosition:LeftIndex];
+                if (base64Str) {
+                    [biometric setObject:base64Str forKey:REG_LEFT_INDEX];
+                }
             }
             
-        }
-        if (self.biometric.rightIndex){
-            base64Str = [self.biometric base64FingerImageWithPosition:RightIndex];
-            if (base64Str) {
-                [biometric setObject:base64Str forKey:REG_RIGHT_INDEX];
-            }
-            
-        }
-        if (self.biometric.leftThumb){
-            base64Str = [self.biometric base64FingerImageWithPosition:LeftThumb];
-            if (base64Str) {
-                [biometric setObject:base64Str forKey:REG_LEFT_THUMB];
-            }
-            
-        }
-        if (self.biometric.leftIndex){
-            base64Str = [self.biometric base64FingerImageWithPosition:LeftIndex];
-            if (base64Str) {
-                [biometric setObject:base64Str forKey:REG_LEFT_INDEX];
-            }
         }
         
         [formatted setObject:biometric forKey:REG_BIOMETRIC];
-        
-                }
         /*
          //Movement
          
@@ -375,8 +406,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         Registration *dt = [Registration registrationWithId:registrationId inManagedObjectContext:context];
         
         if (!dt) {
-            dt = [NSEntityDescription insertNewObjectForEntityForName:REG_ENTITY_NAME
-                                               inManagedObjectContext:context];
+            dt = [Registration newRegistrationInContext:context];
             dt.registrationId = registrationId;
         }
         
@@ -386,50 +416,67 @@ NSString *const REG_MOVEMENT                 = @"movements";
         dt.underIOMCare = [underIOMCare isEqual:@"true"] == TRUE ? @(1) : @(0);
         NSString * selfReporting = [dictionary objectForKey:REG_SELF_REPORT];
         dt.selfReporting = [selfReporting isEqual:@"true"] == TRUE ? @(1) : @(0);
+        //skip finger
+         NSString * skipFinger = [dictionary objectForKey:REG_SKIP_FINGER];
+        dt.skipFinger = [skipFinger isEqual:@"true"] == TRUE ? @(1) : @(0);
+        
         dt.unhcrDocument = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT]);
         dt.unhcrNumber = CORE_DATA_OBJECT([dictionary objectForKey:REG_UNHCR_DOCUMENT_NUMBER]);
         dt.vulnerability = CORE_DATA_OBJECT([dictionary objectForKey:REG_VULNERABILITY]);
-        dt.dateCreated = CORE_DATA_OBJECT([dictionary objectForKey:REG_DATE_OF_ENTRY]);
+//        dt.dateCreated = [NSDate dateFromUTCString:[dictionary objectForKey:REG_DATE_OF_ENTRY]];
         
         
         //biodata
         NSMutableDictionary *bioData = [NSMutableDictionary dictionary];
         bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
-        dt.bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
-        dt.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
-        dt.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
-        
-        dt.bioData.fatherName = CORE_DATA_OBJECT([bioData objectForKey:REG_FATHER_NAME]);
-        dt.bioData.motherName = CORE_DATA_OBJECT([bioData objectForKey:REG_MOTHER_NAME]);
-        
-        dt.bioData.gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
-        dt.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
-        dt.bioData.nationality.code = CORE_DATA_OBJECT([bioData objectForKey:REG_NATIONALITY]);
-        dt.bioData.countryOfBirth.code = CORE_DATA_OBJECT([bioData objectForKey:REG_COUNTRY_OF_BIRTH]);
-        dt.bioData.placeOfBirth = CORE_DATA_OBJECT([ bioData objectForKey:REG_PLACE_OF_BIRTH]);
-        dt.bioData.dateOfBirth = CORE_DATA_OBJECT([bioData objectForKey:REG_DATE_OF_BIRTH]);
-        
+        if (bioData) {
+            //        dt.bioData = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIO_DATA]);
+            dt.bioData.firstName = CORE_DATA_OBJECT([bioData objectForKey:REG_FIRST_NAME]);
+            dt.bioData.familyName = CORE_DATA_OBJECT([bioData objectForKey:REG_FAMILY_NAME]);
+            
+            dt.bioData.fatherName = CORE_DATA_OBJECT([bioData objectForKey:REG_FATHER_NAME]);
+            dt.bioData.motherName = CORE_DATA_OBJECT([bioData objectForKey:REG_MOTHER_NAME]);
+            
+            dt.bioData.gender = CORE_DATA_OBJECT([bioData objectForKey:REG_GENDER]);
+            dt.bioData.maritalStatus = CORE_DATA_OBJECT([bioData objectForKey:REG_MARITAL_STATUS]);
+            dt.bioData.nationality = [Country countryWithCode:[bioData objectForKey:REG_NATIONALITY] inManagedObjectContext:context];
+            dt.bioData.countryOfBirth = [Country countryWithCode:[bioData objectForKey:REG_COUNTRY_OF_BIRTH] inManagedObjectContext:context];
+            dt.bioData.placeOfBirth = CORE_DATA_OBJECT([ bioData objectForKey:REG_PLACE_OF_BIRTH]);
+            dt.bioData.dateOfBirth = [NSDate dateFromUTCString:[bioData objectForKey:REG_DATE_OF_BIRTH]];
+        }
+
         //interception
         NSMutableDictionary *interception = [NSMutableDictionary dictionary];
         interception = CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION]);
-        dt.interceptionData = CORE_DATA_OBJECT([dictionary objectForKey:REG_INTERCEPTION]);
-        dt.interceptionData.interceptionLocation = CORE_DATA_OBJECT([interception objectForKey:REG_INTERCEPTION_LOCATION]);
-        dt.interceptionData.interceptionDate = CORE_DATA_OBJECT([interception objectForKey:REG_INTERCEPTION_DATE]);
-        dt.interceptionData.dateOfEntry = CORE_DATA_OBJECT([interception objectForKey:REG_DATE_OF_ENTRY]);
-        dt.associatedOffice.name = CORE_DATA_OBJECT([interception objectForKey:REG_IOM_OFFICE]);
+        if (interception) {
+            dt.interceptionData.interceptionLocation = CORE_DATA_OBJECT([interception objectForKey:REG_INTERCEPTION_LOCATION]);
+            dt.interceptionData.interceptionDate = [NSDate dateFromUTCString:[interception objectForKey:REG_INTERCEPTION_DATE]];
+            dt.interceptionData.dateOfEntry = [NSDate dateFromUTCString:[interception objectForKey:REG_DATE_OF_ENTRY]];
+            
+            if (!dt.dateCreated) {
+                dt.dateCreated = dt.interceptionData.dateOfEntry;
+            }
+            
+            dt.associatedOffice = [IomOffice officeWithName:CORE_DATA_OBJECT([interception objectForKey:REG_IOM_OFFICE]) inManagedObjectContext:context];
+        }
+
         
         //Under IOM care
-        if (!dt.underIOMCare.boolValue) {
+//        if (!dt.underIOMCare.boolValue) {
             NSMutableDictionary *transfer = [NSMutableDictionary dictionary];
-            transfer = CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER]);
-            dt.transferDate = CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER_DATE]);
-            dt.transferDestination.accommodationId = CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER_DESTINATION]);
+            transfer = CORE_DATA_OBJECT([dictionary objectForKey:REG_TRANSFER]);
+        
+        if (transfer) {
+            dt.transferDate = [NSDate dateFromUTCString:[transfer objectForKey:REG_TRANSFER_DATE]];
+            dt.transferDestination = [Accommodation accommodationWithId:CORE_DATA_OBJECT([transfer objectForKey:REG_TRANSFER_DESTINATION]) inManagedObjectContext:context];
         }
+        
+//        }
+       
         
         //biometric
         NSMutableDictionary *biometric = [NSMutableDictionary dictionary];
         biometric = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIOMETRIC]);
-        dt.biometric = CORE_DATA_OBJECT([dictionary objectForKey:REG_BIOMETRIC]);
         dt.biometric.rightThumb  = CORE_DATA_OBJECT([biometric objectForKey:REG_RIGHT_THUMB]);
         dt.biometric.rightIndex  = CORE_DATA_OBJECT([biometric objectForKey:REG_RIGHT_INDEX]);
         dt.biometric.leftThumb = CORE_DATA_OBJECT([biometric objectForKey:REG_LEFT_THUMB]);
@@ -1027,7 +1074,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         data.selfReporting = migrant.selfReporting;
         
         //skip finger flag
-                data.skipFinger = migrant.skipFinger;
+        data.skipFinger = migrant.skipFinger;
         
         return data;
     }
@@ -1141,7 +1188,7 @@ NSString *const REG_MOVEMENT                 = @"movements";
         }
         
         //skip finger flag
-                data.skipFinger = migrant.skipFinger;
+        data.skipFinger = migrant.skipFinger;
         
         //self Reporting
         data.selfReporting = migrant.selfReporting;

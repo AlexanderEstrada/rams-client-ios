@@ -159,7 +159,7 @@ static NSInteger total_row_table_personal_info = 13;
     if(_skipFinger == YES) {
         //show alert
         //show alert
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Warning !!!" message:@"Are you sure want to skip finger image ?" delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure want to skip finger image ?" delegate:self cancelButtonTitle:@"NO" otherButtonTitles:@"YES", nil];
         alert.tag = IMSkipFinger_Tag;
         [alert show];
     }
