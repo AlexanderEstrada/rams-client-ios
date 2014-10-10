@@ -216,10 +216,10 @@
 		F21278491989F7C6006679AB /* IMFamilyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F21278481989F7C6006679AB /* IMFamilyViewController.m */; };
 		F212784C198A0158006679AB /* IMSSCheckMark.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784B198A0158006679AB /* IMSSCheckMark.m */; };
 		F212784F198A3B8B006679AB /* IMFamilyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F212784E198A3B8B006679AB /* IMFamilyListVC.m */; };
+		F21393D019E7D46000750FCA /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C5119E4F2FD001F691F /* Registration.m */; };
 		F23DA50D19812D0100DDF0C1 /* IMMovementListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F23DA50C19812D0100DDF0C1 /* IMMovementListVC.m */; };
 		F2721EB219C6FD000009EE99 /* IMRAMSTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F2721EB119C6FD000009EE99 /* IMRAMSTest.m */; };
 		F27B1C4C19E4F2FC001F691F /* BioData.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4B19E4F2FC001F691F /* BioData.m */; };
-		F27B1C5619E51970001F691F /* Registration.m in Sources */ = {isa = PBXBuildFile; fileRef = F279A65A19CC295B00491B05 /* Registration.m */; };
 		F27B1C5719E5198A001F691F /* Migrant.m in Sources */ = {isa = PBXBuildFile; fileRef = F27B1C4E19E4F2FC001F691F /* Migrant.m */; };
 		F288C34919B5761800EE7948 /* FamilyRegisterEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34819B5761800EE7948 /* FamilyRegisterEntry.m */; };
 		F288C34C19B5761900EE7948 /* FamilyData.m in Sources */ = {isa = PBXBuildFile; fileRef = F288C34B19B5761900EE7948 /* FamilyData.m */; };
@@ -678,8 +678,6 @@
 		F23F30BE19DBFC3A0095BB16 /* RAMS Client.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "RAMS Client.entitlements"; sourceTree = SOURCE_ROOT; };
 		F2721EB119C6FD000009EE99 /* IMRAMSTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IMRAMSTest.m; sourceTree = "<group>"; };
 		F2721EB419C81D8F0009EE99 /* Helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
-		F279A65919CC295A00491B05 /* Registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Registration.h; path = "Core Data/Generated Classes/Registration.h"; sourceTree = "<group>"; };
-		F279A65A19CC295B00491B05 /* Registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Registration.m; path = "Core Data/Generated Classes/Registration.m"; sourceTree = "<group>"; };
 		F27B1C4719E4F2FB001F691F /* RegistrationBioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistrationBioData.h; path = ../RegistrationBioData.h; sourceTree = "<group>"; };
 		F27B1C4819E4F2FB001F691F /* RegistrationBioData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RegistrationBioData.m; path = ../RegistrationBioData.m; sourceTree = "<group>"; };
 		F27B1C4A19E4F2FC001F691F /* BioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BioData.h; path = ../BioData.h; sourceTree = "<group>"; };
@@ -906,8 +904,6 @@
 			isa = PBXGroup;
 			children = (
 				F2B09A1E194E9FCE00289E8F /* 3rdparty */,
-				F279A65919CC295A00491B05 /* Registration.h */,
-				F279A65A19CC295B00491B05 /* Registration.m */,
 				ACE693F817F159E80095F90C /* View Controllers */,
 				ACE6926517F1599A0095F90C /* Logic */,
 				ACE692A117F159AC0095F90C /* Core Data */,
@@ -1871,8 +1867,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F21393D019E7D46000750FCA /* Registration.m in Sources */,
 				F27B1C5719E5198A001F691F /* Migrant.m in Sources */,
-				F27B1C5619E51970001F691F /* Registration.m in Sources */,
 				ACE6931C17F159AC0095F90C /* RegistrationInterception.m in Sources */,
 				ACCBD260181E27DC00CC3EDE /* RegistrationBiometric.m in Sources */,
 				ACE6931717F159AC0095F90C /* Movement.m in Sources */,
