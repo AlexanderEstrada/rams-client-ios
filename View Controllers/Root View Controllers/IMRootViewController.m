@@ -136,6 +136,13 @@
 
 
 #pragma mark View Transition
+
+- (void)changeContentViewTo:(NSString *)viewIdentifier fromSideMenu:(BOOL)fromSideMenu setIndextTo:(NSIndexPath *)indexPath
+{
+    self.menuViewController.currentIndexPath = indexPath;
+    [self changeContentViewTo:viewIdentifier fromSideMenu:fromSideMenu];
+}
+
 - (void)changeContentViewTo:(NSString *)viewIdentifier fromSideMenu:(BOOL)fromSideMenu
 {
     

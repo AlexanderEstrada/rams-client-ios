@@ -13,6 +13,7 @@
 + (NSDate *)dateFromUTCString:(NSString *)utcString;
 
 - (NSString *)toUTCString;
+- (NSString *)toUTCStringWithTime;
 - (NSString *)relativeTime;
 - (NSString *)relativeTimeLongFormat;
 - (NSString *)relativeTimeToFuture;

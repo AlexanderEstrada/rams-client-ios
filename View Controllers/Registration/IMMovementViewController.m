@@ -493,7 +493,8 @@
 }
 -(void)showMigrantList:(IMMovementReviewTableVC *)view shouldShowMigrantList:(BOOL)bShowMigrantList{
       if (bShowMigrantList) {
-        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
+//        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
+          [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO setIndextTo:[NSIndexPath indexPathForRow:2 inSection:0]];
     }
 }
 - (void)didReceiveMemoryWarning
@@ -537,7 +538,8 @@
         self.movement = [Movement newMovementInContext:self.context];
     }
     if (self.show) {
-        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
+//        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO];
+        [self.sideMenuDelegate changeContentViewTo:@"IMMigrantViewController" fromSideMenu:NO setIndextTo:[NSIndexPath indexPathForRow:2 inSection:0]];
     }
 }
 
@@ -584,7 +586,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"ShowMigrantList"]) {
-        [[segue destinationViewController] setDelegate:self];
+//        [[segue destinationViewController] setDelegate:self];
         [[segue destinationViewController] setMovement:self.movement];
     }
 }

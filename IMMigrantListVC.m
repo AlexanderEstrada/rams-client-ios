@@ -249,7 +249,7 @@
         NSError * err;
         if (remove) {
             //save on database
-            [context save:&err];
+            [context.parentContext save:&err];
             if (err) {
                 NSLog(@"Error saving : %@",[err description]);
             }else [[NSNotificationCenter defaultCenter] postNotificationName:IMDatabaseChangedNotification object:nil userInfo:nil];

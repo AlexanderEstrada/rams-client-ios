@@ -38,7 +38,7 @@
     [params setObject:@(self.progress) forKey:@"offset"];
     
     NSDate *lastSyncDate = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];
-    if (lastSyncDate) [params setObject:[lastSyncDate toUTCString] forKey:@"since"];
+    if (lastSyncDate) [params setObject:[lastSyncDate toUTCStringWithTime] forKey:@"since"];
     
     IMHTTPClient *client = [IMHTTPClient sharedClient];
     [client getJSONWithPath:@"family/list"

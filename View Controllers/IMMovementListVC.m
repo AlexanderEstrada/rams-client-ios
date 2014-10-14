@@ -369,11 +369,11 @@
         }
         
         cell.buttonUpload.hidden = TRUE;
-        
+         cell.hidden = NO;
         if (animated) {
             cell.photoView.alpha = 0;
             cell.labelTitle.alpha = 0;
-            cell.labelSubtitle.alpha = 0;
+            cell.labelSubtitle.alpha = 0; 
             cell.labelDetail1.alpha = 0;
             cell.labelDetail2.alpha = 0;
             cell.labelDetail3.alpha = 0;
@@ -392,6 +392,9 @@
                 cell.buttonUpload.alpha = 1;
             }completion:Nil];
         }
+    }else{
+        //hide null class
+        cell.hidden = YES;
     }
 }
 
@@ -800,7 +803,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"SubmitData"]) {
-        [[segue destinationViewController] setDelegate:self];
+//        [[segue destinationViewController] setDelegate:self];
         if (self.movement) {
             [[segue destinationViewController] setMovement:self.movement];
         }

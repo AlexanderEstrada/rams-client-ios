@@ -212,7 +212,7 @@
 {
     NSDate *lastSyncDate = [[NSUserDefaults standardUserDefaults] objectForKey:IMLastSyncDate];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    if (lastSyncDate) [params setObject:[lastSyncDate toUTCString] forKey:@"since"];
+    if (lastSyncDate) [params setObject:[lastSyncDate toUTCStringWithTime] forKey:@"since"];
     
     [[IMHTTPClient sharedClient] getJSONWithPath:@"update/data"
                                       parameters:params

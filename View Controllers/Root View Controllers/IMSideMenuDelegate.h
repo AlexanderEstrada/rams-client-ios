@@ -21,5 +21,6 @@
 - (void)disableMenu:(BOOL)value;
 
 - (void)changeContentViewTo:(NSString *)viewIdentifier fromSideMenu:(BOOL)fromSideMenu;
+- (void)changeContentViewTo:(NSString *)viewIdentifier fromSideMenu:(BOOL)fromSideMenu setIndextTo:(NSIndexPath *)indexPath;
 
 @end

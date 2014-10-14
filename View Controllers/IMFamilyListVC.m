@@ -435,6 +435,7 @@
         
         cell.buttonUpload.hidden = TRUE;
         
+        cell.hidden = NO;
         if (animated) {
             cell.photoView.alpha = 0;
             cell.labelTitle.alpha = 0;
@@ -457,7 +458,11 @@
                 cell.buttonUpload.alpha = 1;
             }completion:Nil];
         }
+    }else{
+        //hide null class
+        cell.hidden = YES;
     }
+
 }
 
 - (void)showLoadingViewWithTitle:(NSString *)title
@@ -812,24 +817,6 @@
 }
 
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([[segue identifier] isEqualToString:@"SubmitData"]) {
-        [[segue destinationViewController] setDelegate:self];
-//        NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-//        //only set if there is data
-//        if (self.movement) {
-//            [dict setObject:self.movement forKey:@"Movement"];
-//        }
-//        if ([self.migrants count]) {
-//            [dict setObject:self.migrants forKey:@"Migrant"];
-//        }
-//        
-//        
-//        //prepare data and set it
-//        [[segue destinationViewController] setMigrantData:dict];
-    }
-}
 
 
 
